@@ -11,10 +11,13 @@ export const GOALS = [
 ] as const;
 export type Goal = (typeof GOALS)[number];
 export const MINUTES = [10, 15, 20, 30] as const;
+export type StudyMinutes = (typeof MINUTES)[number];
+// `studyMinutes` is how long the learner plans to study each day. It is
+// unrelated to the reminder's time of day (see reminders.ts: hour/minute).
 export type Profile = {
   onboarded: true;
   goal: Goal;
-  minutes: (typeof MINUTES)[number];
+  studyMinutes: StudyMinutes;
   at: number;
 };
 
@@ -37,7 +40,7 @@ export const goalSituations: Record<Goal, string[]> = {
   interview: ["work", "meet"],
 };
 
-export const recommendedMinutes = (path: PathId): Profile["minutes"] =>
+export const recommendedMinutes = (path: PathId): StudyMinutes =>
   path === "foundation" ? 10 : 15;
 
 // First-run onboarding is for new learners only: anyone with existing
@@ -58,11 +61,17 @@ export function needsOnboarding(p: {
   );
 }
 
-export const isProfile = (v: any): v is Profile =>
-  !!v &&
-  typeof v === "object" &&
-  v.onboarded === true &&
-  (GOALS as readonly string[]).includes(v.goal) &&
-  (MINUTES as readonly number[]).includes(v.minutes) &&
-  Number.isFinite(v.at) &&
-  v.at >= 0;
+// Accepts the current shape and the first release's `minutes` field, which is
+// migrated to `studyMinutes`. Returns undefined for anything invalid.
+export function normalizeProfile(v: any): Profile | undefined {
+  if (!v || typeof v !== "object" || v.onboarded !== true) return undefined;
+  const minutes = v.studyMinutes ?? v.minutes;
+  if (
+    !(GOALS as readonly string[]).includes(v.goal) ||
+    !(MINUTES as readonly number[]).includes(minutes) ||
+    !Number.isFinite(v.at) ||
+    v.at < 0
+  )
+    return undefined;
+  return { onboarded: true, goal: v.goal, studyMinutes: minutes, at: v.at };
+}

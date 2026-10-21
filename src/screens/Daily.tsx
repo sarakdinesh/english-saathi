@@ -74,7 +74,7 @@ export function DailyToday({ navigation }: { navigation: any }) {
   const { progress } = useProgress();
   const [open, setOpen] = useState<string | null>(null);
   const toggle = (k: string) => setOpen(open === k ? null : k);
-  const learned = (progress.daily[localDate()] ?? []).filter((x) =>
+  const learned = (progress.daily[plan.date] ?? []).filter((x) =>
     plan.words.includes(x),
   ).length;
   const isDone = (k: string) =>
@@ -281,8 +281,11 @@ function Yesterday({ plan }: { plan: DailyPlan }) {
 }
 
 export function DailyQuiz({ navigation }: any) {
-  const { plan, mark } = useDaily();
+  const { plan, mark, done } = useDaily();
   const { review } = useProgress();
+  // Replaying today's quiz is allowed, but only the first completed run counts
+  // towards the review schedule, so repeats cannot inflate it.
+  const [firstRun] = useState(() => !done.includes("quiz"));
   const items = plan.quiz.map((id) => quizItem(id)).filter(Boolean) as NonNullable<
     ReturnType<typeof quizItem>
   >[];
@@ -300,7 +303,7 @@ export function DailyQuiz({ navigation }: any) {
   const choose = (i: number) => {
     setSelected(i);
     const ok = i === q.answer;
-    review(q.id, ok);
+    if (firstRun) review(q.id, ok);
     if (ok) setScore((n) => n + 1);
   };
   const next = () => {
@@ -320,7 +323,9 @@ export function DailyQuiz({ navigation }: any) {
           {score} / {items.length}
         </Text>
         <Text style={s.marathiBody}>
-          चुकलेले प्रश्न उजळणीत पुन्हा येतील. हा गुण भाषेच्या पातळीचा पुरावा नाही.
+          {firstRun
+            ? "चुकलेले प्रश्न उजळणीत पुन्हा येतील. हा गुण भाषेच्या पातळीचा पुरावा नाही."
+            : "हा पुन्हा केलेला सराव आहे; तो उजळणीच्या वेळापत्रकात नोंदवला जात नाही."}
         </Text>
         <View style={{ height: 16 }} />
         <Button title="परत जा · Back" onPress={() => navigation.goBack()} />

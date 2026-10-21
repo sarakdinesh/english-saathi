@@ -80,8 +80,10 @@ const mastered = words.slice(0, 90).map((w: any) => w.id);
 const fresh = buildPlan(base(day(1), "beginner", [], mastered));
 assert.ok(fresh.words.every((w: string) => !mastered.includes(w)));
 
-// Clock handling: never earlier than last seen (within 3 days); big jumps ignored.
-assert.equal(effectiveDate("2026-03-10", "2026-03-12"), "2026-03-12");
+// Clock handling: the last day seen holds for at most one day ahead (time-zone
+// changes); anything larger is a correction and the device date is used.
+assert.equal(effectiveDate("2026-03-10", "2026-03-11"), "2026-03-11");
+assert.equal(effectiveDate("2026-03-10", "2026-03-12"), "2026-03-10");
 assert.equal(effectiveDate("2026-03-10", "2026-03-10"), "2026-03-10");
 assert.equal(effectiveDate("2026-03-10", "2026-03-01"), "2026-03-10");
 assert.equal(effectiveDate("2026-03-10", "2027-01-01"), "2026-03-10");

@@ -8,7 +8,7 @@ import {
   skillInfo,
   skillOfExercise,
   skillStats,
-  speakingPractice,
+  speakingSelfReport,
   summarize,
   type Level,
   type SkillArea,
@@ -39,13 +39,13 @@ export default function Skills({ navigation }: any) {
   const { strengths, weaknesses, focus } = summarize(stats);
   const names = (list: typeof stats) =>
     list.map((x) => skillInfo[x.skill].mr).join(", ");
-  const spoken = speakingPractice(progress.speaking);
+  const spoken = speakingSelfReport(progress);
   return (
     <Shell>
       <Label>तुमची कौशल्ये · SKILLS</Label>
       <Heading
         title="कुठे मजबूत, कुठे सराव हवा"
-        sub="तुम्ही दिलेल्या उत्तरांवरून. हा पातळीचा पुरावा किंवा प्रमाणपत्र नाही."
+        sub="तुम्ही दिलेल्या उत्तरांवरून. हा सराव-निर्देशक आहे; भाषेच्या पातळीचा पुरावा, परीक्षा किंवा CEFR प्रमाणपत्र नाही."
       />
       <View style={s.goalCard}>
         <Label>सारांश · SUMMARY</Label>
@@ -91,12 +91,17 @@ export default function Skills({ navigation }: any) {
               ? `${st.attempted} प्रश्न सोडवले · सध्या ${st.correct} बरोबर`
               : "अजून प्रश्न सोडवलेले नाहीत"}
           </Text>
-          <Text style={s.smallMuted}>{skillInfo[st.skill].note}</Text>
-          {st.skill === "speaking" && (
-            <Text style={s.body}>
-              स्वतः नोंदवलेला बोलण्याचा सराव: {spoken} वेळा
+          {st.excluded > 0 && (
+            <Text style={s.smallMuted}>
+              {st.excluded} प्रश्न मजकूर पाहून सोडवले; ते मोजले नाहीत.
             </Text>
           )}
+          <Text style={s.smallMuted}>
+            काय मोजते: {skillInfo[st.skill].measures}
+          </Text>
+          <Text style={s.smallMuted}>
+            काय मोजत नाही: {skillInfo[st.skill].notMeasured}
+          </Text>
           {st.total > 0 && (
             <Button
               secondary
@@ -106,6 +111,19 @@ export default function Skills({ navigation }: any) {
           )}
         </View>
       ))}
+      <View style={s.goalCard}>
+        <Label>बोलण्याचा सराव · SPEAKING (SELF-REPORTED)</Label>
+        <Text style={s.body}>
+          तुम्ही नोंदवलेला बोलण्याचा सराव: {spoken.practice} वेळा.
+          {spoken.averageConfidence !== undefined
+            ? ` तुमच्या स्वतःच्या आत्मविश्वासाची सरासरी: ${spoken.averageConfidence.toFixed(1)} / 3 (${spoken.rated} धड्यांवर).`
+            : " अजून आत्मविश्वासाची नोंद नाही."}
+        </Text>
+        <Text style={s.smallMuted}>
+          हे फक्त तुम्ही स्वतः सांगितलेले आहे. रेकॉर्डिंग तपासले जात नाही, त्याला
+          गुण दिले जात नाहीत आणि वरील निर्देशकांत मिसळले जात नाही.
+        </Text>
+      </View>
     </Shell>
   );
 }

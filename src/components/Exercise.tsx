@@ -39,14 +39,14 @@ export function Exercise({
     const correct = isCorrect(item, selection);
     onAttempt?.();
     setResult(correct);
-    if (track) review(item.id, correct);
+    if (track) review(item.id, correct, transcript);
     onResult?.(correct);
   };
   return (
     <View style={s.dailyCard}>
       <Label>{labels[item.skill]}</Label>
       <Text style={s.exampleEnglish}>{item.prompt}</Text>
-      {item.audio && (
+      {!!item.audio && (
         <View>
           <Listen text={item.audio} compact />
           <Pressable

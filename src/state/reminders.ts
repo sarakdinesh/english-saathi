@@ -36,6 +36,12 @@ export const reminderBodies = (minutes: number) => [
   "५ मिनिटेही चालतील! आज एक छोटा धडा पूर्ण करा.",
 ];
 
+// How many days ahead are scheduled. The schedule is rebuilt every time the app
+// opens or returns to the foreground; if the app is not opened for this long,
+// reminders simply stop rather than nagging indefinitely. Well under the 64
+// pending local notifications iOS allows.
+export const REMINDER_DAYS = 14;
+
 export type PlannedReminder = { at: Date; title: string; body: string };
 
 const dayNumber = (d: Date) =>
@@ -50,7 +56,7 @@ export function planReminders(
   reminder: Reminder,
   studiedToday: boolean,
   minutes: number,
-  days = 7,
+  days = REMINDER_DAYS,
 ): PlannedReminder[] {
   if (!reminder.enabled) return [];
   const bodies = reminderBodies(minutes);

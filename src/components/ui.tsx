@@ -239,7 +239,7 @@ export function Heading({ title, sub }: { title: string; sub?: string }) {
   return (
     <View style={{ marginBottom: 22 }}>
       <Text style={s.title}>{title}</Text>
-      {sub && <Text style={s.subtitle}>{sub}</Text>}
+      {!!sub && <Text style={s.subtitle}>{sub}</Text>}
     </View>
   );
 }
@@ -255,7 +255,7 @@ export function Section({
   return (
     <View style={s.section}>
       <Text style={s.sectionTitle}>{title}</Text>
-      {action && (
+      {!!action && (
         <Pressable accessibilityRole="button" onPress={onPress}>
           <Text style={s.link}>{action} →</Text>
         </Pressable>

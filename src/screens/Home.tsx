@@ -46,8 +46,9 @@ export default function Home({ navigation }: any) {
   const due = Object.values(progress.reviews).filter(
     (r) => r.due <= now,
   ).length;
-  const dailyWords = useDaily().plan.words;
-  const today = progress.daily[localDate()] ?? [];
+  const daily = useDaily();
+  const dailyWords = daily.plan.words;
+  const today = progress.daily[daily.plan.date] ?? [];
   const count = list.filter((l) => progress.completed.includes(l.id)).length;
   const unit = next ? unitOf(next.id) : undefined;
   const learnedToday = today.filter((x) => dailyWords.includes(x)).length;
@@ -111,7 +112,7 @@ export default function Home({ navigation }: any) {
         {progress.profile && (
           <Text style={s.smallMuted}>
             🎯 {goalInfo[progress.profile.goal].mr} · दररोज{" "}
-            {progress.profile.minutes} मिनिटे
+            {progress.profile.studyMinutes} मिनिटे
           </Text>
         )}
       </View>

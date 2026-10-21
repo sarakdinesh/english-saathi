@@ -1,5 +1,6 @@
 import React, { useRef, useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
+import { CommonActions } from "@react-navigation/native";
 import { talks, unitById, unitLessons } from "../curriculum";
 import {
   foundationQuestions,
@@ -72,15 +73,27 @@ export function Placement({ navigation }: any) {
           onPress={() => {
             setPath(result.path);
             const first = unit ? unitLessons(unit)[0] : undefined;
-            if (first) navigation.replace("Lesson", { id: first.id });
-            else navigation.goBack();
+            // Reset the stack so Back from the lesson goes Home, never back to
+            // the placement check or first-run onboarding underneath it.
+            navigation.dispatch(
+              CommonActions.reset({
+                index: first ? 1 : 0,
+                routes: first
+                  ? [{ name: "Main" }, { name: "Lesson", params: { id: first.id } }]
+                  : [{ name: "Main" }],
+              }),
+            );
           }}
         />
         <View style={{ height: 12 }} />
         <Button
           secondary
           title="माझा सध्याचा मार्ग ठेवा"
-          onPress={() => navigation.goBack()}
+          onPress={() =>
+            navigation.dispatch(
+              CommonActions.reset({ index: 0, routes: [{ name: "Main" }] }),
+            )
+          }
         />
         <Text style={s.smallMuted}>
           तुमचा मार्ग तुम्ही कधीही Learn मधून बदलू शकता. सर्व धडे खुले आहेत.

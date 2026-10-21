@@ -419,7 +419,7 @@ export function Recorder({
           if (!busy) void toggle();
         }}
       />
-      {uri && (
+      {!!uri && (
         <>
           <Button
             secondary

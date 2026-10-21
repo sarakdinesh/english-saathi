@@ -17,12 +17,17 @@ import {
 import type { PathId } from "../curriculum/types";
 import type { Profile } from "./onboarding";
 import type { Reminder } from "./reminders";
-import { prunePlans, type DailyPlan } from "../daily/engine";
+import {
+  dateKey,
+  effectiveDate,
+  mergePlan,
+  prunePlans,
+  type DailyPlan,
+} from "../daily/engine";
 const KEY = "english-saathi.progress.v1";
-export const localDate = () => {
-  const d = new Date();
-  return `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
-};
+export const localDate = () => dateKey();
+// The day used for daily plans and their completion (see effectiveDate).
+const planDay = (clock?: string) => effectiveDate(localDate(), clock);
 export function streakFor(dates: string[]) {
   const cursor = new Date();
   let count = 0;
@@ -45,7 +50,8 @@ type Context = {
   toggleSave: (id: string) => void;
   recordQuiz: (score: number) => void;
   step: (id: string, n: number) => void;
-  review: (id: string, correct: boolean) => void;
+  // `assisted`: the transcript was shown before answering (listening only).
+  review: (id: string, correct: boolean, assisted?: boolean) => void;
   activity: (id: string) => void;
   settings: (patch: Partial<Progress["settings"]>) => void;
   importProgress: (raw: string) => void;
@@ -56,6 +62,7 @@ type Context = {
   setConfidence: (id: string, value: 1 | 2 | 3) => void;
   saveCheckpoint: (unit: string, correct: number, total: number) => void;
   savePlan: (plan: DailyPlan) => void;
+  setClock: (date: string) => void;
   saveProfile: (profile: Profile) => void;
   saveReminder: (reminder: Reminder) => void;
   markDaily: (date: string, task: string) => void;
@@ -104,9 +111,12 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
             lastLesson: id,
             steps: { ...p.steps, [id]: n },
           })),
-        review: (id, correct) =>
+        review: (id, correct, assisted = false) =>
           setProgress((p) => ({
             ...p,
+            assisted: assisted
+              ? Array.from(new Set([...(p.assisted ?? []), id]))
+              : (p.assisted ?? []).filter((x) => x !== id),
             dates: activeDates(p.dates),
             reviews: {
               ...p.reviews,
@@ -122,8 +132,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
             dates: activeDates(p.dates),
             daily: {
               ...p.daily,
-              [localDate()]: Array.from(
-                new Set([...(p.daily[localDate()] ?? []), id]),
+              [planDay(p.clock)]: Array.from(
+                new Set([...(p.daily[planDay(p.clock)] ?? []), id]),
               ),
             },
           })),
@@ -146,8 +156,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
               },
               daily: {
                 ...p.daily,
-                [localDate()]: Array.from(
-                  new Set([...(p.daily[localDate()] ?? []), "speak"]),
+                [planDay(p.clock)]: Array.from(
+                  new Set([...(p.daily[planDay(p.clock)] ?? []), "speak"]),
                 ),
               },
             };
@@ -166,18 +176,17 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
               [unit]: { correct, total, at: Date.now() },
             },
           })),
-        // Stores the plan for its day (and advances the clock) once; never
-        // overwrites an existing plan for the same path.
+        // Stores a day's plan once. An existing plan is kept when the path is
+        // unchanged or when anything has been done that day; it is replaced only
+        // by a different-path plan on a day with no activity yet.
         savePlan: (plan) =>
           setProgress((p) => {
-            const old = p.dailyPlans[plan.date];
-            if (old && old.path === plan.path) return p;
-            return {
-              ...p,
-              dailyPlans: prunePlans({ ...p.dailyPlans, [plan.date]: plan }),
-              clock: !p.clock || plan.date > p.clock ? plan.date : p.clock,
-            };
+            const plans = mergePlan(p.dailyPlans, p.dailyDone, p.daily, plan);
+            return plans === p.dailyPlans ? p : { ...p, dailyPlans: plans };
           }),
+        // Records the day the app treats as today (see effectiveDate).
+        setClock: (date) =>
+          setProgress((p) => (p.clock === date ? p : { ...p, clock: date })),
         saveProfile: (profile) => setProgress((p) => ({ ...p, profile })),
         saveReminder: (reminder) => setProgress((p) => ({ ...p, reminder })),
         markDaily: (date, task) =>

@@ -25,7 +25,7 @@ export function EmptyState({
       <Icon name={icon} size={42} color={C.muted} />
       <Text style={[s.sectionTitle, { textAlign: "center" }]}>{title}</Text>
       <Text style={[s.body, { textAlign: "center" }]}>{sub}</Text>
-      {actionTitle && onAction && (
+      {!!actionTitle && !!onAction && (
         <Button secondary title={actionTitle} onPress={onAction} />
       )}
     </View>

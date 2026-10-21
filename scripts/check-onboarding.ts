@@ -22,18 +22,21 @@ assert.equal(ob.needsOnboarding({ ...fresh, completed: ["intro"] }), false);
 assert.equal(ob.needsOnboarding({ ...fresh, dates: ["2026-01-01"] }), false);
 assert.equal(ob.needsOnboarding({ ...fresh, attempts: 1 }), false);
 assert.equal(
-  ob.needsOnboarding({ ...fresh, profile: { onboarded: true, goal: "work", minutes: 10, at: 1 } }),
+  ob.needsOnboarding({ ...fresh, profile: { onboarded: true, goal: "work", studyMinutes: 10, at: 1 } }),
   false,
 );
 
 // Profile and placement storage.
-const profile = { onboarded: true, goal: "travel", minutes: 20, at: 5 };
+const profile = { onboarded: true, goal: "travel", studyMinutes: 20, at: 5 };
 const saved = JSON.parse(JSON.stringify({ ...initial, profile }));
 assert.deepEqual(validateProgress(saved).profile, profile);
+// First-release backups used `minutes`; they load and are migrated.
+const legacy = { onboarded: true, goal: "travel", minutes: 20, at: 5 };
+assert.deepEqual(validateProgress({ ...saved, profile: legacy }).profile, profile);
 assert.equal(validateProgress(JSON.parse(JSON.stringify(initial))).profile, undefined);
 for (const bad of [
   { ...profile, goal: "fun" },
-  { ...profile, minutes: 7 },
+  { ...profile, studyMinutes: 7 },
   { ...profile, onboarded: false },
   { ...profile, at: -1 },
   "yes",

@@ -1,10 +1,15 @@
-import React, { useState } from "react";
+import React, { useCallback, useState } from "react";
 import { View, TextInput, Share, Platform } from "react-native";
 import { validateProgress } from "../state/model";
-import { useNavigation } from "@react-navigation/native";
+import { useFocusEffect, useNavigation } from "@react-navigation/native";
 import { goalInfo } from "../state/onboarding";
 import { REMINDER_TIMES, defaultReminder } from "../state/reminders";
-import { ensurePermission, remindersSupported } from "../components/reminderService";
+import {
+  ensurePermission,
+  getPermission,
+  remindersSupported,
+  sendTestNotification,
+} from "../components/reminderService";
 import { useProgress } from "../state/progress";
 import {
   AppText as Text,
@@ -20,6 +25,14 @@ export default function Settings() {
     useProgress();
   const reminder = progress.reminder ?? defaultReminder;
   const [reminderNote, setReminderNote] = useState("");
+  const [permission, setPermission] = useState<string>("unknown");
+  // Re-check when the screen is shown: the learner may have changed the
+  // notification permission in the phone's own settings.
+  useFocusEffect(
+    useCallback(() => {
+      getPermission().then(setPermission, () => setPermission("unknown"));
+    }, []),
+  );
   const navigation = useNavigation<any>();
   const [backup, setBackup] = useState("");
   const [message, setMessage] = useState("");
@@ -34,7 +47,7 @@ export default function Settings() {
       <Label>तुमचे ध्येय · YOUR GOAL</Label>
       <Text style={s.body}>
         {progress.profile
-          ? `${goalInfo[progress.profile.goal].mr} · दररोज ${progress.profile.minutes} मिनिटे`
+          ? `${goalInfo[progress.profile.goal].mr} · दररोज ${progress.profile.studyMinutes} मिनिटे`
           : "अजून निवडलेले नाही."}
       </Text>
       <View style={{ height: 10 }} />
@@ -65,6 +78,7 @@ export default function Settings() {
                 return;
               }
               const result = await ensurePermission();
+              setPermission(result);
               if (result === "granted") {
                 saveReminder({ ...reminder, enabled: true });
                 setReminderNote("आठवण सुरू झाली.");
@@ -88,6 +102,24 @@ export default function Settings() {
               />
             );
           })}
+          {reminder.enabled && permission === "denied" && (
+            <Text accessibilityRole="alert" style={s.smallMuted}>
+              सूचनांची परवानगी बंद आहे, त्यामुळे आठवण येणार नाही. फोनच्या
+              सेटिंग्जमध्ये इंग्रजी साथीसाठी सूचना सुरू करा.
+            </Text>
+          )}
+          <Button
+            secondary
+            title="चाचणी सूचना पाठवा · Send a test"
+            onPress={async () => {
+              const ok = await sendTestNotification(5);
+              setReminderNote(
+                ok
+                  ? "५ सेकंदांत सूचना येईल. ती आली नाही तर फोनच्या सेटिंग्ज तपासा."
+                  : "आधी आठवण सुरू करून सूचनांची परवानगी द्या.",
+              );
+            }}
+          />
           {!!reminderNote && (
             <Text accessibilityLiveRegion="polite" style={s.smallMuted}>
               {reminderNote}

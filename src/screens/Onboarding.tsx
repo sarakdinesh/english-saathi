@@ -8,7 +8,7 @@ import {
   goalInfo,
   recommendedMinutes,
   type Goal,
-  type Profile,
+  type StudyMinutes,
 } from "../state/onboarding";
 import type { PathId } from "../curriculum/types";
 import { pathInfo } from "./Learn";
@@ -69,11 +69,11 @@ export default function Onboarding({ navigation }: any) {
   const { progress, saveProfile, setPath } = useProgress();
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<Goal>(progress.profile?.goal ?? "daily");
-  const [minutes, setMinutes] = useState<Profile["minutes"]>(
-    progress.profile?.minutes ?? 15,
+  const [minutes, setMinutes] = useState<StudyMinutes>(
+    progress.profile?.studyMinutes ?? 15,
   );
   const save = () =>
-    saveProfile({ onboarded: true, goal, minutes, at: Date.now() });
+    saveProfile({ onboarded: true, goal, studyMinutes: minutes, at: Date.now() });
   const toMain = () =>
     navigation.dispatch(
       CommonActions.reset({ index: 0, routes: [{ name: "Main" }] }),

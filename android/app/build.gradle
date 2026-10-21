@@ -109,6 +109,16 @@ android {
         debug {
             signingConfig signingConfigs.debug
         }
+        // QA build: separate application id so test data never touches the real
+        // app's data; debuggable so private files can be inspected with
+        // `adb run-as`. It is not in react { debuggableVariants }, so its
+        // JavaScript is bundled into the APK (no Metro needed, works offline).
+        qa {
+            initWith debug
+            applicationIdSuffix ".qa"
+            signingConfig signingConfigs.debug
+            matchingFallbacks = ['debug']
+        }
         release {
             // Caution! In production, you need to generate your own keystore file.
             // see https://reactnative.dev/docs/signed-apk-android.

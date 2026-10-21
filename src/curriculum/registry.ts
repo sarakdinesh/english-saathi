@@ -14,6 +14,7 @@ import * as b5 from "./beginner/b5-pronouns-be";
 import * as b6 from "./beginner/b6-patterns";
 import * as b7 from "./beginner/b7-questions-negatives";
 import * as b8 from "./beginner/b8-routine-now";
+import * as b8p from "./beginner/b8p-past-simple";
 import * as b9 from "./beginner/b9-past-future";
 import * as b10 from "./beginner/b10-situations";
 import * as b11 from "./beginner/b11-help-sounds";
@@ -49,6 +50,7 @@ export const unitFiles: UnitFile[] = [
   b6,
   b7,
   b8,
+  b8p,
   b9,
   b10,
   b11,

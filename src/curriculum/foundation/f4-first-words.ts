@@ -21,7 +21,7 @@ export const lessons = [
     "firstwords",
     "Counting from 1 to 20",
     "एक ते वीस अंक",
-    "1 one (एक), 2 two (दोन), 3 three (तीन), 4 four (चार), 5 five (पाच), 6 six (सहा), 7 seven (सात), 8 eight (आठ), 9 nine (नऊ), 10 ten (दहा). 11 eleven, 12 twelve, 13 thirteen ... 19 nineteen, 20 twenty. 13 ते 19 मध्ये -teen येते आणि जोर शेवटी असतो: thir-TEEN. 30, 40 मध्ये -ty येते आणि जोर सुरुवातीला असतो: THIR-ty. थर्टीन आणि थर्टी वेगळे ऐका.",
+    "1 one (एक), 2 two (दोन), 3 three (तीन), 4 four (चार), 5 five (पाच), 6 six (सहा), 7 seven (सात), 8 eight (आठ), 9 nine (नऊ), 10 ten (दहा). 11 eleven, 12 twelve, 13 thirteen ... 19 nineteen, 20 twenty. 13 ते 19 मध्ये -teen येते; अंक एकटा म्हटल्यावर जोर शेवटी असतो: thir-TEEN. 30, 40 मध्ये -ty येते आणि जोर सुरुवातीला असतो: THIR-ty. थर्टीन आणि थर्टी वेगळे ऐका. (वाक्यात, उदा. thirteen people, जोर बदलू शकतो.)",
     "How many …? → I have + number + things",
     [
       ["one, two, three", "एक, दोन, तीन."],

@@ -146,9 +146,9 @@ function WordsScreen({ route, navigation }: any) {
             />
             <Button
               secondary
-              disabled={(progress.daily[localDate()] ?? []).includes(w.id)}
+              disabled={(progress.daily[plan.date] ?? []).includes(w.id)}
               title={
-                (progress.daily[localDate()] ?? []).includes(w.id)
+                (progress.daily[plan.date] ?? []).includes(w.id)
                   ? "आज शिकलो ✓"
                   : "आज शिकलो · Learned today"
               }
@@ -424,8 +424,8 @@ function useReminderSync() {
   const { reminder, profile } = progress;
   useEffect(() => {
     if (!ready) return;
-    syncReminders(reminder, profile?.minutes ?? 15, studied).catch(() => {});
-  }, [ready, reminder, profile?.minutes, studied, tick]);
+    syncReminders(reminder, profile?.studyMinutes ?? 15, studied).catch(() => {});
+  }, [ready, reminder, profile?.studyMinutes, studied, tick]);
 }
 function Root() {
   const { ready, error, progress } = useProgress();
@@ -435,7 +435,7 @@ function Root() {
     <View style={[s.root, width > 700 && { paddingVertical: 20 }]}>
       <View style={s.appFrame}>
         <StatusBar style="dark" />
-        {error && (
+        {!!error && (
           <Text accessibilityRole="alert" style={s.error}>
             {error}
           </Text>

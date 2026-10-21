@@ -9,7 +9,7 @@ import {
   unitIds,
 } from "../curriculum";
 import type { PathId } from "../curriculum/types";
-import { isProfile, type Profile } from "./onboarding";
+import { normalizeProfile, type Profile } from "./onboarding";
 import { isReminder, type Reminder } from "./reminders";
 import {
   DAILY_TASKS,
@@ -34,6 +34,9 @@ export type Progress = {
   steps: Record<string, number>;
   reviews: Record<string, ReviewItem>;
   mastered: string[];
+  // Listening questions whose latest answer was given after the transcript had
+  // been revealed: they are not counted as listening evidence.
+  assisted?: string[];
   settings: { textSize: number; sound: boolean };
   daily: Record<string, string[]>;
   // Added after the first release. All are optional in stored/imported data.
@@ -224,8 +227,8 @@ export function validateProgress(p: any): Progress {
       ...(x.foundation !== undefined ? { foundation: x.foundation } : {}),
     };
   }
-  if (p.profile !== undefined && !isProfile(p.profile))
-    throw Error("Invalid profile");
+  const profile = p.profile === undefined ? undefined : normalizeProfile(p.profile);
+  if (p.profile !== undefined && !profile) throw Error("Invalid profile");
   if (p.reminder !== undefined && !isReminder(p.reminder))
     throw Error("Invalid reminder");
   const speaking: Record<string, SpeakingPractice> = {};
@@ -351,6 +354,7 @@ export function validateProgress(p: any): Progress {
     steps,
     reviews,
     mastered: ids(p.mastered ?? [], reviewIds),
+    ...(p.assisted ? { assisted: ids(p.assisted, reviewIds) } : {}),
     settings: { ...settings },
     daily,
     path,
@@ -361,7 +365,7 @@ export function validateProgress(p: any): Progress {
     dailyPlans,
     dailyDone,
     ...(p.clock ? { clock: p.clock } : {}),
-    ...(p.profile ? { profile: { ...p.profile } } : {}),
+    ...(profile ? { profile } : {}),
     ...(p.reminder
       ? {
           reminder: {

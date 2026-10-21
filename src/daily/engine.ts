@@ -44,9 +44,11 @@ export type DailyPlan = {
 export const HISTORY_DAYS = 14;
 export const MAX_STORED_PLANS = 60;
 const QUIZ_SIZE = 5;
-// A device date further ahead than this is treated as a changed clock, not
-// as evidence that the learner really is in the future.
-const MAX_AHEAD_DAYS = 3;
+// The last day seen may be at most this far ahead of the device date and still
+// count as "today". One day covers time-zone changes (travelling west) and the
+// midnight edge; anything larger is a clock correction and is accepted, so a
+// wrong clock can never hold back fresh daily content for more than a day.
+export const MAX_AHEAD_DAYS = 1;
 
 // Level pools. Foundation learners get a hand-picked set of concrete, everyday
 // words and only short sentences; other paths use all content. Pools smaller
@@ -83,14 +85,30 @@ export const isDate = (d: string) =>
   new Date(d + "T00:00:00Z").toISOString().slice(0, 10) === d;
 const dayNumber = (d: string) => Math.floor(Date.parse(d + "T00:00:00Z") / 864e5);
 
-// The day the app treats as "today". Setting the device clock backwards never
-// reopens or rewrites an earlier day; a large jump forward is not trusted.
+// The learner's local calendar day as YYYY-MM-DD (DST-safe: built from the
+// local date parts, never from elapsed hours).
+export const dateKey = (d: Date = new Date()) =>
+  `${d.getFullYear()}-${String(d.getMonth() + 1).padStart(2, "0")}-${String(d.getDate()).padStart(2, "0")}`;
+
+// The day the app treats as "today". Moving the device clock back by up to a
+// day (time zone change) keeps the later day so earlier plans are not reopened
+// or rewritten; a bigger jump in either direction is taken as the new date.
+// The stored `clock` is always set to this result, so protection never lasts
+// longer than MAX_AHEAD_DAYS.
 export function effectiveDate(local: string, lastSeen?: string) {
   if (!lastSeen || !isDate(lastSeen) || lastSeen <= local) return local;
   return dayNumber(lastSeen) - dayNumber(local) <= MAX_AHEAD_DAYS
     ? lastSeen
     : local;
 }
+
+// A day's plan is fixed once the learner has done anything on it, so changing
+// path or preferences later cannot swap content under completed activities.
+export const dayHasActivity = (
+  done: Record<string, string[]>,
+  daily: Record<string, string[]>,
+  date: string,
+) => (done[date]?.length ?? 0) + (daily[date]?.length ?? 0) > 0;
 
 function hash(text: string) {
   let h = 2166136261;
@@ -286,6 +304,21 @@ export function buildPlan(ctx: Context): DailyPlan {
     speaking,
     quiz,
   };
+}
+
+// Pure rule behind saving a day's plan (used by the progress provider): an
+// existing plan is kept when the path is unchanged or anything has been done
+// that day; otherwise the new plan is stored. Never touches other days.
+export function mergePlan(
+  plans: Record<string, DailyPlan>,
+  done: Record<string, string[]>,
+  daily: Record<string, string[]>,
+  plan: DailyPlan,
+): Record<string, DailyPlan> {
+  const old = plans[plan.date];
+  if (old && (old.path === plan.path || dayHasActivity(done, daily, plan.date)))
+    return plans;
+  return prunePlans({ ...plans, [plan.date]: plan });
 }
 
 // Keeps the newest plans; used before storing so progress stays small.
