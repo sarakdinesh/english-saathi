@@ -1,0 +1,11 @@
+node_modules/
+.expo/
+dist/
+dist-android/
+web-build/
+*.log
+.DS_Store
+
+# Local installable build artifacts
+artifacts/
+*.apk

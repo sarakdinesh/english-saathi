@@ -1,0 +1,138 @@
+import React from "react";
+import { View } from "react-native";
+import { allExercises } from "../curriculum";
+import { localDate, useProgress } from "../state/progress";
+import {
+  MIN_ATTEMPTS,
+  SKILL_AREAS,
+  skillInfo,
+  skillOfExercise,
+  skillStats,
+  speakingPractice,
+  summarize,
+  type Level,
+  type SkillArea,
+} from "../state/skills";
+import { effectiveDate, skillPractice } from "../daily/engine";
+import { AppText as Text, Button, Heading, Label, Shell } from "../components/ui";
+import { EmptyState } from "../components/cards";
+import { Exercise } from "../components/Exercise";
+import { s } from "../components/styles";
+import { C } from "../components/theme";
+
+const levelText: Record<Level, string> = {
+  strong: "बलस्थान ✓",
+  ok: "चांगली प्रगती",
+  weak: "सुधारणा हवी",
+  unknown: "अजून माहिती कमी",
+};
+const levelColor: Record<Level, string> = {
+  strong: C.green,
+  ok: C.ink,
+  weak: "#B65C4C",
+  unknown: C.muted,
+};
+
+export default function Skills({ navigation }: any) {
+  const { progress } = useProgress();
+  const stats = skillStats(progress, allExercises);
+  const { strengths, weaknesses, focus } = summarize(stats);
+  const names = (list: typeof stats) =>
+    list.map((x) => skillInfo[x.skill].mr).join(", ");
+  const spoken = speakingPractice(progress.speaking);
+  return (
+    <Shell>
+      <Label>तुमची कौशल्ये · SKILLS</Label>
+      <Heading
+        title="कुठे मजबूत, कुठे सराव हवा"
+        sub="तुम्ही दिलेल्या उत्तरांवरून. हा पातळीचा पुरावा किंवा प्रमाणपत्र नाही."
+      />
+      <View style={s.goalCard}>
+        <Label>सारांश · SUMMARY</Label>
+        {strengths.length > 0 && (
+          <Text style={s.body}>बलस्थाने: {names(strengths)}</Text>
+        )}
+        {weaknesses.length > 0 && (
+          <Text style={s.body}>सराव हवा: {names(weaknesses)}</Text>
+        )}
+        {!strengths.length && !weaknesses.length && (
+          <Text style={s.body}>
+            अजून पुरेशी माहिती नाही. प्रत्येक कौशल्यात किमान {MIN_ATTEMPTS}{" "}
+            प्रश्न सोडवल्यावर बलस्थाने आणि कमकुवत भाग दिसतील.
+          </Text>
+        )}
+        {focus && focus.total > 0 && (
+          <Button
+            title={`सुचवलेला सराव: ${skillInfo[focus.skill].mr}`}
+            onPress={() => navigation.navigate("SkillPractice", { skill: focus.skill })}
+          />
+        )}
+      </View>
+      {stats.map((st) => (
+        <View key={st.skill} style={s.goalCard}>
+          <View style={[s.goalRow, { justifyContent: "space-between" }]}>
+            <Text style={s.sectionTitle}>
+              {skillInfo[st.skill].mr} · {skillInfo[st.skill].en}
+            </Text>
+          </View>
+          <Text style={[s.rowTitle, { color: levelColor[st.level] }]}>
+            {levelText[st.level]}
+            {st.level === "unknown" ? ` (${st.attempted}/${MIN_ATTEMPTS})` : ""}
+          </Text>
+          <View
+            style={s.track}
+            accessibilityRole="progressbar"
+            accessibilityValue={{ min: 0, max: Math.max(st.attempted, 1), now: st.correct }}
+          >
+            <View style={[s.trackFill, { width: `${st.pct * 100}%` }]} />
+          </View>
+          <Text style={s.smallMuted}>
+            {st.attempted
+              ? `${st.attempted} प्रश्न सोडवले · सध्या ${st.correct} बरोबर`
+              : "अजून प्रश्न सोडवलेले नाहीत"}
+          </Text>
+          <Text style={s.smallMuted}>{skillInfo[st.skill].note}</Text>
+          {st.skill === "speaking" && (
+            <Text style={s.body}>
+              स्वतः नोंदवलेला बोलण्याचा सराव: {spoken} वेळा
+            </Text>
+          )}
+          {st.total > 0 && (
+            <Button
+              secondary
+              title="या कौशल्याचा सराव · Practise"
+              onPress={() => navigation.navigate("SkillPractice", { skill: st.skill })}
+            />
+          )}
+        </View>
+      ))}
+    </Shell>
+  );
+}
+
+export function SkillPractice({ route }: any) {
+  const { progress } = useProgress();
+  const skill: SkillArea = SKILL_AREAS.includes(route.params?.skill)
+    ? route.params.skill
+    : "vocabulary";
+  const date = effectiveDate(localDate(), progress.clock);
+  // Fixed when the screen opens so answering does not reshuffle the set.
+  const [set] = React.useState(() =>
+    skillPractice(skill, date, progress, allExercises, skillOfExercise),
+  );
+  const items = set as typeof allExercises;
+  return (
+    <Shell>
+      <Label>सराव · PRACTICE</Label>
+      <Heading
+        title={`${skillInfo[skill].mr} · ${skillInfo[skill].en}`}
+        sub="आधी चुकलेले प्रश्न, मग नवे. उत्तरे उजळणीत नोंदवली जातात."
+      />
+      {items.length ? (
+        items.map((e) => <Exercise key={e.id} item={e} />)
+      ) : (
+        <EmptyState title="या कौशल्यासाठी प्रश्न नाहीत" sub="इतर धडे पूर्ण केल्यावर प्रश्न येतील." />
+      )}
+    </Shell>
+  );
+}

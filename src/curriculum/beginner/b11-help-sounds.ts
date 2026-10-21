@@ -1,0 +1,576 @@
+import {
+  bld,
+  e2m,
+  gap,
+  lessonKit,
+  lis,
+  m2e,
+  newLesson,
+  resp,
+  rolePlay,
+  und,
+  finish,
+} from "../author";
+import type { Unit, Enrich } from "../types";
+
+export const lessons = [
+  newLesson(
+    "ask-help",
+    "conversation",
+    "Asking for help and clarification",
+    "समजले नाही तर काय म्हणायचे?",
+    "समजले नाही तेव्हा घाबरू नका; हे वाक्य वापरा: Could you repeat that, please? (पुन्हा सांगाल का?), Please speak slowly. (हळू बोला), What does this word mean? (या शब्दाचा अर्थ काय?), How do you say this in English? (हे इंग्रजीत कसे म्हणतात?), Let me try again. (मी पुन्हा प्रयत्न करतो/करते).",
+    "Could you repeat that, please? · Please speak slowly. · What does … mean? · Let me try again.",
+    [
+      ["Could you repeat that, please?", "कृपया ते पुन्हा सांगाल का?"],
+      ["Please speak slowly.", "कृपया हळू बोला."],
+      ["What does this word mean?", "या शब्दाचा अर्थ काय?"],
+      ["Let me try again.", "मला पुन्हा प्रयत्न करू द्या."],
+      ["How do you say this in English?", "हे इंग्रजीत कसे म्हणतात?"],
+    ],
+    "समजले नाही असे सांगण्यासाठी तीन वेगवेगळी वाक्ये मोठ्याने म्हणा.",
+  ),
+  newLesson(
+    "contractions",
+    "sounds",
+    "Short forms: I'm, don't, can't",
+    "बोलताना संक्षिप्त रूपे",
+    "बोलताना शब्द जोडून लहान करतात: I am → I'm, you are → you're, she is → she's, do not → don't, cannot → can't, will not → won't. ही रूपे ऐकून ओळखता आली पाहिजेत. औपचारिक लेखनात पूर्ण रूपे वापरा. बोलण्यात दोन्ही चालतात.",
+    "I am → I'm · do not → don't · cannot → can't",
+    [
+      ["I'm ready.", "मी तयार आहे."],
+      ["She's at home.", "ती घरी आहे."],
+      ["We don't know.", "आम्हाला माहीत नाही."],
+      ["I can't hear you.", "मला तुमचे ऐकू येत नाही."],
+    ],
+    "तुमच्याबद्दल चार वाक्ये I'm, don't आणि can't वापरून बोला.",
+  ),
+  newLesson(
+    "word-stress",
+    "sounds",
+    "Word stress",
+    "शब्दातील जोराचा भाग",
+    "इंग्रजी शब्दात एका भागावर जास्त जोर असतो आणि बाकीचे भाग हलके बोलले जातात: TEA-cher, to-MOR-row, ho-TEL. मराठीत सर्व भाग सारखे बोलले जातात, म्हणून जोर चुकला तर शब्द समजायला अवघड जाते. नवीन शब्द ऐकताना कोणता भाग जोरात आहे ते ऐका.",
+    "TEA-cher · to-MOR-row · ho-TEL",
+    [
+      ["teacher — TEA-cher", "शिक्षक: पहिल्या भागावर जोर."],
+      ["tomorrow — to-MOR-row", "उद्या: दुसऱ्या भागावर जोर."],
+      ["hotel — ho-TEL", "हॉटेल: दुसऱ्या भागावर जोर."],
+      ["important — im-POR-tant", "महत्त्वाचे: दुसऱ्या भागावर जोर."],
+    ],
+    "पाच शब्द निवडा आणि कोणत्या भागावर जोर आहे ते सांगा.",
+  ),
+  newLesson(
+    "sounds-mr",
+    "sounds",
+    "Sounds to practise: V/W and TH",
+    "मराठी भाषकांसाठी उच्चार",
+    "V मध्ये वरचे दात खालच्या ओठाला लागतात; W मध्ये ओठ गोल होतात आणि दात लागत नाहीत. TH मध्ये जिभेचे टोक दातांमध्ये हलके ठेवा. S ने सुरू होणारे शब्द (school, station) 'इस्कूल' असे म्हणू नका. ध्येय स्पष्ट समजेल असे बोलणे आहे, कोणत्याही एका accent ची नक्कल नाही.",
+    "V = दात + ओठ · W = गोल ओठ · TH = जीभ दातांमध्ये",
+    [
+      ["Water is very important.", "पाणी खूप महत्त्वाचे आहे."],
+      ["I think this is the third one.", "मला वाटते हे तिसरे आहे."],
+      ["We stand at the station.", "आम्ही स्टेशनवर उभे आहोत."],
+      ["He worked yesterday.", "त्याने काल काम केले."],
+    ],
+    "वरील वाक्ये हळू म्हणा आणि स्वतःला रेकॉर्ड करून ऐका.",
+  ),
+];
+
+export const kits: Record<string, Enrich> = {
+  "ask-help": lessonKit(
+    "ask-help",
+    [
+      "I can ask someone to repeat, speak slowly and explain.",
+      "मी समोरच्याला पुन्हा सांगायला, हळू बोलायला आणि समजावून सांगायला सांगू शकतो/शकते.",
+    ],
+    [
+      ["A", "The meeting is at half past nine.", "बैठक साडेनऊ वाजता आहे."],
+      [
+        "B",
+        "Could you repeat that, please? Please speak slowly.",
+        "कृपया ते पुन्हा सांगाल का? कृपया हळू बोला.",
+      ],
+      ["A", "Of course. Half past nine.", "नक्कीच. साडेनऊ."],
+      [
+        "B",
+        "Thank you. What does 'agenda' mean?",
+        "धन्यवाद. 'agenda' चा अर्थ काय?",
+      ],
+    ],
+    [
+      "Could you repeat that, please?",
+      "Please speak slowly.",
+      "What does … mean?",
+      "Let me try again.",
+    ],
+    [
+      resp(
+        "Sorry, I spoke too fast.",
+        "No problem. Could you speak slowly, please?",
+        ["I am a fast.", "Please repeat me slowly yes."],
+        "वेग जास्त असल्यास नम्रपणे हळू बोलायला सांगा.",
+      ),
+      gap(
+        "Could you ___ that, please?",
+        "repeat",
+        ["repeating", "repeated"],
+        "Could you नंतर मूळ रूप.",
+      ),
+      gap(
+        "What ___ this word mean?",
+        "does",
+        ["do", "is"],
+        "this word सोबत does.",
+      ),
+      e2m(
+        "Let me try again.",
+        "मला पुन्हा प्रयत्न करू द्या.",
+        ["मी आता निघतो.", "मला मदत करा."],
+        "try again म्हणजे पुन्हा प्रयत्न.",
+      ),
+      m2e(
+        "या शब्दाचा अर्थ काय?",
+        "What does this word mean?",
+        ["What this word means?", "What is mean this word?"],
+        "अर्थ विचारताना What does … mean? वापरा.",
+      ),
+      lis(
+        "Could you speak more slowly, please?",
+        "ऐका. व्यक्ती काय विचारते?",
+        "हळू बोलायला सांगते",
+        ["पुन्हा लिहायला सांगते", "लवकर यायला सांगते"],
+        "more slowly म्हणजे अधिक हळू.",
+      ),
+    ],
+    rolePlay(
+      "",
+      "beginner",
+      ["समजले नाही तर", "When you do not understand"],
+      "ऑफिसमध्ये कोणीतरी खूप वेगाने बोलत आहे.",
+      "तुम्ही: कर्मचारी",
+      [
+        [
+          "o",
+          "The meeting is at half past nine in room four.",
+          "बैठक साडेनऊ वाजता खोली चारमध्ये आहे.",
+        ],
+        [
+          "y",
+          "नम्रपणे पुन्हा सांगायला आणि हळू बोलायला सांगा.",
+          "Could you repeat that, please? Please speak slowly.",
+          "Could you repeat…",
+        ],
+        [
+          "o",
+          "Of course. Half past nine, room four.",
+          "नक्कीच. साडेनऊ, खोली चार.",
+        ],
+        [
+          "y",
+          "आभार माना आणि 'agenda' चा अर्थ विचारा.",
+          "Thank you. What does 'agenda' mean?",
+          "Thank you. What does…",
+        ],
+      ],
+      true,
+    ),
+  ),
+  could: lessonKit(
+    "could",
+    [
+      "I can make polite requests with could.",
+      "could वापरून मी नम्र विनंती करू शकतो/शकते.",
+    ],
+    [
+      [
+        "A",
+        "Excuse me, could you show me the way?",
+        "माफ करा, तुम्ही मला रस्ता दाखवाल का?",
+      ],
+      ["B", "Of course. Go straight.", "नक्कीच. सरळ जा."],
+      ["A", "Could you speak slowly, please?", "तुम्ही हळू बोलाल का?"],
+      [
+        "B",
+        "Sure. Go straight, then turn left.",
+        "नक्की. सरळ जा, मग डावीकडे वळा.",
+      ],
+    ],
+    ["Could you + base verb + please?", "Could I + base verb?"],
+    [
+      gap(
+        "Could you ___ me the way?",
+        "show",
+        ["shows", "showing"],
+        "Could you नंतर मूळ रूप.",
+      ),
+      und(
+        "कोणती विनंती अधिक नम्र आहे?",
+        "Could you open the window, please?",
+        ["Open the window.", "You open window."],
+        "Could you…, please? नम्र आहे.",
+      ),
+      e2m(
+        "Could you repeat that, please?",
+        "कृपया ते पुन्हा सांगाल का?",
+        ["कृपया ते लिहाल का?", "कृपया ते बंद कराल का?"],
+        "repeat म्हणजे पुन्हा सांगणे.",
+      ),
+      m2e(
+        "तुम्ही हळू बोलाल का?",
+        "Could you speak slowly?",
+        ["Could you speaking slowly?", "You could speak slowly?"],
+        "Could you + मूळ क्रियापद.",
+      ),
+      resp(
+        "Could you help me, please?",
+        "Of course. How can I help?",
+        ["Yes, I could you.", "Help me am."],
+        "विनंतीला Of course म्हणा.",
+      ),
+      lis(
+        "Could you show me the way to the station?",
+        "ऐका. व्यक्ती काय विचारते?",
+        "स्टेशनचा रस्ता",
+        ["बसचे तिकीट", "हॉटेलचे नाव"],
+        "the way to the station म्हणजे स्टेशनचा रस्ता.",
+      ),
+    ],
+    rolePlay(
+      "",
+      "beginner",
+      ["नम्र विनंती", "A polite request"],
+      "तुम्ही स्टेशनवर मदत मागता.",
+      "तुम्ही: प्रवासी",
+      [
+        [
+          "y",
+          "नम्रपणे रस्ता दाखवायला सांगा.",
+          "Excuse me, could you show me the way to the platform?",
+          "Excuse me, could you…",
+        ],
+        [
+          "o",
+          "Of course. It is down the stairs.",
+          "नक्कीच. ते जिन्याने खाली आहे.",
+        ],
+        [
+          "y",
+          "हळू बोलायला सांगा.",
+          "Could you speak slowly, please?",
+          "Could you…",
+        ],
+        [
+          "o",
+          "Sure. Down the stairs, turn left.",
+          "नक्की. जिन्याने खाली, डावीकडे वळा.",
+        ],
+      ],
+    ),
+  ),
+  contractions: lessonKit(
+    "contractions",
+    [
+      "I can understand and use short forms like I'm and don't.",
+      "मी I'm आणि don't सारखी संक्षिप्त रूपे समजू आणि वापरू शकतो/शकते.",
+    ],
+    [
+      ["A", "I'm sorry. I can't hear you.", "माफ करा. मला तुमचे ऐकू येत नाही."],
+      [
+        "B",
+        "Oh, I'm not near the phone. Is that better?",
+        "अरे, मी फोनजवळ नाही. आता बरे आहे का?",
+      ],
+      ["A", "Yes. We don't have much time.", "हो. आपल्याकडे जास्त वेळ नाही."],
+      ["B", "I'll be quick. She's waiting.", "मी लवकर करेन. ती वाट पाहत आहे."],
+    ],
+    ["I am → I'm · she is → she's", "do not → don't · cannot → can't"],
+    [
+      und(
+        "'I'm' म्हणजे काय?",
+        "I am",
+        ["I will", "I have"],
+        "I'm म्हणजे I am (मी आहे).",
+      ),
+      und(
+        "'don't' म्हणजे काय?",
+        "do not",
+        ["does not", "did not"],
+        "don't म्हणजे do not (करत नाही).",
+      ),
+      und(
+        "'can't' म्हणजे काय?",
+        "cannot",
+        ["can", "could"],
+        "can't म्हणजे cannot (येत नाही/करू शकत नाही).",
+      ),
+      lis(
+        "She's at home and I'm at work.",
+        "ऐका. ती कुठे आहे?",
+        "घरी",
+        ["ऑफिसमध्ये", "बाजारात"],
+        "She's = She is; at home म्हणजे घरी.",
+      ),
+      e2m(
+        "We don't know.",
+        "आम्हाला माहीत नाही.",
+        ["आम्हाला माहीत आहे.", "आम्ही जाणार आहोत."],
+        "don't know म्हणजे माहीत नाही.",
+      ),
+      m2e(
+        "मला तुमचे ऐकू येत नाही.",
+        "I can't hear you.",
+        ["I can hear you.", "I cant not hear you."],
+        "can't hear म्हणजे ऐकू येत नाही.",
+      ),
+    ],
+    rolePlay(
+      "",
+      "beginner",
+      ["फोनवर आवाज नीट येत नाही", "A bad line"],
+      "फोनवर आवाज येत नाही.",
+      "तुम्ही: कॉल करणारे",
+      [
+        ["o", "Hello? Can you hear me?", "हॅलो? तुम्हाला माझे ऐकू येते का?"],
+        [
+          "y",
+          "तुम्हाला ऐकू येत नाही असे सांगा.",
+          "I can't hear you. Could you speak louder?",
+          "I can't hear…",
+        ],
+        ["o", "Is that better now?", "आता बरे आहे का?"],
+        [
+          "y",
+          "'हो, आता ऐकू येते' असे सांगा.",
+          "Yes, I can hear you now.",
+          "Yes, I can…",
+        ],
+      ],
+    ),
+  ),
+  "word-stress": lessonKit(
+    "word-stress",
+    [
+      "I can hear and say the strong part of a word.",
+      "मी शब्दातील जोराचा भाग ऐकू आणि म्हणू शकतो/शकते.",
+    ],
+    [
+      ["A", "Where is the hotel?", "हॉटेल कुठे आहे?"],
+      ["B", "The hotel is near the station.", "हॉटेल स्टेशनजवळ आहे."],
+      ["A", "Is the teacher there tomorrow?", "उद्या शिक्षक तिथे असतील का?"],
+      ["B", "Yes. It is important.", "हो. ते महत्त्वाचे आहे."],
+    ],
+    ["TEA-cher (1st part)", "to-MOR-row · ho-TEL · im-POR-tant (2nd part)"],
+    [
+      e2m("tomorrow", "उद्या", ["काल", "आज"], "tomorrow म्हणजे उद्या."),
+      m2e(
+        "शिक्षक",
+        "teacher",
+        ["teach", "tea"],
+        "शिक्षक म्हणजे teacher; पहिल्या भागावर जोर: TEA-cher.",
+      ),
+      und(
+        "'teacher' मध्ये कोणत्या भागावर जोर असतो?",
+        "पहिला (TEA)",
+        ["दुसरा (cher)", "दोन्ही सारखे"],
+        "teacher = TEA-cher; पहिल्या भागावर जोर.",
+      ),
+      und(
+        "'hotel' मध्ये कोणत्या भागावर जोर असतो?",
+        "दुसरा (TEL)",
+        ["पहिला (ho)", "दोन्ही सारखे"],
+        "hotel = ho-TEL; दुसऱ्या भागावर जोर.",
+      ),
+      und(
+        "'tomorrow' मध्ये जोर कुठे असतो?",
+        "MOR (मधला)",
+        ["to", "row"],
+        "to-MOR-row; मधल्या भागावर जोर.",
+      ),
+      lis(
+        "important",
+        "ऐका. जोर कुठे वाटतो?",
+        "दुसऱ्या भागावर (POR)",
+        ["पहिल्या भागावर (im)", "शेवटच्या भागावर (tant)"],
+        "im-POR-tant; दुसऱ्या भागावर जोर.",
+      ),
+      und(
+        "जोर चुकला तर काय होऊ शकते?",
+        "समोरच्याला शब्द समजायला अवघड जाते",
+        ["शब्दाचा अर्थ बदलत नाही आणि सर्व काही समजते", "शब्द मराठी होतो"],
+        "जोर चुकल्यास शब्द ओळखणे अवघड जाते.",
+      ),
+    ],
+    rolePlay(
+      "",
+      "beginner",
+      ["हॉटेलचे नाव", "Saying a word clearly"],
+      "तुम्ही टॅक्सीत हॉटेल सांगता.",
+      "तुम्ही: प्रवासी",
+      [
+        ["o", "Where do you want to go?", "तुम्हाला कुठे जायचे आहे?"],
+        [
+          "y",
+          "'hotel' शब्दावर जोर देऊन हॉटेलचा रस्ता सांगा.",
+          "I want to go to the hotel near the station.",
+          "I want to go to the ho-TEL…",
+        ],
+        ["o", "Which hotel?", "कोणते हॉटेल?"],
+        [
+          "y",
+          "'Grand Hotel' असे स्पष्ट सांगा.",
+          "The Grand Hotel, please.",
+          "The Grand…",
+        ],
+      ],
+    ),
+  ),
+  "sounds-mr": lessonKit(
+    "sounds-mr",
+    [
+      "I can practise sounds that are often difficult and speak clearly.",
+      "अवघड वाटणारे आवाज सराव करून मी स्पष्ट बोलू शकतो/शकते.",
+    ],
+    [
+      [
+        "A",
+        "Could you say the word 'very'?",
+        "तुम्ही 'very' हा शब्द म्हणाल का?",
+      ],
+      [
+        "B",
+        "Very. Water is very important.",
+        "व्हेरी. पाणी खूप महत्त्वाचे आहे.",
+      ],
+      ["A", "Good. Now say 'think'.", "छान. आता 'think' म्हणा."],
+      [
+        "B",
+        "Think. I think this is the third one.",
+        "थिंक. मला वाटते हे तिसरे आहे.",
+      ],
+    ],
+    ["V (teeth + lip) · W (round lips) · TH (tongue between teeth)"],
+    [
+      e2m(
+        "He worked yesterday.",
+        "त्याने काल काम केले.",
+        ["तो उद्या काम करेल.", "तो आज काम करत आहे."],
+        "worked म्हणजे काम केले; yesterday म्हणजे काल.",
+      ),
+      m2e(
+        "पाणी खूप महत्त्वाचे आहे.",
+        "Water is very important.",
+        ["Water is wery important.", "Water very is important."],
+        "पाणी = water; खूप = very; महत्त्वाचे = important.",
+      ),
+      und(
+        "V चा आवाज करताना काय करावे?",
+        "वरचे दात खालच्या ओठाला लावावे",
+        ["ओठ पूर्ण गोल करावेत", "जीभ वर उचलावी"],
+        "V मध्ये दात आणि ओठ लागतात.",
+      ),
+      und(
+        "W चा आवाज करताना काय करावे?",
+        "ओठ गोल करावेत; दात ओठाला लागत नाहीत",
+        ["दात खालच्या ओठाला लावावे", "ओठ बंद करावेत"],
+        "W मध्ये ओठ गोल होतात.",
+      ),
+      lis(
+        "very",
+        "ऐका. कोणता शब्द ऐकू आला?",
+        "very",
+        ["wary", "berry"],
+        "very मध्ये V (दात-ओठ) आणि शेवटी 'री'.",
+      ),
+      lis(
+        "station",
+        "ऐका. शब्द कसा सुरू होतो?",
+        "स्टेशन (st)",
+        ["इस्टेशन (ist)", "सटेशन (sat)"],
+        "station मध्ये st ने थेट सुरुवात; 'इ' जोडत नाहीत.",
+      ),
+      und(
+        "'worked' चा शेवट कसा बोलायचा?",
+        "वर्क्ट (शेवटी t)",
+        ["वर्कड (शेवटी इड)", "वर्क (शेवट नाही)"],
+        "worked मध्ये शेवटी t चा आवाज येतो.",
+      ),
+    ],
+    rolePlay(
+      "",
+      "beginner",
+      ["स्पष्ट बोलणे", "Saying it clearly"],
+      "तुम्ही दुसऱ्याला शब्द कसा म्हणायचा ते सांगता.",
+      "तुम्ही: सहकारी",
+      [
+        ["o", "Could you say 'very'?", "तुम्ही 'very' म्हणाल का?"],
+        [
+          "y",
+          "'very' स्पष्ट म्हणा आणि त्याचे वाक्य सांगा.",
+          "Very. Water is very important.",
+          "Very…",
+        ],
+        ["o", "Good. Now say 'think'.", "छान. आता 'think' म्हणा."],
+        [
+          "y",
+          "'think' म्हणा आणि वाक्य सांगा.",
+          "Think. I think this is the third one.",
+          "Think…",
+        ],
+      ],
+    ),
+  ),
+};
+
+export const unit: Unit = {
+  id: "b11",
+  path: "beginner",
+  title: "मदत, स्पष्टता आणि उच्चार",
+  en: "Asking for help, clarity and pronunciation",
+  outcome: [
+    "I can ask for help when I do not understand and speak more clearly.",
+    "समजले नाही तर मी मदत मागू शकतो/शकते आणि अधिक स्पष्ट बोलू शकतो/शकते.",
+  ],
+  lessons: ["ask-help", "could", "contractions", "word-stress", "sounds-mr"],
+  checkpoint: {
+    scenario: [
+      "A bank clerk gives you information quickly and you do not understand.",
+      "बँकेतील कर्मचारी तुम्हाला वेगाने माहिती देतो आणि तुम्हाला समजत नाही.",
+    ],
+    ex: finish("b11", "cp", [
+      resp(
+        "Your account opens in ten days. Do you understand?",
+        "Sorry, could you repeat that slowly, please?",
+        ["Yes, I am repeat.", "Ten days I understand not."],
+        "समजले नसेल तर नम्रपणे पुन्हा सांगायला सांगा.",
+      ),
+      gap(
+        "What does 'deposit' ___?",
+        "mean",
+        ["means", "meaning"],
+        "does नंतर मूळ रूप mean.",
+      ),
+      und(
+        "'I can't hear you.' मध्ये can't म्हणजे काय?",
+        "cannot",
+        ["can", "could"],
+        "can't म्हणजे cannot (करू शकत नाही).",
+      ),
+      lis(
+        "Could you fill in this form, please?",
+        "ऐका. कर्मचारी काय सांगतो?",
+        "फॉर्म भरायला",
+        ["पैसे द्यायला", "बाहेर जायला"],
+        "fill in this form म्हणजे फॉर्म भरा.",
+      ),
+      bld(
+        "मी पुन्हा प्रयत्न करतो.",
+        "Let me try again.",
+        ["is"],
+        "Let me try again म्हणजे पुन्हा प्रयत्न करू द्या.",
+      ),
+    ]),
+    speak:
+      "बँकेत कर्मचारी वेगाने बोलला तर तुम्ही कसे विचाराल ते तीन वाक्यांत सांगा.",
+  },
+};
