@@ -109,7 +109,13 @@ export function Button({
       {small ? (
         <>
           {!!icon && <Icon name={icon} size={16} color={ink} />}
-          <AppText style={[s.buttonSmallText, { color: ink }]}>{title}</AppText>
+          {/* A pill shrinks to its label; on Android a short bold Devanagari
+              word ("हळू") is measured narrower than it draws and loses its
+              last letter (vivo V2415). The trailing no-break space gives it room. */}
+          <AppText numberOfLines={1} style={[s.buttonSmallText, { color: ink }]}>
+            {title}
+            {"\u00A0"}
+          </AppText>
         </>
       ) : (
         <>
@@ -192,7 +198,7 @@ export function AppHeader({ title }: { title?: string }) {
       {canGoBack ? (
         <HeaderButton
           icon="chevron-back"
-          label="Back · मागे"
+          label="मागे · Back"
           onPress={() => navigation.goBack()}
         />
       ) : isHome ? (
@@ -227,12 +233,12 @@ export function AppHeader({ title }: { title?: string }) {
         <>
           <HeaderButton
             icon="bookmark-outline"
-            label="Saved · जतन केलेले"
+            label="जतन केलेले · Saved"
             onPress={() => navigation.navigate("Saved")}
           />
           <HeaderButton
             icon="settings-outline"
-            label="Settings · सेटिंग्ज"
+            label="सेटिंग्ज · Settings"
             onPress={() => navigation.navigate("Settings")}
           />
         </>

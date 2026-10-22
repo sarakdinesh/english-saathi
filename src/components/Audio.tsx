@@ -17,6 +17,7 @@ import { Pressable } from "react-native";
 import { AppText as Text, Button } from "./ui";
 import { C } from "./theme";
 import { s } from "./styles";
+import { WordCheck } from "./WordCheck";
 import { useProgress } from "../state/progress";
 let speechRequest = 0;
 const voiceTimeout = <T,>(p: Promise<T>, fallback: T) =>
@@ -424,8 +425,7 @@ export function Recorder({
         current={state.isRecording ? 1 : uri ? (playerState.playing ? 2 : 3) : model ? 0 : 1}
       />
       <Text style={s.body}>
-        एक वाक्य बोला. ऐका. पुन्हा प्रयत्न करा. उच्चारांचे गुणांकन केले जात
-        नाही. रेकॉर्डिंग तात्पुरते आहे (कमाल ६० सेकंद).
+        बोला, ऐका, स्वतः तुलना करा — अॅप गुण देत नाही. (कमाल ६० सेकंद)
       </Text>
       {!!model && (
         <View>
@@ -435,6 +435,7 @@ export function Recorder({
           </Text>
           <Text style={[s.exampleEnglish, { marginTop: 6 }]}>{model}</Text>
           <Listen text={model} compact />
+          <WordCheck target={model} disabled={busy || state.isRecording} />
         </View>
       )}
       <Button

@@ -220,8 +220,7 @@ export function RolePlayStage({
       <Text style={s.sectionTitle}>{kit.rp.title}</Text>
       <Text style={s.marathiBody}>{kit.rp.situation}</Text>
       <Text style={s.body}>
-        ठरलेला सराव: समोरच्या व्यक्तीचे वाक्य आधीच ठरलेले आहे आणि अॅप तुमचे बोलणे
-        तपासत नाही.
+        ठरलेला सराव: समोरच्या व्यक्तीचे वाक्य आधीच ठरलेले आहे.
       </Text>
       <View style={{ height: 12 }} />
       <Button

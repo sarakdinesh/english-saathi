@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { load } from "./lib.ts";
 
 const { isCorrect, normalize, answerText, correctText } = load("src/curriculum/score.ts");
@@ -267,8 +268,95 @@ assert.equal(
   reviewIds.length,
 );
 
+// ---- On-device word check (recognition, not scoring) -------------------------
+const wc = load("src/state/wordcheck.ts");
+{
+  const all = wc.checkWords("Where is the bus stop?", ["where is the bus stop"]);
+  assert.deepEqual([all.heard, all.total], [5, 5]);
+  assert.equal(wc.heardLine(all), "५ पैकी ५ शब्द ऐकू आले");
+  const some = wc.checkWords("I would like a cup of tea.", ["I like a cup of tea"]);
+  assert.deepEqual(some.words.filter((w: any) => !w.heard).map((w: any) => w.text), ["would"]);
+  assert.equal(wc.heardLine(some), "७ पैकी ६ शब्द ऐकू आले");
+  // Punctuation and case do not matter; the displayed words keep their form.
+  assert.equal(wc.checkWords("Hello, Ravi!", ["hello ravi"]).heard, 2);
+  assert.equal(wc.checkWords("Hello, Ravi!", ["hello ravi"]).words[0].text, "Hello,");
+  // Contractions either way, curly apostrophes, small numbers.
+  assert.equal(wc.checkWords("I'm fine.", ["I am fine"]).heard, 2);
+  assert.equal(wc.checkWords("I am fine.", ["I’m fine"]).heard, 3);
+  assert.equal(wc.checkWords("I don't know.", ["I do not know"]).heard, 3);
+  assert.equal(wc.checkWords("I have 2 brothers.", ["I have two brothers"]).heard, 4);
+  // Repeated words need repeated hearing.
+  const twice = wc.checkWords("The cat sees the dog.", ["the cat sees dog"]);
+  assert.deepEqual([twice.heard, twice.total], [4, 5]);
+  // Best of several alternatives; nothing heard is 0, never an error.
+  assert.equal(wc.checkWords("Good morning", ["good mourning", "good morning"]).heard, 2);
+  assert.deepEqual([wc.checkWords("Good morning", []).heard, wc.checkWords("Good morning", []).total], [0, 2]);
+  assert.equal(wc.marathiDigits(10), "१०");
+  // Locale: an installed English model only; prefer Indian English.
+  assert.equal(wc.pickLocale(["en-US", "en-IN", "hi-IN"]), "en-IN");
+  assert.equal(wc.pickLocale(["en_GB"]), "en-GB");
+  assert.equal(wc.pickLocale(["en-AU"]), "en-AU");
+  assert.equal(wc.pickLocale(["hi-IN", "mr-IN"]), null);
+  assert.equal(wc.pickLocale([]), null, "no installed model: fall back");
+  // Every lesson sentence can be checked: tokens exist for each word.
+  // (the Recorder's model sentences: lesson examples and conversation lines).
+  let sentences = 0;
+  for (const l of cur.orderedLessons)
+    for (const e of [...l.examples, ...(cur.kits[l.id]?.conv ?? [])]) {
+      const c = wc.checkWords(e.en, [e.en]);
+      assert.ok(c.total > 0 && c.heard === c.total, `${l.id}: "${e.en}"`);
+      sentences++;
+    }
+  assert.ok(sentences > 500, `checked ${sentences} sentences`);
+}
+
+// ---- Short steps: Home focus and lesson step labels --------------------------
+const steps = load("src/state/steps.ts");
+assert.equal(steps.simpleHome("foundation"), true);
+assert.equal(steps.simpleHome("beginner"), true);
+assert.equal(steps.simpleHome("intermediate"), false);
+assert.equal(steps.simpleHome("advanced"), false);
+{
+  const none = steps.todayGoals([], 0);
+  assert.deepEqual([none.done, none.total], [0, 3]);
+  const some = steps.todayGoals(["lesson", "word-1"], 7);
+  assert.deepEqual([some.done, some.total], [2, 3]);
+  assert.match(some.goals[1].label, /\(5\/5\)/, "word count is capped at 5");
+  assert.equal(steps.todayGoals(["lesson", "speak"], 5).done, 3);
+}
+// Stage lists must stay exactly as before: stored progress keeps stage values.
+assert.deepEqual(steps.lessonStages(true), [0, 1, 2, 3, 4, 5, 6]);
+assert.deepEqual(steps.lessonStages(false), [0, 1, 2, 5, 6]);
+assert.equal(steps.stagePosition([0, 1, 2, 5, 6], 5), 3, "stored value 5 is the 4th short stage");
+assert.equal(steps.stagePosition([0, 1, 2, 5, 6], 3), 0, "unknown stored value starts at the beginning");
+assert.equal(steps.stagePosition([0, 1, 2, 5, 6], undefined), 0);
+assert.equal(steps.stepLabel(1, 7), "टप्पा 2/7");
+assert.equal(steps.stepLabel(9, 7), "टप्पा 7/7");
+assert.equal(steps.lessonMinutes(5, true), 13);
+assert.equal(steps.lessonMinutes(5, false), 5);
+// Minutes left fall as stages finish, never below 1 on an open stage.
+const left = [0, 1, 2, 3, 4, 5, 6].map((p) => steps.minutesLeft(14, 7, p));
+assert.deepEqual(left, [14, 12, 10, 8, 6, 4, 2]);
+assert.ok(left.every((m, i) => i === 0 || m <= left[i - 1]));
+assert.equal(steps.minutesLeft(3, 7, 6), 1);
+assert.equal(steps.minutesLeft(0, 7, 0), 0);
+assert.equal(steps.minutesLeft(10, 0, 0), 0);
+// Every lesson in every path gets a sensible estimate.
+const { duration } = load("src/data/journey.ts");
+for (const l of cur.orderedLessons) {
+  const m = steps.lessonMinutes(duration(l.id), !!cur.kits[l.id]);
+  assert.ok(m >= 3 && m <= 30, `${l.id}: ${m} minutes`);
+}
+// The lesson screen derives stages from the shared helper (no second copy).
+const lessonSrc = fs.readFileSync("src/screens/Lesson.tsx", "utf8");
+assert.match(lessonSrc, /lessonStages\(/);
+assert.ok(!/\[0, 1, 2, 5, 6\]/.test(lessonSrc), "stage list duplicated in Lesson.tsx");
+const homeSrc = fs.readFileSync("src/screens/Home.tsx", "utf8");
+assert.match(homeSrc, /simpleHome\(path\)/);
+assert.match(homeSrc, /<Collapsible[\s\S]*?title="आणखी पाहा/, "beginner Home keeps extras behind आणखी पाहा");
+
 console.log(
   `Flow checks passed: scoring (${cur.allExercises.length} exercises solvable, duplicates, alternatives), ` +
-    `${cur.rolePlays.length} role-play progressions, resume logic, migration + 12 invalid new-field imports, revision IDs (${reviewIds.length}).`,
+    `${cur.rolePlays.length} role-play progressions, resume logic, short-step helpers, migration + 12 invalid new-field imports, revision IDs (${reviewIds.length}).`,
 );
 void initial;

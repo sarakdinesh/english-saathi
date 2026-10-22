@@ -103,6 +103,92 @@ assert.equal(
 const uiSrc = read("src/components/ui.tsx");
 assert.match(uiSrc, /accessibilityState=\{\{ disabled \}\}/, "Button exposes disabled state");
 
+// ---- Marathi first --------------------------------------------------------------
+// Learner-facing eyebrows, headings, section titles and button labels start in
+// Marathi; English may follow only as a subtitle ("मराठी · English").
+// English learning content (example sentences, prompts) lives in data files.
+const devanagari = /[\u0900-\u097F]/;
+const firstWords = (s: string) => s.replace(/^[^A-Za-z\u0900-\u097F]+/, "").slice(0, 1);
+for (const f of tsx.filter((f) => f.includes(`${path.sep}screens${path.sep}`) || f.endsWith("Exercise.tsx") || f.endsWith("Audio.tsx"))) {
+  const text = read(f);
+  const checks: [RegExp, string][] = [
+    [/<Label(?: light)?>([^<{]+)</g, "eyebrow"],
+    [/\btitle="([^"]+)"/g, "title"],
+    [/<Section title=\{?[`"]([^`"$]+)/g, "section"],
+  ];
+  for (const [re, kind] of checks)
+    for (const m of text.matchAll(re)) {
+      const value = m[1].trim();
+      if (!value) continue;
+      assert.ok(
+        devanagari.test(firstWords(value)) || !/[A-Za-z]/.test(firstWords(value)),
+        `${f}:${lineOf(text, m.index!)} ${kind} must start in Marathi: "${value}"`,
+      );
+    }
+  // Subtitles may lead with notation (V1, A/An) but must carry Marathi.
+  for (const m of text.matchAll(/\bsub="([^"]+)"/g))
+    assert.ok(devanagari.test(m[1]), `${f}:${lineOf(text, m.index!)} subtitle has no Marathi: "${m[1]}"`);
+  // Links ("… →") are actions too.
+  for (const m of text.matchAll(/>\s*([A-Z][A-Za-z ]+)→\s*</g))
+    assert.fail(`${f}:${lineOf(text, m.index!)} English-only link "${m[1].trim()}"`);
+}
+for (const banned of ["CONTINUE LEARNING", "PATH COMPLETE", "FIND YOUR ENGLISH VOICE", "Let's talk, a little.", "Reveal English", "Read full lesson"])
+  for (const f of tsx) assert.ok(!read(f).includes(banned), `"${banned}" is back in ${f}`);
+// Tab labels, spoken tab labels and browser titles also lead in Marathi.
+for (const m of appSrc.matchAll(/(?:tabBarAccessibilityLabel|tabBarLabel|title): "([^"]+)"/g))
+  assert.ok(devanagari.test(firstWords(m[1])), `App.tsx:${lineOf(appSrc, m.index!)} "${m[1]}" must start in Marathi`);
+// Header titles: Marathi title, English subtitle.
+for (const [route, t] of Object.entries(
+  [...uiSrc.matchAll(/^\s+(\w+): \{ mr: "([^"]+)", en: "([^"]+)" \}/gm)].reduce(
+    (o, m) => ({ ...o, [m[1]]: { mr: m[2], en: m[3] } }), {} as Record<string, { mr: string; en: string }>,
+  ),
+))
+  assert.ok(devanagari.test(t.mr), `screen title for ${route} must be Marathi`);
+// The "the app does not listen to or score your speech" note is said once in
+// onboarding; outside it only the recorder (one line) and About may repeat it.
+const disclaimer = /ऐकत नाही|तपासत नाही|गुण देत नाही|गुणांकन/;
+assert.match(read("src/screens/Onboarding.tsx"), disclaimer, "onboarding explains that speech is not scored");
+for (const f of tsx.filter((f) => !/Onboarding\.tsx$|Audio\.tsx$|Settings\.tsx$/.test(f)))
+  assert.ok(!disclaimer.test(read(f)), `${f} repeats the no-scoring disclaimer; keep it in onboarding`);
+assert.equal((read("src/components/Audio.tsx").match(/गुण देत नाही/g) ?? []).length, 1, "recorder keeps one short hint");
+
+// ---- Celebrations -----------------------------------------------------------------
+// Built-in Animated only, reduce-motion respected, no haptics dependency added
+// without the owner's approval, and celebrations can be switched off.
+const celebrateSrc = read("src/components/Celebrate.tsx");
+assert.match(celebrateSrc, /isReduceMotionEnabled/);
+assert.match(celebrateSrc, /reduceMotionChanged/);
+assert.match(celebrateSrc, /from "react-native"/);
+const pkg = JSON.parse(read("package.json"));
+for (const dep of ["expo-haptics", "lottie-react-native", "react-native-reanimated", "moti"])
+  assert.ok(!pkg.dependencies[dep], `${dep} needs the owner's approval before it is added`);
+assert.match(read("src/screens/Settings.tsx"), /celebrate: progress\.settings\.celebrate === false/);
+assert.match(read("src/screens/Lesson.tsx"), /celebrationsOn\(progress\.settings\)/);
+
+// ---- On-device word check ----------------------------------------------------------
+// Approved by the owner (2026-10-22): expo-speech-recognition@3.1.3, on-device
+// only, native only, silent fallback. Never framed as pronunciation scoring.
+assert.equal(pkg.dependencies["expo-speech-recognition"], "3.1.3", "pinned to the approved SDK 54 release");
+const wcSrc = read("src/components/WordCheck.tsx");
+assert.match(wcSrc, /requiresOnDeviceRecognition: true/);
+assert.match(wcSrc, /Platform\.OS === "web"\) return/, "web never uses the browser recogniser (it uploads audio)");
+assert.match(wcSrc, /require\("expo-speech-recognition"\)/, "loaded lazily so a missing native module cannot crash the app");
+assert.ok(!/import .* from "expo-speech-recognition"/.test(wcSrc));
+assert.ok(!/triggerOfflineModelDownload|androidTriggerOfflineModelDownload/.test(wcSrc), "never downloads models (needs internet)");
+for (const f of ["src/components/WordCheck.tsx", "src/state/wordcheck.ts"]) {
+  const visible = read(f).replace(/\/\/.*$/gm, "").replace(/\/\*[\s\S]*?\*\//g, "");
+  assert.ok(!/score|accuracy|accent|pass\b|fail|स्कोअर|गुण|टक्के|उत्तीर्ण|नापास|अचूक/i.test(visible), `${f}: scoring language`);
+}
+assert.match(read("src/components/Audio.tsx"), /<WordCheck target=\{model\}/);
+assert.ok(app.plugins.some((p: any) => p[0] === "expo-speech-recognition"));
+const mainManifest = read("android/app/src/main/AndroidManifest.xml");
+assert.match(mainManifest, /android\.speech\.RecognitionService/);
+assert.deepEqual(
+  [...mainManifest.matchAll(/<uses-permission android:name="([^"]+)"\/>/g)].map((m) => m[1]).sort(),
+  ["android.permission.INTERNET", "android.permission.MODIFY_AUDIO_SETTINGS", "android.permission.RECORD_AUDIO", "android.permission.VIBRATE"],
+  "no new Android permission",
+);
+
 // ---- Design tokens --------------------------------------------------------------
 const theme = load("src/components/theme.ts");
 // Screens and components use tokens, not their own hex colours. Lesson and
@@ -125,7 +211,7 @@ const pairs: [string, string][] = [
   ["bodyMr", "white"], ["muted", "bg"], ["muted", "white"], ["green", "bg"],
   ["green", "white"], ["onPrimary", "green"], ["onPrimary", "ink"],
   ["onLime", "lime"], ["heroText", "tile"], ["heroSub", "tile"], ["ink", "limeSoft"], ["ink", "sand"],
-  ["green", "successSoft"], ["danger", "white"],
+  ["green", "successSoft"], ["ink", "successSoft"], ["body", "successSoft"], ["body", "limeSoft"], ["danger", "white"],
   ["danger", "dangerSoft"], ["dangerInk", "dangerSoft"], ["amberInk", "amberSoft"],
   ["coralInk", "coralSoft"], ["blueInk", "blueTint"], ["olive", "limeTint"],
   ["heroText", "hero"], ["heroSub", "hero"], ["heroMuted", "hero"],
@@ -170,4 +256,4 @@ assert.match(gradle, /versionName expoConfig\.version/);
 assert.match(gradle, /expoConfig\.android\.versionCode/);
 assert.match(gradle, /boluyaStoreRelease/);
 
-console.log("App checks passed: branding, compatibility IDs, navigation, accessibility props, design tokens and contrast, release safety.");
+console.log("App checks passed: branding, compatibility IDs, navigation, accessibility props, Marathi-first labels, design tokens and contrast, release safety.");

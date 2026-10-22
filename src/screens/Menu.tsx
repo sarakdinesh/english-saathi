@@ -151,7 +151,7 @@ export function MenuSheet({
           <View style={m.head}>
             <View style={{ flex: 1 }}>
               <Text style={m.title}>सर्व विभाग</Text>
-              <Text style={m.subtitle}>All sections · थेट तिथे जा</Text>
+              <Text style={m.subtitle}>सर्व विभाग · थेट तिथे जा</Text>
             </View>
             <Pressable
               accessibilityRole="button"

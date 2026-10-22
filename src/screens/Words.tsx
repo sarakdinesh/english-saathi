@@ -31,9 +31,9 @@ export default function WordsScreen({
   );
   return (
     <Shell>
-      <Label>A FEW WORDS, A NEW WORLD</Label>
+      <Label>रोजचे शब्द · WORDS</Label>
       <Heading
-        title="Everyday words"
+        title="रोजच्या वापरातील शब्द"
         sub="शब्द शिका. वाक्यात वापरा. लक्षात ठेवा."
       />
       <View style={s.search}>
@@ -118,7 +118,7 @@ export default function WordsScreen({
         </View>
       ))}
       {!matches.length && (
-        <EmptyState title="No words found" sub="वेगळा शब्द शोधून पहा." />
+        <EmptyState title="शब्द सापडला नाही" sub="वेगळा शब्द शोधून पहा." />
       )}
     </Shell>
   );

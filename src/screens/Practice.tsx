@@ -52,7 +52,7 @@ export function SpeakDrill() {
     <Shell>
       <Label>बोलण्याचा सराव · SPEAK THE SENTENCE</Label>
       <Heading
-        title="Think. Say it. Check."
+        title="विचार करा. म्हणा. तपासा."
         sub="मराठी वाक्य वाचा, इंग्रजीत मोठ्याने म्हणा, मग उत्तर तपासा."
       />
       <ScrollView
@@ -152,7 +152,7 @@ export function Mistakes() {
     <Shell>
       <Label>सामान्य चुका · COMMON MISTAKES</Label>
       <Heading
-        title="Fix it before you say it."
+        title="बोलण्याआधी चूक ओळखा."
         sub="मराठीतून शब्दशः भाषांतर केल्यावर होणाऱ्या चुका. योग्य वाक्य शिका."
       />
       {mistakes.map((m, i) => {

@@ -60,7 +60,7 @@ export default function RolePlay({ route, navigation }: StackProps<"RolePlay">) 
   if (stage === "intro")
     return (
       <Shell>
-        <Label>{rp.en.toUpperCase()} · ROLE-PLAY</Label>
+        <Label>संवाद सराव · {rp.en}</Label>
         <Heading title={rp.title} sub={rp.situation} />
         <View style={s.scripted}>
           <Text style={s.sayLabel}>ठरलेला सराव · SCRIPTED PRACTICE</Text>
@@ -69,8 +69,7 @@ export default function RolePlay({ route, navigation }: StackProps<"RolePlay">) 
           <Text style={s.rowTitle}>{rp.role}</Text>
           <Text style={s.body}>
             समोरच्या व्यक्तीचे वाक्य वाचा किंवा ऐका, मग तुमचे उत्तर मोठ्याने
-            द्या. हा पूर्वी ठरवलेला संवाद आहे. अॅप तुमचा आवाज ऐकत नाही आणि तपासत
-            नाही; अचूकता तुम्हीच तपासता.
+            द्या. हा पूर्वी ठरवलेला संवाद आहे.
           </Text>
           <Text style={s.body}>
             {beginner
@@ -97,7 +96,7 @@ export default function RolePlay({ route, navigation }: StackProps<"RolePlay">) 
         <Label>स्वतःचे मूल्यमापन · SELF-REVIEW</Label>
         <Heading
           title="छान! संवाद पूर्ण."
-          sub="खालील गोष्टी तुम्ही स्वतः ठरवा. हे फक्त तुमच्या नोंदीसाठी आहे; अॅप बोलण्याची पातळी तपासत नाही."
+          sub="खालील गोष्टी तुम्ही स्वतः ठरवा. हे फक्त तुमच्या नोंदीसाठी आहे."
         />
         {checks.map((c, i) => (
           <Pressable
@@ -196,11 +195,11 @@ export default function RolePlay({ route, navigation }: StackProps<"RolePlay">) 
   return (
     <Shell>
       <Label>
-        {rp.en.toUpperCase()} · {step + 1} / {rp.turns.length}
+        संवाद · {step + 1}/{rp.turns.length} · {rp.en}
       </Label>
       <ProgressBar value={step + 1} max={rp.turns.length} label="संवादातील टप्पा" />
       <View style={s.scripted}>
-        <Text style={s.sayLabel}>ठरलेला सराव · अॅप तुमचा आवाज तपासत नाही</Text>
+        <Text style={s.sayLabel}>ठरलेला सराव · SCRIPTED PRACTICE</Text>
       </View>
       {rp.turns.slice(0, step).map((t, i) => (
         <View

@@ -32,7 +32,7 @@ export default function Phrasebook({ route }: StackProps<"Phrasebook">) {
     <Shell>
       <Label>रोजच्या प्रसंगातील इंग्रजी · PHRASEBOOK</Label>
       <Heading
-        title="Say it like you mean it."
+        title="स्पष्ट आणि आत्मविश्वासाने बोला."
         sub="आधी ऐका, मग मोठ्याने म्हणा. देवनागरीतील उच्चार फक्त अंदाजे मदत आहे; खरा आवाज ऑडिओतून शिका."
       />
       <View style={s.routine}>

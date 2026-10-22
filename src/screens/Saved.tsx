@@ -28,19 +28,19 @@ export default function Saved({
   );
   return (
     <Shell>
-      <Label>YOUR PERSONAL COLLECTION</Label>
+      <Label>तुमचा संग्रह · SAVED</Label>
       <Heading
-        title="Keep the good words."
+        title="आवडलेले जपून ठेवा"
         sub="आवडलेले धडे आणि शब्द पुन्हा पाहा."
       />
       {!savedLessons.length && !savedWords.length && !savedPhrases.length ? (
         <EmptyState
-          title="A little empty, for now."
-          sub="धडा किंवा शब्दावरील bookmark दाबा. तुमचा संग्रह येथे दिसेल."
+          title="सध्या इथे काही नाही"
+          sub="धडा किंवा शब्दावरील जतन (🔖) चिन्ह दाबा. तुमचा संग्रह येथे दिसेल."
         />
       ) : (
         <>
-          <Section title={`Saved lessons · ${savedLessons.length}`} />
+          <Section title={`जतन केलेले धडे · ${savedLessons.length}`} />
           {savedLessons.map((l) => (
             <LessonCard
               key={l.id}
@@ -48,7 +48,7 @@ export default function Saved({
               onPress={() => navigation.navigate("Lesson", { id: l.id })}
             />
           ))}
-          <Section title={`Saved words · ${savedWords.length}`} />
+          <Section title={`जतन केलेले शब्द · ${savedWords.length}`} />
           {savedWords.map((w) => (
             <View key={w.id} style={s.dailyCard}>
               <Text style={s.rowTitle}>
@@ -60,14 +60,14 @@ export default function Saved({
                 onPress={() => navigation.navigate("Words")}
               >
                 <Text style={[s.link, { marginTop: 12 }]}>
-                  Manage saved words →
+                  सर्व शब्द पाहा →
                 </Text>
               </Pressable>
             </View>
           ))}
           {savedPhrases.length > 0 && (
             <>
-              <Section title={`Saved phrases · ${savedPhrases.length}`} />
+              <Section title={`जतन केलेली वाक्ये · ${savedPhrases.length}`} />
               {savedPhrases.map((p) => (
                 <View key={p.en} style={s.phraseCard}>
                   <Text style={s.phraseEn}>{p.en}</Text>
@@ -83,7 +83,7 @@ export default function Saved({
       <View style={s.tip}>
         <Icon name="lock-closed-outline" />
         <Text style={[s.body, { flex: 1 }]}>
-          तुमची प्रगती या device वर सेव्ह होते. App data clear केल्यास ती हटेल.
+          तुमची प्रगती फक्त या फोनवर जतन होते. ॲपचा डेटा पुसल्यास ती हटेल.
         </Text>
       </View>
     </Shell>

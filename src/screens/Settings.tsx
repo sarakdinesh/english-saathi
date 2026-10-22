@@ -58,7 +58,7 @@ export default function Settings() {
     <Shell>
       <Heading
         title="तुमच्या आवडीनुसार"
-        sub="Settings · प्रगतीची प्रत सुरक्षित ठेवा."
+        sub="प्रगतीची प्रत सुरक्षित ठेवा · Settings"
       />
       <Label>तुमचे ध्येय · YOUR GOAL</Label>
       <Text style={s.body}>
@@ -178,6 +178,20 @@ export default function Settings() {
           void Speech.stop();
           settings({ sound: !progress.settings.sound });
         }}
+      />
+      <View style={{ height: 10 }} />
+      <Button
+        secondary
+        icon={progress.settings.celebrate === false ? "sparkles-outline" : "sparkles"}
+        title={
+          progress.settings.celebrate === false
+            ? "छोटे अभिनंदन बंद आहेत · Turn celebrations on"
+            : "छोटे अभिनंदन सुरू आहेत · Turn celebrations off"
+        }
+        accessibilityHint="टप्पा, धडा आणि युनिट पूर्ण झाल्यावर दिसणारे छोटे अभिनंदन"
+        onPress={() =>
+          settings({ celebrate: progress.settings.celebrate === false })
+        }
       />
       <View style={s.dailyCard}>
         <Label>प्रगतीची प्रत · BACKUP</Label>

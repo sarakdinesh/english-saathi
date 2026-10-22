@@ -48,12 +48,12 @@ export default function QuizScreen({
       <Shell>
         <View style={s.speakBanner}>
           <Icon name="ribbon-outline" size={64} color={C.green} />
-          <Label>PRACTICE COMPLETE</Label>
+          <Label>सराव पूर्ण · DONE</Label>
           <Text style={s.resultScore}>
             {Math.round((score / pool.length) * 100)}%
           </Text>
           <Text style={s.sectionTitle}>
-            {score} of {pool.length} correct
+            {pool.length} पैकी {score} बरोबर
           </Text>
           <Text style={s.marathiBody}>
             छान प्रयत्न! रोजच्या सरावाने आत्मविश्वास वाढतो.
@@ -61,7 +61,7 @@ export default function QuizScreen({
         </View>
         {missed.length > 0 && (
           <>
-            <Section title="A little revision" />
+            <Section title="थोडी उजळणी" />
             {missed.map((i) => (
               <View key={i} style={s.dailyCard}>
                 <Text style={s.rowTitle}>{questions[i].prompt}</Text>
@@ -92,7 +92,7 @@ export default function QuizScreen({
         />
         <View style={{ height: 12 }} />
         <Button
-          title="Back to learning"
+          title="धड्यांकडे परत · Back"
           secondary
           onPress={() => navigation.goBack()}
         />
@@ -101,7 +101,7 @@ export default function QuizScreen({
   return (
     <Shell>
       <ExerciseCard
-        header={`QUESTION ${index + 1} OF ${pool.length}`}
+        header={`प्रश्न ${index + 1} / ${pool.length} · QUESTION`}
         prompt={q.prompt}
         options={q.options}
         answer={q.answer}
@@ -111,7 +111,7 @@ export default function QuizScreen({
       />
       {selected !== null && (
         <Button
-          title={index === pool.length - 1 ? "See my results" : "Next question"}
+          title={index === pool.length - 1 ? "निकाल पाहा · Results" : "पुढचा प्रश्न · Next"}
           onPress={next}
         />
       )}

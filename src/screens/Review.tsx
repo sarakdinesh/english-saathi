@@ -38,7 +38,7 @@ export default function Review({ navigation }: TabProps<"Review">) {
   );
   return (
     <Shell>
-      <Label>RECALL. PRACTISE. GROW.</Label>
+      <Label>आठवा, सराव करा · REVIEW</Label>
       <Heading
         title="उजळणी आणि सराव"
         sub="चुका समजून घ्या. आत्मविश्वास वाढवा."

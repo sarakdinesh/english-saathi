@@ -362,7 +362,7 @@ export function DailyQuiz({ navigation }: StackProps<"DailyQuiz">) {
   if (finished)
     return (
       <Shell>
-        <Label>DAILY QUIZ</Label>
+        <Label>आजचा सराव · DAILY QUIZ</Label>
         <Text style={s.title}>
           {score} / {items.length}
         </Text>
@@ -378,7 +378,7 @@ export function DailyQuiz({ navigation }: StackProps<"DailyQuiz">) {
   return (
     <Shell>
       <ExerciseCard
-        header={`QUESTION ${index + 1} OF ${items.length}`}
+        header={`प्रश्न ${index + 1} / ${items.length} · QUESTION`}
         prompt={q.prompt}
         options={q.options}
         answer={q.answer}

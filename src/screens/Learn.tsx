@@ -86,7 +86,7 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
         options={PATHS.map((id) => [id, pathInfo[id].short] as const)}
       />
       <View style={[s.pathCard, s.pathCardOn, { marginTop: 8 }]}>
-        <Label light>{pathInfo[path].en.toUpperCase()} · निवडलेला</Label>
+        <Label light>निवडलेला मार्ग · {pathInfo[path].en}</Label>
         <Text style={[s.sectionTitle, { color: C.heroText }]}>
           {pathInfo[path].mr}
         </Text>
@@ -159,12 +159,13 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
         showsHorizontalScrollIndicator={false}
         contentContainerStyle={s.filters}
       >
-        {[{ id: "all", title: "सर्व धडे" }, ...categories].map((c) => {
+        {[{ id: "all", short: "सर्व धडे", title: "All" }, ...categories].map((c) => {
           const on = (!active && c.id === "all") || active === c.id;
           return (
             <Pressable
               key={c.id}
               accessibilityRole="button"
+              accessibilityLabel={`${c.short} · ${c.title}`}
               accessibilityState={{ selected: on }}
               onPress={() =>
                 navigation.setParams({
@@ -178,7 +179,10 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
               ]}
             >
               <Text style={[s.filterText, on && { color: C.onPrimary }]}>
-                {c.title}
+                {c.short}
+                <Text style={[s.filterSub, on && { color: C.onPrimary }]}>
+                  {" "}· {c.title}
+                </Text>
               </Text>
             </Pressable>
           );
@@ -216,11 +220,8 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
                 next ? all.some((l) => l.id === next.id) : index === 0
               }
             >
-              <Text style={s.body}>
-                {unit.outcome[0]}
-                {"\n"}
-                {unit.outcome[1]}
-              </Text>
+              <Text style={s.body}>{unit.outcome[1]}</Text>
+              <Text style={s.smallMuted}>{unit.outcome[0]}</Text>
               {all.map((l) => (
                 <View key={l.id}>
                   {l.id === next?.id && (

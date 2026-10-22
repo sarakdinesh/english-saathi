@@ -193,7 +193,7 @@ export function Checkpoint({ route, navigation }: StackProps<"Checkpoint">) {
   const prev = progress.checkpoints[unit.id];
   return (
     <Shell>
-      <Label>युनिट चेकपॉइंट · {unit.en.toUpperCase()}</Label>
+      <Label>युनिट चेकपॉइंट · {unit.en}</Label>
       <Heading title="नवीन परिस्थिती" sub={cp.scenario[1]} />
       <View style={s.noteBox}>
         <Text style={s.exampleEnglish}>{cp.scenario[0]}</Text>
@@ -223,7 +223,7 @@ export function Checkpoint({ route, navigation }: StackProps<"Checkpoint">) {
         <Label>बोलण्याचा सराव · SPEAKING TASK</Label>
         <Text style={s.marathiBody}>{cp.speak}</Text>
         <Text style={s.body}>
-          रेकॉर्ड करणे ऐच्छिक आहे. अॅप बोलणे तपासत नाही.
+          रेकॉर्ड करणे ऐच्छिक आहे; स्वतः ऐकून तुलना करा.
         </Text>
         <Recorder />
       </View>

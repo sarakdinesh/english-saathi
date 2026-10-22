@@ -111,3 +111,77 @@ Still open: device pass (P0 list above), `Lesson.tsx` split into step components
 Content now: 119 lessons, 812 exercises (693 lesson + 119 checkpoint), 119 role-plays. Everything from before is unchanged.
 
 Honesty notes: the rewritten explanations and the Level 4 unit are AI-written and have **not** been reviewed by a Marathi-medium teacher. Recorded phoneme audio needs a human voice and was not attempted. The device check was a smoke test of a few screens, not the 20-row pass.
+
+---
+
+# Beginner experience — Round 1: Marathi first
+
+| Area | Change | Files |
+| --- | --- | --- |
+| Labels | Every eyebrow, heading, section title, chip, link and button a learner sees now leads in Marathi, with English only as a short subtitle (`मराठी · English`). Fixed: Home hero tag (`पुढचा धडा · Continue` / `मार्ग पूर्ण · Complete`), Speak heading and links (`इंग्रजी उत्तर पाहा →`, `पूर्ण धडा वाचा →`), role-play library, Review, Words, Saved, Quiz, Daily quiz, Practice, Phrasebook, Settings, More menu, Grammar passive table, quiz question headers, lesson "Transcript" toggle, unit outcomes in Learn (Marathi line first). | `src/screens/*`, `src/components/Exercise.tsx`, `src/components/ui.tsx` |
+| Category chips | New `short` Marathi label per category (ids unchanged; `title` kept as the English subtitle). Learn chips show `सुरुवात · Beginner basics`; Speak's translate chips show the Marathi label. | `src/data/course.ts`, `Learn.tsx`, `Speak.tsx`, `styles.ts` (`filterSub`) |
+| Lesson header | `टप्पा 2/7 · <stage name>` instead of the upper-case English unit name. Stage names were already Marathi. | `src/screens/lesson/parts.tsx` |
+| Navigation | Tab labels for screen readers, header buttons and browser titles lead in Marathi (`बोला · Speak`, `मागे · Back`, `धडा · Lesson`). | `App.tsx`, `ui.tsx` |
+| Honesty note | "The app does not listen to or score your speech" is said once, clearly, on the first onboarding screen ("हे ॲप कसे मदत करते"), with the offline note. Removed the repeats from Speak, RolePlay (intro, play, self-review), the lesson role-play stage and the checkpoint. The recorder keeps one short line; Settings → About keeps its factual note. | `Onboarding.tsx`, `Speak.tsx`, `RolePlay.tsx`, `lesson/stages.tsx`, `Assess.tsx`, `Audio.tsx` |
+
+Tests added (`scripts/check-app.ts`, `scripts/check-content.ts`): labels/titles/section titles in screens must start in Marathi; subtitles must contain Marathi; no English-only `… →` links; the fixed English strings may not return; tab and browser titles lead in Marathi; the no-scoring disclaimer must be in onboarding and may appear elsewhere only in the recorder (once) and About; every category has a short Marathi chip label.
+
+Verification: `npx tsc --noEmit` pass; `npm test` exit 0. Web preview 375×812, light and dark: onboarding (new note), Home, Speak (translate tab), Learn (chips, unit), lesson stage 1 header; no console errors. Not checked on Android hardware.
+
+Left as is, on purpose: lesson and role-play titles (e.g. "Greetings and how are you?") are English learning content and still appear as the big title, with the Marathi line underneath. Translating 119 lesson titles is a content decision for the owner.
+
+---
+
+# Beginner experience — Round 2: one clear next step, shorter-feeling lessons
+
+| Area | Change | Files |
+| --- | --- | --- |
+| Focused Home (Foundation, Beginner) | Home now shows the greeting, one big **"आजचा पुढचा टप्पा"** card with the next lesson and its single button, and a small **"आजची प्रगती · 1/3"** card (progress bar, the three goals, streak `🔥 N दिवस`). The path pill, the 7 daily items, the speaking suggestion and the four summary tabs are inside a closed **"आणखी पाहा · More for today"** section. Nothing was removed. | `src/screens/Home.tsx`, `styles.ts` |
+| Intermediate / Advanced | Full Home, in the same order as before. | `Home.tsx` |
+| Hero estimate | New lesson: "सुमारे 13 मिनिटे · 7 छोटे टप्पे". Started lesson: "टप्पा 2/7 · सुमारे 12 मिनिटे बाकी". | `Home.tsx` |
+| Lesson steps | Header shows `टप्पा 2/7 · <stage>`, a row of 7 step dots (✓ on finished stages, announced as a progress bar), and "सुमारे N मिनिटे बाकी · पुढे: <next stage>". The Next button reads "टप्पा पूर्ण ✓ · पुढे". After it, the next stage opens with a short "छान! टप्पा 1 पूर्ण ✓" note (screen-reader live region; it isn't stored). | `src/screens/Lesson.tsx`, `src/screens/lesson/parts.tsx`, `styles.ts` |
+| Shared logic | `src/state/steps.ts`: `simpleHome`, `todayGoals`, `lessonMinutes`, `minutesLeft`, `stepLabel`, `lessonStages`, `stagePosition`. Lesson and Home use the same stage list. **Stage values, exercise IDs and the stored `progress.steps` keys are unchanged.** | `src/state/steps.ts` |
+
+Tests added (`scripts/check-flows.ts`): which paths get the focused Home; today's goal counting (word count capped at 5); stage lists match the previous values exactly, and a stored value maps to the right position (for example 5 → the 4th of 5 short stages); step labels clamp; minutes left fall stage by stage and never show 0 on an open stage; every lesson's estimate is 3–30 minutes; Lesson.tsx has no second copy of the stage list; beginner Home keeps the extras behind "आणखी पाहा".
+
+Verification: `npx tsc --noEmit` pass; `npm test` exit 0. Web preview 375×812: beginner Home (light and dark), "आणखी पाहा" opened, lesson stage 1 → 2 showing the ✓ note, dots and minutes left (light and dark), Home resume line "टप्पा 2/7 · सुमारे 12 मिनिटे बाकी", Intermediate full Home; no console errors. Not checked on Android hardware.
+
+---
+
+# Beginner experience — Round 3: reward and encouragement
+
+| Area | Change | Files |
+| --- | --- | --- |
+| Stage ✓ | The "छान! टप्पा N पूर्ण ✓" note from Round 2 now springs in (scale + fade) with ✨. | `src/screens/lesson/parts.tsx`, `src/components/Celebrate.tsx` |
+| Lesson / unit finished | Finishing a lesson shows a short celebration screen ("🎉 धडा पूर्ण! छान काम.") with the weekly summary line, a primary "पुढचा धडा" / "युनिट चेकपॉइंट · पुढे" button and "आत्ता इतकेच · Back". If that lesson completes its unit for the first time, a second card follows: "🏆 युनिट पूर्ण: <unit>". Progress is saved before the screen shows, so leaving at any point loses nothing. | `src/screens/Lesson.tsx` |
+| Motion | Built-in `Animated` only. `useReduceMotion()` reads `AccessibilityInfo.isReduceMotionEnabled` and listens for changes; with reduced motion the same content shows without movement. **No haptics:** `expo-haptics` isn't installed and I didn't add it. | `src/components/Celebrate.tsx` |
+| Setting | Settings → "छोटे अभिनंदन सुरू आहेत / बंद आहेत". Stored as optional `settings.celebrate` (boolean). Old data without it loads unchanged and means "on". When off, stages show the plain ✓ note and lessons move on exactly as before. | `src/state/model.ts`, `Settings.tsx` |
+| Weekly summary | "या आठवड्यात 12 शब्द शिकलात · 4 दिवस सराव" (last 7 days; daily words counted once each; practice days from the existing `dates`). Shown in the beginner "आजची प्रगती" card, the full Home goal panel and the lesson celebration. With no activity it invites ("…आज एका छोट्या टप्प्याने करूया."). | `src/state/encourage.ts`, `Home.tsx` |
+| Welcome back | After 3+ days away (and not yet practised today): "पुन्हा स्वागत! 🙂 थोडा ब्रेक झाला तरी हरकत नाही…" or, after 7+ days, "पुन्हा भेटून आनंद झाला! … तुमची सगळी प्रगती जपलेली आहे." No streak-loss or missed-day wording. On every path's Home. | `encourage.ts`, `Home.tsx` |
+
+Tests added: `check-progress.ts` — the celebrate field is optional, never invented for old data, round-trips through backup, and rejects non-booleans. `check-time.ts` (runs in 7 time zones) — week window across DST and month edges, word de-duplication, summary wording, welcome-back thresholds (none for new learners, none at 1–2 days, none after practising today, two tones), no guilt words, unit-completion detection. `check-app.ts` — reduce-motion handling present, no haptics/animation dependency added, the setting is wired into Settings and Lesson, and contrast for the new card colours in both palettes.
+
+Verification: `npx tsc --noEmit` pass; `npm test` exit 0. Web preview 375×812 with seeded local test data (last practice 12 days earlier, unit 1 at its last lesson): welcome-back card on Home (light), lesson + unit celebration (light), lesson celebration again in dark (no repeated unit card), Settings toggle stores `celebrate: false` and back; no console errors. Not verified: actual reduce-motion behaviour on a phone (checked in code and tests only) and Android hardware.
+
+---
+
+# Beginner experience — Round 4: honest offline speaking check
+
+Approved by the owner on 22 October 2026: `expo-speech-recognition@3.1.3` (the SDK 54 release; MIT; community package), on-device only, native only, silent fallback.
+
+| Area | Change | Files |
+| --- | --- | --- |
+| Dependency | `expo-speech-recognition` pinned to `3.1.3`. Config plugin in `app.json` with Marathi iOS permission texts. The `android/` folder is checked in, so the plugin's `<queries>` entry (Google speech services + `android.speech.RecognitionService`) was added to the manifest by hand. **No new Android permission** (`RECORD_AUDIO` was already there; the package's own manifest is empty). QA APK grew by about 30 KB (144,154,195 → 144,184,251 bytes). | `package.json`, `app.json`, `android/app/src/main/AndroidManifest.xml` |
+| Word check | Where the recorder has a model sentence (lesson listen stage, own-speaking stage, legacy lessons, role-play with full help), a "शब्द ओळख · फोनवरच" card appears: "म्हणा आणि शब्द पाहा" → the phone's recogniser listens once → "६ पैकी ५ शब्द ऐकू आले", each word shown as a chip, missed words highlighted (amber, bold, underlined — not colour alone) with a "listen again and say it slowly" hint. Labelled "फक्त शब्द ओळख आहे, उच्चाराचे मूल्यमापन नाही"; no score, percentage or pass/fail anywhere. | `src/components/WordCheck.tsx`, `src/components/Audio.tsx`, `styles.ts` |
+| Matching | `src/state/wordcheck.ts`: case/punctuation-insensitive, contractions both ways (I'm ↔ I am), curly apostrophes, numbers 0–20 as words, repeated words counted, best of up to 5 alternatives, Marathi digits in the message, preferred offline locale `en-IN` → `en-US` → `en-GB` → any `en-*`. | `src/state/wordcheck.ts` |
+| Offline and fallback | `requiresOnDeviceRecognition: true` always; on Android the on-device service `com.google.android.as`. The card only renders if recognition is available, on-device is supported, and an English model is **already installed** (the app never triggers a model download, which would need internet). It disappears silently on web (the browser recogniser uploads audio), on Android 12 and below, with no model, if permission is refused, if the native module is missing, or on any recogniser error other than "no speech". The record-and-compare recorder is unchanged in every case. | `WordCheck.tsx` |
+
+Tests added: `check-flows.ts` — matching rules above, the Marathi message, locale choice (no English model → no card), and every lesson example and conversation line (the recorder's model sentences) matches itself fully. `check-app.ts` — pinned approved version, on-device flag present, web excluded, lazy `require` (a build without the native module cannot crash), no model download call, no scoring words in user-visible text of the word-check files, wired into the recorder, plugin and `<queries>` present, and the app's own Android permission list unchanged.
+
+Verification: `npx tsc --noEmit` pass; `npm test` exit 0. Web preview 375×812: lesson listen stage → recorder opens with no word-check card and no console errors (fallback). `./gradlew :app:assembleQa` succeeds; merged manifest has the queries and no new permission from the package. **Not verified on the phone:** it was asleep and locked, so the QA build was not installed and real on-device recognition (accuracy with Marathi-accented English, model availability on the vivo, iOS) is still untested.
+
+## Round 4 — phone check (vivo V2415, Android 16)
+
+- QA build installed while the phone was unlocked. Google's speech services (`com.google.android.googlequicksearchbox`, `com.google.android.as`) are present, and the **"शब्द ओळख · फोनवरच" card appears** in lesson stage 3 under "Good morning, Asha!". The card only renders when on-device recognition is available with an installed English model, so this phone qualifies.
+- The microphone permission dialog was dismissed on the first tap. The card then hid itself and the recorder stayed usable, which is the designed fallback. Re-opening the recorder brings the card back. **Actual recognition of speech (the "N पैकी M शब्द ऐकू आले" result) has not been seen yet:** at the time of writing the app's `RECORD_AUDIO` permission was still not granted. I didn't grant it over adb; that's the owner's choice on the phone.
+- Device bugs found and fixed: (1) small pill buttons lost the last letter of a short bold label ("हळू" drawn as "ह"). Fixed with a trailing no-break space and a slightly smaller right padding in `Button small`. (2) The beginner Home "आणखी पाहा" subtitle lost its last word ("प्रगती") because a line that only just fits is drawn wider than measured. Fixed by a shorter subtitle ("७ छोटे सराव, शिफारस, उजळणी, प्रगती"). Fix (1) is in the build now on the phone, not yet re-checked on screen. Fix (2) is in a newer QA build that hasn't been installed yet.

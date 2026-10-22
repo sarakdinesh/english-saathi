@@ -58,15 +58,11 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
   const prompts = lessons.filter((l) => l.category === topic);
   return (
     <Shell>
-      <Label>FIND YOUR ENGLISH VOICE</Label>
+      <Label>बोलण्याचा सराव · SPEAK</Label>
       <Heading
-        title="Let's talk, a little."
+        title="चला, थोडं बोलूया."
         sub={`${pathInfo[path].mr} · परिपूर्ण बोलण्यापेक्षा, बोलायला सुरुवात करा.`}
       />
-      <Text style={[s.smallMuted, { marginTop: 4 }]}>
-        स्वतःचा सराव: अॅप तुमचे बोलणे ऐकत नाही किंवा गुण देत नाही. मोठ्याने
-        बोला, ऐका, पुन्हा करा.
-      </Text>
       <SegmentTabs
         label="बोलण्याचा सराव"
         value={tab}
@@ -153,7 +149,7 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
           progress.completed.length > 20 ? (
             <>
               <Section
-                title="दीर्घ बोलणे · 1–2 minute talks"
+                title="दीर्घ बोलणे · १–२ मिनिटे"
                 sub="तयारी ऐच्छिक. मुद्दे, सुरुवातीची वाक्ये आणि टायमर"
               />
               {talks.map((t) => (
@@ -181,7 +177,7 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
             <View style={[s.noteBox, { marginTop: 22 }]}>
               <Text style={s.body}>
                 दीर्घ बोलण्याचे विषय (१–२ मिनिटे) “आत्मविश्वासाने बोला” मार्गात
-                उपलब्ध आहेत. Learn मध्ये मार्ग बदलून पाहा.
+                उपलब्ध आहेत. “शिका” टॅबमध्ये मार्ग बदलून पाहा.
               </Text>
             </View>
           )}
@@ -190,7 +186,7 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
       {tab === "role" && (
         <>
           <Text style={s.sectionHint}>
-            ठरलेला संवाद. अॅप तुमचे बोलणे तपासत नाही.
+            ठरलेला संवाद: वाक्य वाचा, मग मोठ्याने उत्तर द्या.
           </Text>
           {featured.map((r) => (
             <Pressable
@@ -247,7 +243,7 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
                 <Text
                   style={[s.filterText, topic === id && { color: C.onPrimary }]}
                 >
-                  {categories.find((c) => c.id === id)?.title}
+                  {categories.find((c) => c.id === id)?.short}
                 </Text>
               </Pressable>
             ))}
@@ -283,7 +279,7 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
                         onPress={() => setRevealed([...revealed, key])}
                       >
                         <Text style={[s.link, { marginTop: 10 }]}>
-                          Reveal English →
+                          इंग्रजी उत्तर पाहा →
                         </Text>
                       </Pressable>
                     )}
@@ -295,7 +291,7 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
                 onPress={() => navigation.navigate("Lesson", { id: l.id })}
               >
                 <Text style={[s.link, { marginTop: 10 }]}>
-                  Read full lesson →
+                  पूर्ण धडा वाचा →
                 </Text>
               </Pressable>
             </Collapsible>
@@ -320,7 +316,7 @@ export function RolePlayList({ navigation }: StackProps<"RolePlayList">) {
   const list = rolePlays.filter((r) => r.level === progress.path);
   return (
     <Shell>
-      <Label>ROLE-PLAY LIBRARY</Label>
+      <Label>संवाद संग्रह · ROLE-PLAYS</Label>
       <Heading
         title="संवाद सराव"
         sub={`${pathInfo[progress.path].mr} · ठरलेले संवाद`}

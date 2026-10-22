@@ -43,6 +43,17 @@
           "enableBackgroundRecording": false,
           "enableBackgroundPlayback": false
         }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "तुमचा बोलण्याचा सराव रेकॉर्ड करण्यासाठी मायक्रोफोनची परवानगी द्या.",
+          "speechRecognitionPermission": "तुम्ही म्हटलेले शब्द फोनवरच ओळखण्यासाठी परवानगी द्या. आवाज फोनबाहेर पाठवला जात नाही.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox",
+            "com.google.android.as"
+          ]
+        }
       ]
     ]
   }

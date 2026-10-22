@@ -63,6 +63,23 @@ assert.equal(validateProgress(legacy).settings.theme, undefined);
 const themed = validateProgress({ ...migrated, settings: { textSize: 1.15, sound: false, theme: "dark" } });
 assert.deepEqual(themed.settings, { textSize: 1.15, sound: false, theme: "dark" });
 assert.deepEqual(validateProgress(JSON.parse(JSON.stringify(themed))).settings, themed.settings);
+// Celebrations setting: optional; old data without it loads unchanged (and
+// means "on"); a stored false survives a backup round-trip; junk is rejected.
+{
+  const { celebrationsOn } = load("src/state/encourage.ts");
+  const old = validateProgress(JSON.parse(JSON.stringify(themed)));
+  assert.ok(!("celebrate" in old.settings), "no field invented for old data");
+  assert.equal(celebrationsOn(old.settings), true);
+  const off = validateProgress({ ...migrated, settings: { textSize: 1, sound: true, celebrate: false } });
+  assert.deepEqual(off.settings, { textSize: 1, sound: true, celebrate: false });
+  assert.equal(celebrationsOn(off.settings), false);
+  assert.deepEqual(validateProgress(JSON.parse(JSON.stringify(off))).settings, off.settings);
+  const on = validateProgress({ ...migrated, settings: { textSize: 1, sound: true, theme: "light", celebrate: true } });
+  assert.equal(on.settings.celebrate, true);
+  assert.equal(on.settings.theme, "light");
+  for (const celebrate of ["yes", 1, null, {}])
+    assert.throws(() => validateProgress({ ...migrated, settings: { textSize: 1, sound: true, celebrate } }));
+}
 const now = 1000000;
 let r = scheduleReview(undefined, false, now);
 assert.equal(r.due, now + 600000);
@@ -91,5 +108,5 @@ for (const e of exercises) {
     );
 }
 console.log(
-  "Passed legacy migration, backup round-trip, 12 invalid imports, theme setting, revision intervals, curriculum coverage and 8 beginner exercise checks.",
+  "Passed legacy migration, backup round-trip, 12 invalid imports, theme and celebration settings, revision intervals, curriculum coverage and 8 beginner exercise checks.",
 );

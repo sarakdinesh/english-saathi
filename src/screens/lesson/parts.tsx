@@ -10,8 +10,9 @@ import {
   Heading,
   Icon,
   Label,
-  ProgressBar,
 } from "../../components/ui";
+import { stepLabel } from "../../state/steps";
+import { Pop } from "../../components/Celebrate";
 import { s } from "../../components/styles";
 import { C } from "../../components/theme";
 
@@ -43,6 +44,9 @@ export function LessonHeader({
   names,
   stages,
   position,
+  minutesLeft,
+  justDone,
+  celebrate,
   saved,
   onToggleSave,
 }: {
@@ -51,26 +55,37 @@ export function LessonHeader({
   names: string[];
   stages: number[];
   position: number;
+  minutesLeft: number;
+  // Position of the stage the learner just finished, for the ✓ moment.
+  justDone: number | null;
+  // Animate the ✓ moment (Settings → celebrations; reduce motion still wins).
+  celebrate: boolean;
   saved: boolean;
   onToggleSave: () => void;
 }) {
   const current = stages[position];
   return (
     <>
-      <Label>
-        {unit ? `${unit.en.toUpperCase()} · ` : ""}
-        {position + 1} / {stages.length} · {names[current]}
-      </Label>
-      <ProgressBar
-        value={position + 1}
-        max={stages.length}
-        label={`धड्याचा टप्पा: ${names[current]}`}
-      />
-      {position < stages.length - 1 && (
-        <Text style={[s.smallMuted, { marginTop: 6 }]}>
-          पुढे: {names[stages[position + 1]]}
-        </Text>
+      {justDone !== null && (
+        <Pop animate={celebrate}>
+          <View style={s.stageDone} accessibilityLiveRegion="polite">
+            <Icon name="checkmark-circle" color={C.green} size={20} />
+            <Text style={[s.rowTitle, { flex: 1 }]}>
+              {celebrate ? "✨ " : ""}छान! टप्पा {justDone + 1} पूर्ण ✓
+            </Text>
+          </View>
+        </Pop>
       )}
+      <Label>
+        {stepLabel(position, stages.length)} · {names[current]}
+      </Label>
+      <StepDots stages={stages} position={position} names={names} />
+      <Text style={[s.smallMuted, { marginTop: 6 }]}>
+        {unit ? `${unit.title} · ` : ""}सुमारे {minutesLeft} मिनिटे बाकी
+        {position < stages.length - 1
+          ? ` · पुढे: ${names[stages[position + 1]]}`
+          : " · शेवटचा टप्पा"}
+      </Text>
       <View style={{ height: 16 }} />
       <Heading title={item.title} sub={item.subtitle} />
       <Pressable
@@ -86,6 +101,37 @@ export function LessonHeader({
       </Pressable>
       <View style={{ height: 12 }} />
     </>
+  );
+}
+
+// One dot per stage: ✓ for finished stages, filled for the current one.
+// Announced as a progress bar ("टप्पा 2/7").
+function StepDots({
+  stages,
+  position,
+  names,
+}: {
+  stages: number[];
+  position: number;
+  names: string[];
+}) {
+  return (
+    <View
+      style={s.stepDots}
+      accessible
+      accessibilityRole="progressbar"
+      accessibilityLabel={`धड्याचा टप्पा: ${names[stages[position]]}`}
+      accessibilityValue={{ min: 1, max: stages.length, now: position + 1, text: stepLabel(position, stages.length) }}
+    >
+      {stages.map((v, i) => (
+        <View
+          key={v}
+          style={[s.stepDot, i < position && s.stepDotDone, i === position && s.stepDotOn]}
+        >
+          {i < position && <Icon name="checkmark" size={12} color={C.onPrimary} />}
+        </View>
+      ))}
+    </View>
   );
 }
 
@@ -109,7 +155,7 @@ export function StageNav({
       {isLast ? (
         <Button title={finishTitle} onPress={onFinish} />
       ) : (
-        <Button title="पुढचा टप्पा · Next" onPress={onNext} />
+        <Button title="टप्पा पूर्ण ✓ · पुढे" onPress={onNext} />
       )}
       {canGoBack && (
         <Button secondary title="मागचा टप्पा · Previous" onPress={onPrevious} />

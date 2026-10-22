@@ -118,6 +118,19 @@ export default function Onboarding({ navigation }: StackProps<"Onboarding">) {
               />
             ))}
           </View>
+          {/* Said once here, plainly; recording screens keep a one-line hint. */}
+          <View style={[s.noteBox, { marginTop: 16 }]}>
+            <Text style={s.rowTitle}>हे ॲप कसे मदत करते · How it works</Text>
+            <Text style={s.body}>
+              🔊 फोनचा आवाज इंग्रजी वाक्य ऐकवतो.{"\n"}🗣️ तुम्ही ते मोठ्याने
+              म्हणता.{"\n"}🎙️ हवे तर रेकॉर्ड करून स्वतःचा आवाज ऐकता आणि तुलना
+              करता.
+            </Text>
+            <Text style={[s.smallMuted, { marginTop: 6 }]}>
+              ॲप तुमचे बोलणे ऐकून गुण देत नाही आणि उच्चार तपासत नाही. बरोबर
+              आहे की नाही ते तुम्ही स्वतः ठरवता. इंटरनेटची गरज नाही.
+            </Text>
+          </View>
           <View style={{ height: 18 }} />
           <Button title="पुढे · Next" onPress={() => setStep(1)} />
         </>

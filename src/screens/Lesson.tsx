@@ -2,10 +2,16 @@
 // and handles finishing. The stages themselves live in ./lesson/.
 import type { StackProps } from "../navigation/types";
 import React, { useState } from "react";
-import { exercises as legacyList } from "../data/journey";
+import { View } from "react-native";
+import { duration, exercises as legacyList } from "../data/journey";
+import { lessonMinutes, lessonStages, minutesLeft, stagePosition } from "../state/steps";
+import { celebrationsOn, unitJustCompleted, weekSummary } from "../state/encourage";
+import { Celebration } from "../components/Celebrate";
+import { localDate } from "../state/progress";
 import { kits, lessonById, orderedLessons, unitOf } from "../curriculum";
 import { useProgress } from "../state/progress";
-import { Button, Heading, Shell } from "../components/ui";
+import { AppText as Text, Button, Heading, Shell } from "../components/ui";
+import { s } from "../components/styles";
 import {
   LAST_STAGE,
   LessonHeader,
@@ -31,6 +37,9 @@ export default function Lesson({ navigation, route }: StackProps<"Lesson">) {
   const unit = item ? unitOf(item.id) : undefined;
   // Beginner-style support (Marathi shown by default) below Intermediate.
   const beginner = unit?.path !== "intermediate" && unit?.path !== "advanced";
+  const [justDone, setJustDone] = useState<number | null>(null);
+  // Set when the lesson was just finished: shows the celebration before moving on.
+  const [finished, setFinished] = useState<{ unitDone: boolean } | null>(null);
   const [n, setN] = useState(
     Math.min(progress.steps[route.params.id] ?? 0, LAST_STAGE),
   );
@@ -43,27 +52,83 @@ export default function Lesson({ navigation, route }: StackProps<"Lesson">) {
     );
   const legacy = legacyList.filter((e) => e.lesson === item.id);
   // Lessons without a full kit keep the original reading/listening/speaking flow.
-  const stages = kit || legacy.length ? [0, 1, 2, 3, 4, 5, 6] : [0, 1, 2, 5, 6];
+  const stages = lessonStages(!!kit || legacy.length > 0);
   const names = kit ? stageNames : legacyNames;
-  const position = Math.max(stages.indexOf(n), 0);
+  const position = stagePosition(stages, n);
   const current = stages[position];
+  const left = minutesLeft(lessonMinutes(duration(item.id), !!kit), stages.length, position);
   const go = (value: number) => {
     setN(value);
     step(item.id, value);
   };
-  const next = () => go(stages[Math.min(position + 1, stages.length - 1)]);
+  const next = () => {
+    // A short "✓ stage done" moment on the following stage; not stored.
+    setJustDone(position);
+    go(stages[Math.min(position + 1, stages.length - 1)]);
+  };
   const following = orderedLessons[orderedLessons.findIndex((l) => l.id === item.id) + 1];
   const opensCheckpoint =
     !!unit?.checkpoint &&
     unit.lessons[unit.lessons.length - 1] === item.id &&
     !progress.checkpoints[unit.id];
-  const finish = () => {
-    complete(item.id);
-    activity("lesson");
+  const moveOn = () => {
     if (opensCheckpoint) navigation.replace("Checkpoint", { unit: unit!.id });
     else if (following) navigation.replace("Lesson", { id: following.id });
     else navigation.goBack();
   };
+  const celebrate = celebrationsOn(progress.settings);
+  const finish = () => {
+    // Only the first time the unit's last lesson is finished.
+    const unitDone =
+      !!unit &&
+      !progress.completed.includes(item.id) &&
+      unitJustCompleted(unit.lessons, progress.completed, item.id);
+    complete(item.id);
+    activity("lesson");
+    if (celebrate) setFinished({ unitDone });
+    else moveOn();
+  };
+  if (finished) {
+    const week = weekSummary(progress.daily, progress.dates, localDate());
+    return (
+      <Shell>
+        <View style={{ height: 8 }} />
+        <Celebration
+          emoji="🎉"
+          title="धडा पूर्ण! छान काम."
+          sub={`${item.title} · आज तुम्ही एक पाऊल पुढे गेलात.`}
+        />
+        {finished.unitDone && unit && (
+          <Celebration
+            emoji="🏆"
+            title={`युनिट पूर्ण: ${unit.title}`}
+            sub={`${unit.lessons.length} धडे पूर्ण · ${unit.en}`}
+            delay={350}
+          />
+        )}
+        <Text style={[s.smallMuted, { textAlign: "center", marginBottom: 16 }]}>
+          {week.text}
+        </Text>
+        <Button
+          title={
+            opensCheckpoint
+              ? "युनिट चेकपॉइंट · पुढे"
+              : following
+                ? "पुढचा धडा · Next lesson"
+                : "पूर्ण · Done"
+          }
+          onPress={moveOn}
+        />
+        <View style={{ height: 10 }} />
+        <Button
+          secondary
+          icon="home-outline"
+          title="आत्ता इतकेच · Back"
+          onPress={() => navigation.goBack()}
+        />
+      </Shell>
+    );
+  }
   const stageProps = kit ? { item, kit, beginner } : undefined;
   return (
     <Shell key={current}>
@@ -73,6 +138,9 @@ export default function Lesson({ navigation, route }: StackProps<"Lesson">) {
         names={names}
         stages={stages}
         position={position}
+        minutesLeft={left}
+        justDone={justDone === position - 1 ? justDone : null}
+        celebrate={celebrate}
         saved={progress.saved.includes(item.id)}
         onToggleSave={() => toggleSave(item.id)}
       />
@@ -114,7 +182,10 @@ export default function Lesson({ navigation, route }: StackProps<"Lesson">) {
         }
         canGoBack={position > 0}
         onNext={next}
-        onPrevious={() => go(stages[position - 1])}
+        onPrevious={() => {
+          setJustDone(null);
+          go(stages[position - 1]);
+        }}
         onFinish={finish}
       />
     </Shell>

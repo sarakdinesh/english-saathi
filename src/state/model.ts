@@ -41,7 +41,13 @@ export type Progress = {
   // been revealed: they are not counted as listening evidence.
   assisted?: string[];
   // `theme` was added later; missing means "system" (follow the phone).
-  settings: { textSize: number; sound: boolean; theme?: ThemeChoice };
+  // `celebrate` was added later; missing means on (short celebrations shown).
+  settings: {
+    textSize: number;
+    sound: boolean;
+    theme?: ThemeChoice;
+    celebrate?: boolean;
+  };
   daily: Record<string, string[]>;
   // Added after the first release. All are optional in stored/imported data.
   path: PathId;
@@ -183,7 +189,8 @@ export function validateProgress(p: any): Progress {
     !plain(settings) ||
     ![1, 1.15, 1.3].includes(settings.textSize) ||
     typeof settings.sound !== "boolean" ||
-    (settings.theme !== undefined && !THEMES.includes(settings.theme))
+    (settings.theme !== undefined && !THEMES.includes(settings.theme)) ||
+    (settings.celebrate !== undefined && typeof settings.celebrate !== "boolean")
   )
     throw Error("Invalid settings");
   const daily: Record<string, string[]> = {};
@@ -361,6 +368,9 @@ export function validateProgress(p: any): Progress {
       textSize: settings.textSize,
       sound: settings.sound,
       ...(settings.theme ? { theme: settings.theme } : {}),
+      ...(typeof settings.celebrate === "boolean"
+        ? { celebrate: settings.celebrate }
+        : {}),
     },
     daily,
     path,

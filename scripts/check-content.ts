@@ -254,6 +254,12 @@ for (const c of categories)
     lessons.some((l: any) => l.category === c.id),
     `Empty category ${c.id}`,
   );
+// Filter chips show a short Marathi label first; the English title is the subtitle.
+for (const c of categories)
+  assert(
+    marathi(c.short) && c.short.length <= 18 && c.title,
+    `Category ${c.id} needs a short Marathi chip label`,
+  );
 
 console.log(
   `Pronunciation guides (optional, approximate): ${guided}/${total} lesson sentences.`,

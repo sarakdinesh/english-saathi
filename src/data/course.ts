@@ -15,6 +15,8 @@ export type Lesson = {
 export const categories = [
   {
     id: "starter",
+    // Short Marathi label for filter chips; `title` stays as the English subtitle.
+    short: "सुरुवात",
     title: "Beginner basics",
     mr: "अगदी सुरुवातीचे इंग्रजी",
     icon: "①",
@@ -22,6 +24,7 @@ export const categories = [
   },
   {
     id: "alphabet",
+    short: "वर्णमाला",
     title: "Alphabet",
     mr: "इंग्रजी वर्णमाला",
     icon: "Aa",
@@ -29,6 +32,7 @@ export const categories = [
   },
   {
     id: "phonics",
+    short: "आवाज",
     title: "Phonics",
     mr: "आवाज आणि वाचन",
     icon: "ph",
@@ -36,6 +40,7 @@ export const categories = [
   },
   {
     id: "firstwords",
+    short: "पहिले शब्द",
     title: "First words",
     mr: "पहिले शब्द",
     icon: "①",
@@ -43,6 +48,7 @@ export const categories = [
   },
   {
     id: "reading",
+    short: "वाचन",
     title: "Reading foundations",
     mr: "वाचनाची सुरुवात",
     icon: "Aa",
@@ -50,6 +56,7 @@ export const categories = [
   },
   {
     id: "sounds",
+    short: "उच्चार",
     title: "Sounds & stress",
     mr: "उच्चार आणि जोर",
     icon: "♪",
@@ -57,6 +64,7 @@ export const categories = [
   },
   {
     id: "fluency",
+    short: "लांब उत्तरे",
     title: "Longer answers",
     mr: "लांब आणि स्पष्ट उत्तरे",
     icon: "…",
@@ -64,6 +72,7 @@ export const categories = [
   },
   {
     id: "work",
+    short: "कामाचे इंग्रजी",
     title: "Work English",
     mr: "कामाच्या ठिकाणचे इंग्रजी",
     icon: "▣",
@@ -71,6 +80,7 @@ export const categories = [
   },
   {
     id: "basics",
+    short: "पहिली पावले",
     title: "Start here",
     mr: "इंग्रजीची सुरुवात",
     icon: "◉",
@@ -78,6 +88,7 @@ export const categories = [
   },
   {
     id: "formulas",
+    short: "वाक्य सूत्रे",
     title: "Sentence formulas",
     mr: "वाक्य सहज बनवा",
     icon: "✦",
@@ -85,6 +96,7 @@ export const categories = [
   },
   {
     id: "articles",
+    short: "A/An/The वापर",
     title: "Articles",
     mr: "A, An आणि The",
     icon: "Aa",
@@ -92,6 +104,7 @@ export const categories = [
   },
   {
     id: "modals",
+    short: "विनंती आणि सल्ला",
     title: "Modal verbs",
     mr: "विनंती, सल्ला आणि क्षमता",
     icon: "↗",
@@ -99,6 +112,7 @@ export const categories = [
   },
   {
     id: "vocabulary",
+    short: "रोजचे शब्द",
     title: "Everyday words",
     mr: "रोजच्या वापरातील शब्द",
     icon: "▤",
@@ -106,6 +120,7 @@ export const categories = [
   },
   {
     id: "passive",
+    short: "कर्तरी-कर्मणी",
     title: "Active & passive",
     mr: "कर्तरी आणि कर्मणी वाक्ये",
     icon: "⇄",
@@ -113,6 +128,7 @@ export const categories = [
   },
   {
     id: "conversation",
+    short: "संवाद",
     title: "Conversations",
     mr: "दैनंदिन संवाद",
     icon: "☏",
@@ -120,6 +136,7 @@ export const categories = [
   },
   {
     id: "tenses",
+    short: "काळ",
     title: "Tenses",
     mr: "काळ समजून घ्या",
     icon: "◷",

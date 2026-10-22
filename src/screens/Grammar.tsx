@@ -129,7 +129,7 @@ export default function Grammar({ navigation }: StackProps<"Grammar">) {
       {tab === "passive" && (
         <>
           <View style={s.dailyCard}>
-            <Text style={s.sectionTitle}>Active → Passive: 3 steps</Text>
+            <Text style={s.sectionTitle}>कर्तरी → कर्मणी: ३ पायऱ्या · Active → Passive</Text>
             {passiveSteps.map((p) => (
               <View key={p.n} style={{ gap: 2, marginTop: 8 }}>
                 <Text style={s.rowTitle}>
@@ -151,8 +151,8 @@ export default function Grammar({ navigation }: StackProps<"Grammar">) {
             .map((t) => (
               <View key={t.id} style={s.dailyCard}>
                 <Text style={s.sectionTitle}>{t.name}</Text>
-                <Row label="ACTIVE" f={t.affirmative} />
-                <Row label="PASSIVE" f={t.passive!} />
+                <Row label="कर्तरी · ACTIVE" f={t.affirmative} />
+                <Row label="कर्मणी · PASSIVE" f={t.passive!} />
               </View>
             ))}
           <View style={s.dailyCard}>

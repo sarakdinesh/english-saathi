@@ -6,9 +6,19 @@ import { useProgress, streakFor, localDate } from "../state/progress";
 import { allExercises } from "../curriculum";
 import { skillInfo, skillStats, summarize } from "../state/skills";
 import { goalInfo } from "../state/onboarding";
+import {
+  lessonMinutes,
+  lessonStages,
+  minutesLeft,
+  simpleHome,
+  stagePosition,
+  stepLabel,
+  todayGoals,
+} from "../state/steps";
+import { weekSummary, welcomeBack } from "../state/encourage";
 import { useDaily } from "../daily/useDaily";
 import { DailyToday } from "./Daily";
-import { duration } from "../data/journey";
+import { duration, exercises as legacyList } from "../data/journey";
 import { kits, pathLessons, unitOf } from "../curriculum";
 import { nextLessonFor, pathInfo } from "./Learn";
 import {
@@ -19,6 +29,8 @@ import {
   Icon,
   Section,
   SegmentTabs,
+  Collapsible,
+  ProgressBar,
 } from "../components/ui";
 import { ProgressCard } from "../components/cards";
 import { s } from "../components/styles";
@@ -57,11 +69,12 @@ export default function Home({ navigation }: TabProps<"Home">) {
   const count = list.filter((l) => progress.completed.includes(l.id)).length;
   const unit = next ? unitOf(next.id) : undefined;
   const learnedToday = today.filter((x) => dailyWords.includes(x)).length;
-  const goals = [
-    { label: "एक धडा पूर्ण करा", done: today.includes("lesson") },
-    { label: `पाच शब्द शिका (${learnedToday}/5)`, done: learnedToday >= 5 },
-    { label: "एक वाक्य मोठ्याने बोला", done: today.includes("speak") },
-  ];
+  const todays = todayGoals(today, learnedToday);
+  const goals = todays.goals;
+  const simple = simpleHome(path);
+  const todayKey = localDate();
+  const weekly = weekSummary(progress.daily, progress.dates, todayKey);
+  const back = welcomeBack(progress.dates, todayKey);
   const marathiDays = ["र", "सो", "मं", "बु", "गु", "शु", "श"];
   const week = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
@@ -108,75 +121,30 @@ export default function Home({ navigation }: TabProps<"Home">) {
   const avg = rated.length
     ? Math.round(rated.reduce((a, b) => a + b, 0) / rated.length)
     : 0;
-  return (
-    <Shell>
-      <View style={[s.welcome, { marginTop: 4 }]}>
-        <Label>थोडे शिका. रोज बोला.</Label>
-        <Text style={s.greeting}>नमस्कार! आज थोडं इंग्रजी बोलूया.</Text>
-        <Text style={s.subtitle}>
-          {streak > 0
-            ? `🔥 ${streak} दिवसांची सलग वाटचाल`
-            : "आज एक छोटी सुरुवात पुरेशी आहे."}
-        </Text>
-        {progress.profile && (
-          <Text style={s.smallMuted}>
-            🎯 {goalInfo[progress.profile.goal].mr} · दररोज{" "}
-            {progress.profile.studyMinutes} मिनिटे
-          </Text>
-        )}
-      </View>
-      <Pressable
-        accessibilityRole="button"
-        accessibilityLabel={`तुमचा मार्ग: ${pathInfo[path].mr}. मार्ग बदलण्यासाठी दाबा.`}
-        onPress={() => navigation.navigate("Learn")}
-        style={s.pathPill}
-      >
-        <Text style={s.smallMuted}>
-          तुमचा मार्ग: <Text style={s.rowTitle}>{pathInfo[path].mr}</Text> ·{" "}
-          {pathInfo[path].en}
-        </Text>
-        <Text style={s.link}>बदला →</Text>
-      </Pressable>
-      <View style={s.hero}>
-        <View style={s.heroTop}>
-          <Text style={s.heroTag}>
-            {next ? "CONTINUE LEARNING" : "PATH COMPLETE"}
-          </Text>
-          <Text style={s.heroBadgeText}>
-            {count}/{list.length} धडे
-          </Text>
-        </View>
-        <Text style={s.heroTitle}>
-          {next ? next.title : "अभिनंदन! छान वाटचाल."}
-        </Text>
-        <Text style={[s.heroMarathi, { fontSize: 16, lineHeight: 27 }]}>
-          {next
-            ? nextKit
-              ? nextKit.can[1]
-              : next.subtitle
-            : "या मार्गातील सर्व धडे वाचले आहेत. आता सराव आणि उजळणी सुरू ठेवा."}
-        </Text>
-        {!!unit && next && (
-          <Text style={[s.heroMarathi, { marginBottom: 14 }]}>
-            {unit.title} · सुमारे {duration(next.id) + (nextKit ? 8 : 0)} मिनिटे
-          </Text>
-        )}
-        <Button
-          accent
-          title={
-            next
-              ? resume
-                ? "पुढे सुरू ठेवा"
-                : "शिकायला सुरुवात करा"
-              : "उजळणी करा"
-          }
-          onPress={() =>
-            next
-              ? navigation.navigate("Lesson", { id: next.id })
-              : navigation.navigate("Review")
-          }
-        />
-      </View>
+  const total = next ? lessonMinutes(duration(next.id), !!nextKit) : 0;
+  const stages = lessonStages(
+    !!nextKit || (!!next && legacyList.some((e) => e.lesson === next.id)),
+  );
+  const at = next ? stagePosition(stages, progress.steps[next.id]) : 0;
+  const resumeNote = resume
+    ? `${stepLabel(at, stages.length)} · सुमारे ${minutesLeft(total, stages.length, at)} मिनिटे बाकी`
+    : `सुमारे ${total} मिनिटे · ${stages.length} छोटे टप्पे`;
+  const pathPill = (
+    <Pressable
+      accessibilityRole="button"
+      accessibilityLabel={`तुमचा मार्ग: ${pathInfo[path].mr}. मार्ग बदलण्यासाठी दाबा.`}
+      onPress={() => navigation.navigate("Learn")}
+      style={s.pathPill}
+    >
+      <Text style={s.smallMuted}>
+        तुमचा मार्ग: <Text style={s.rowTitle}>{pathInfo[path].mr}</Text> ·{" "}
+        {pathInfo[path].en}
+      </Text>
+      <Text style={s.link}>बदला →</Text>
+    </Pressable>
+  );
+  const extras = (
+    <>
       <DailyToday />
       <Section title="आजची बोलण्याची शिफारस" />
       <Pressable
@@ -233,7 +201,7 @@ export default function Home({ navigation }: TabProps<"Home">) {
             ))}
           </View>
           <Text style={s.smallMuted}>
-            या आठवड्यात {week.filter((d) => d.on).length} / ७ दिवस सराव
+            {weekly.text}
           </Text>
         </View>
       )}
@@ -305,6 +273,123 @@ export default function Home({ navigation }: TabProps<"Home">) {
             onPress={() => navigation.navigate("Grammar")}
           />
         </View>
+      )}
+    </>
+  );
+  return (
+    <Shell>
+      <View style={[s.welcome, { marginTop: 4 }]}>
+        <Label>थोडे शिका. रोज बोला.</Label>
+        <Text style={s.greeting}>नमस्कार! आज थोडं इंग्रजी बोलूया.</Text>
+        <Text style={s.subtitle}>
+          {streak > 0
+            ? `🔥 ${streak} दिवसांची सलग वाटचाल`
+            : "आज एक छोटी सुरुवात पुरेशी आहे."}
+        </Text>
+        {progress.profile && (
+          <Text style={s.smallMuted}>
+            🎯 {goalInfo[progress.profile.goal].mr} · दररोज{" "}
+            {progress.profile.studyMinutes} मिनिटे
+          </Text>
+        )}
+      </View>
+      {!!back && (
+        <View style={s.welcomeBack} accessibilityLiveRegion="polite">
+          <Text style={s.rowTitle}>{back.title}</Text>
+          <Text style={s.body}>{back.body}</Text>
+        </View>
+      )}
+      {!simple && pathPill}
+      <View style={s.hero}>
+        <View style={s.heroTop}>
+          <Text style={s.heroTag}>
+            {next
+              ? simple
+                ? "आजचा पुढचा टप्पा · Next step"
+                : "पुढचा धडा · Continue"
+              : "मार्ग पूर्ण · Complete"}
+          </Text>
+          <Text style={s.heroBadgeText}>
+            {count}/{list.length} धडे
+          </Text>
+        </View>
+        <Text style={s.heroTitle}>
+          {next ? next.title : "अभिनंदन! छान वाटचाल."}
+        </Text>
+        <Text style={[s.heroMarathi, { fontSize: 16, lineHeight: 27 }]}>
+          {next
+            ? nextKit
+              ? nextKit.can[1]
+              : next.subtitle
+            : "या मार्गातील सर्व धडे वाचले आहेत. आता सराव आणि उजळणी सुरू ठेवा."}
+        </Text>
+        {!!unit && next && (
+          <Text style={[s.heroMarathi, { marginBottom: 14 }]}>
+            {unit.title} · {resumeNote}
+          </Text>
+        )}
+        <Button
+          accent
+          title={
+            next
+              ? resume
+                ? "पुढे सुरू ठेवा"
+                : "शिकायला सुरुवात करा"
+              : "उजळणी करा"
+          }
+          onPress={() =>
+            next
+              ? navigation.navigate("Lesson", { id: next.id })
+              : navigation.navigate("Review")
+          }
+        />
+      </View>
+      {simple ? (
+        <>
+          <View style={s.todayCard}>
+            <View
+              style={{ flexDirection: "row", alignItems: "center", gap: 10 }}
+            >
+              <Text style={[s.rowTitle, { flex: 1 }]}>
+                {todays.done === todays.total
+                  ? "आजचे ध्येय पूर्ण! 🎉"
+                  : `आजची प्रगती · ${todays.done}/${todays.total}`}
+              </Text>
+              <Text style={s.smallMuted}>
+                {streak > 0 ? `🔥 ${streak} दिवस` : "🌱 आज सुरुवात"}
+              </Text>
+            </View>
+            <ProgressBar
+              value={todays.done}
+              max={todays.total}
+              label="आजची प्रगती"
+            />
+            <View style={s.todayGoals}>
+              {goals.map((g) => (
+                <Text
+                  key={g.key}
+                  style={[s.smallMuted, g.done && { color: C.green }]}
+                >
+                  {g.done ? "✓" : "○"} {g.label}
+                </Text>
+              ))}
+            </View>
+            <Text style={[s.smallMuted, { marginTop: 6 }]}>{weekly.text}</Text>
+          </View>
+          <View style={{ height: 14 }} />
+          <Collapsible
+            icon="apps-outline"
+            title="आणखी पाहा · More for today"
+            // Kept to one short line: on the vivo V2415 a line that only just
+            // fits is drawn wider than measured and loses its last word.
+            sub="७ छोटे सराव, शिफारस, उजळणी, प्रगती"
+          >
+            {pathPill}
+            {extras}
+          </Collapsible>
+        </>
+      ) : (
+        extras
       )}
     </Shell>
   );

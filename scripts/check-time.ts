@@ -137,4 +137,47 @@ const complete = (s: Store, date: string, task = "words") => {
   complete(s, day(1));
   assert.deepEqual(s.done[day(1)], ["words"]);
 }
-console.log(`Time checks passed (${tz}): DST-safe dates, midnight, time zones, clock changes, gaps, plan locking.`);
+// ---- Encouragement: weekly summary and welcome back --------------------------
+{
+  const enc = load("src/state/encourage.ts");
+  // Across the DST changes in March/April and October/November.
+  for (const today of ["2026-03-08", "2026-03-29", "2026-04-05", "2026-10-25", "2026-11-01", "2026-01-01"]) {
+    const w = enc.lastWeek(today);
+    assert.equal(w.length, 7);
+    assert.equal(w[6], today);
+    assert.equal(new Set(w).size, 7, `${tz} ${today}: duplicate day in week`);
+    w.forEach((d: string, i: number) => assert.equal(enc.daysBetween(d, today), 6 - i));
+  }
+  assert.deepEqual(enc.lastWeek("2026-03-02").slice(0, 2), ["2026-02-24", "2026-02-25"]);
+  const daily = {
+    "2026-10-20": ["word-1", "word-2", "lesson"],
+    "2026-10-21": ["word-2", "word-3", "speak"],
+    "2026-10-22": ["word-4"],
+    "2026-10-10": ["word-9"], // older than a week: not counted
+  };
+  const dates = ["2026-10-10", "2026-10-20", "2026-10-21", "2026-10-22"];
+  const sum = enc.weekSummary(daily, dates, "2026-10-22");
+  assert.deepEqual([sum.words, sum.days], [4, 3], "words counted once each");
+  assert.equal(sum.text, "या आठवड्यात 4 शब्द शिकलात · 3 दिवस सराव");
+  assert.equal(enc.weekSummary({}, ["2026-10-21"], "2026-10-22").text, "या आठवड्यात 1 दिवस सराव केलात");
+  assert.match(enc.weekSummary({}, [], "2026-10-22").text, /सुरुवात/);
+  // Welcome back: only after 3+ days away, never on the same day, never guilt.
+  assert.equal(enc.welcomeBack([], "2026-10-22"), null, "new learners get no welcome-back");
+  assert.equal(enc.welcomeBack(["2026-10-21"], "2026-10-22"), null);
+  assert.equal(enc.welcomeBack(["2026-10-20"], "2026-10-22"), null, "2 days is not a break");
+  assert.equal(enc.welcomeBack(["2026-10-15", "2026-10-22"], "2026-10-22"), null, "already practised today");
+  const short = enc.welcomeBack(["2026-10-19"], "2026-10-22");
+  const long = enc.welcomeBack(["2026-09-01", "2026-10-01"], "2026-10-22");
+  assert.ok(short && long && short.title !== long.title);
+  assert.equal(enc.daysAway(["2026-09-01", "2026-10-01"], "2026-10-22"), 21);
+  for (const m of [short, long])
+    assert.ok(!/स्ट्रीक|streak|चुकल|गमाव|तुटल/i.test(m.title + m.body), "no guilt or lost-streak wording");
+  // Across a month boundary and DST.
+  assert.equal(enc.daysAway(["2026-10-28"], "2026-11-02"), 5);
+  assert.equal(enc.daysAway(["2026-03-27"], "2026-03-30"), 3);
+  // Unit completion.
+  assert.equal(enc.unitJustCompleted(["a", "b", "c"], ["a", "b"], "c"), true);
+  assert.equal(enc.unitJustCompleted(["a", "b", "c"], ["a"], "c"), false);
+  assert.equal(enc.unitJustCompleted(["a", "b"], ["a", "b"], "x"), false);
+}
+console.log(`Time checks passed (${tz}): DST-safe dates, midnight, time zones, clock changes, gaps, plan locking, weekly summary, welcome back.`);

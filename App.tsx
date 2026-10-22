@@ -89,14 +89,14 @@ function Tabs() {
       <Tab.Screen
         name="Home"
         component={Home}
-        options={{ tabBarLabel: "घर", tabBarAccessibilityLabel: "Home · घर" }}
+        options={{ tabBarLabel: "घर", tabBarAccessibilityLabel: "घर · Home" }}
       />
       <Tab.Screen
         name="Learn"
         component={Learn}
         options={{
           tabBarLabel: "शिका",
-          tabBarAccessibilityLabel: "Learn · शिका",
+          tabBarAccessibilityLabel: "शिका · Learn",
         }}
       />
       <Tab.Screen
@@ -104,7 +104,7 @@ function Tabs() {
         component={Speak}
         options={{
           tabBarLabel: "बोला",
-          tabBarAccessibilityLabel: "Speak · बोला",
+          tabBarAccessibilityLabel: "बोला · Speak",
         }}
       />
       <Tab.Screen
@@ -112,7 +112,7 @@ function Tabs() {
         component={Review}
         options={{
           tabBarLabel: "सराव",
-          tabBarAccessibilityLabel: "Practice · सराव आणि उजळणी",
+          tabBarAccessibilityLabel: "सराव आणि उजळणी · Practice",
         }}
       />
       <Tab.Screen
@@ -120,7 +120,7 @@ function Tabs() {
         component={Menu}
         options={{
           tabBarLabel: "आणखी",
-          tabBarAccessibilityLabel: "More · सर्व विभाग",
+          tabBarAccessibilityLabel: "सर्व विभाग · More",
         }}
         listeners={{
           tabPress: (e) => {
@@ -296,12 +296,12 @@ function Root() {
               <Stack.Screen
                 name="Lesson"
                 component={LessonScreen}
-                options={{ title: "Your lesson" }}
+                options={{ title: "धडा · Lesson" }}
               />
               <Stack.Screen
                 name="Words"
                 component={WordsScreen}
-                options={{ title: "Word collection" }}
+                options={{ title: "शब्द · Words" }}
               />
               <Stack.Screen
                 name="DailyQuiz"
@@ -311,7 +311,7 @@ function Root() {
               <Stack.Screen
                 name="Quiz"
                 component={QuizScreen}
-                options={{ title: "Daily practice" }}
+                options={{ title: "रोजचा सराव · Daily practice" }}
               />
             </Stack.Navigator>
           </NavigationContainer>

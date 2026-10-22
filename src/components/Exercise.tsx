@@ -54,7 +54,7 @@ export function Exercise({
             onPress={() => setTranscript(!transcript)}
           >
             <Text style={[s.link, { marginTop: 10 }]}>
-              {transcript ? "Transcript लपवा ↑" : "Transcript पाहा ↓"}
+              {transcript ? "लिखित वाक्य लपवा ↑" : "लिखित वाक्य पाहा ↓"}
             </Text>
           </Pressable>
           {transcript && (
