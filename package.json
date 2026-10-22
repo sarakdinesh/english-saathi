@@ -1,5 +1,5 @@
 {
-  "name": "english-saathi",
+  "name": "english-boluya",
   "version": "1.0.0",
   "private": true,
   "main": "index.ts",
@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "export:web": "expo export --platform web",
     "export:android": "expo export --platform android --output-dir dist-android",
-    "test": "node --experimental-strip-types scripts/check-content.ts && node --experimental-strip-types scripts/check-progress.ts && node --experimental-strip-types scripts/check-flows.ts && node --experimental-strip-types scripts/check-daily.ts && node --experimental-strip-types scripts/check-onboarding.ts && node --experimental-strip-types scripts/check-reminders.ts && node --experimental-strip-types scripts/check-skills.ts && node --experimental-strip-types scripts/check-grammar.ts && npm run test:tz",
+    "test": "node --experimental-strip-types scripts/check-content.ts && node --experimental-strip-types scripts/check-progress.ts && node --experimental-strip-types scripts/check-flows.ts && node --experimental-strip-types scripts/check-daily.ts && node --experimental-strip-types scripts/check-onboarding.ts && node --experimental-strip-types scripts/check-reminders.ts && node --experimental-strip-types scripts/check-skills.ts && node --experimental-strip-types scripts/check-grammar.ts && node --experimental-strip-types scripts/check-app.ts && npm run test:tz",
     "test:tz": "for z in UTC Asia/Kolkata America/New_York Europe/London Australia/Lord_Howe Pacific/Kiritimati America/Los_Angeles; do TZ=$z node --experimental-strip-types scripts/check-time.ts && TZ=$z node --experimental-strip-types scripts/check-reminders.ts || exit 1; done",
     "ios": "expo run:ios",
     "report:inventory": "node --experimental-strip-types scripts/report-inventory.ts",
@@ -40,5 +40,8 @@
     "@types/react": "~19.1.10",
     "prettier": "^3.9.10",
     "typescript": "~5.9.2"
+  },
+  "overrides": {
+    "postcss": "^8.5.31"
   }
 }

@@ -29,7 +29,7 @@ const levelText: Record<Level, string> = {
 const levelColor: Record<Level, string> = {
   strong: C.green,
   ok: C.ink,
-  weak: "#B65C4C",
+  weak: C.danger,
   unknown: C.muted,
 };
 

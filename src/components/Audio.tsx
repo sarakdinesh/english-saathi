@@ -293,6 +293,32 @@ function erase(uri: string | null) {
     /* Cache cleanup is best effort. */
   }
 }
+const PRACTICE_STEPS = [
+  { mr: "ऐका", en: "Listen" },
+  { mr: "म्हणा", en: "Record" },
+  { mr: "तुलना", en: "Compare" },
+  { mr: "पुन्हा", en: "Try again" },
+];
+
+// Shows where the learner is in listen → record → compare → try again.
+function PracticeSteps({ current }: { current: number }) {
+  return (
+    <View
+      style={s.stepRow}
+      accessible
+      accessibilityLabel={`पायरी ${current + 1} पैकी ${PRACTICE_STEPS.length}: ${PRACTICE_STEPS[current].mr}`}
+    >
+      {PRACTICE_STEPS.map((step, i) => (
+        <View key={step.en} style={[s.stepChip, i === current && s.stepChipOn]}>
+          <Text style={[s.stepChipText, i === current && s.stepChipTextOn]}>
+            {i + 1}. {step.mr}
+          </Text>
+        </View>
+      ))}
+    </View>
+  );
+}
+
 export function Recorder({
   model,
   onRecorded,
@@ -399,6 +425,9 @@ export function Recorder({
   return (
     <View style={[s.dailyCard, { gap: 12 }]}>
       <Text style={s.rowTitle}>तुमचा आवाज · Self-practice</Text>
+      <PracticeSteps
+        current={state.isRecording ? 1 : uri ? (playerState.playing ? 2 : 3) : model ? 0 : 1}
+      />
       <Text style={s.body}>
         एक वाक्य बोला. ऐका. पुन्हा प्रयत्न करा. उच्चारांचे गुणांकन केले जात
         नाही. रेकॉर्डिंग तात्पुरते आहे (कमाल ६० सेकंद).

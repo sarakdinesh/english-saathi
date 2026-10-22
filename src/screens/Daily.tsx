@@ -49,11 +49,12 @@ function DailyCard({
     <View style={[s.dailyCard, { marginBottom: 12 }]}>
       <Pressable
         accessibilityRole="button"
+        accessibilityLabel={`${title}. ${done ? "पूर्ण झाले" : "बाकी आहे"}. ${sub}`}
         accessibilityState={{ expanded: open }}
         onPress={onToggle}
         style={s.goalRow}
       >
-        <View style={[s.smallIcon, { backgroundColor: done ? C.lime : "#EAF0E4" }]}>
+        <View style={[s.smallIcon, { backgroundColor: done ? C.lime : C.greenMist }]}>
           <Icon name={done ? "checkmark" : icon} />
         </View>
         <View style={{ flex: 1 }}>
@@ -117,11 +118,15 @@ export function DailyToday({ navigation }: { navigation: any }) {
         onToggle={() => toggle("words")}
       >
         {plan.words.map((id) => (
-          <View key={id} style={{ marginTop: 10 }}>
-            <Text style={s.rowTitle}>
-              {wordById(id).en} · {wordById(id).mr}
-            </Text>
-            <Text style={s.smallMuted}>{wordById(id).example}</Text>
+          <View key={id} style={s.dailyWord}>
+            <View style={{ flex: 1 }}>
+              <Text style={s.rowTitle}>
+                {wordById(id).en} · {wordById(id).mr}
+              </Text>
+              <Text style={s.smallMuted}>{wordById(id).example}</Text>
+              <Text style={s.smallMuted}>{wordById(id).translation}</Text>
+            </View>
+            <Listen text={wordById(id).en} compact />
           </View>
         ))}
         <View style={{ marginTop: 12 }}>
@@ -174,7 +179,7 @@ export function DailyToday({ navigation }: { navigation: any }) {
           open={open === "tip"}
           onToggle={() => toggle("tip")}
         >
-          <Text style={[s.exampleEnglish, { color: "#B65C4C" }]}>✗ {tip.wrong}</Text>
+          <Text style={[s.exampleEnglish, { color: C.danger }]}>✗ {tip.wrong}</Text>
           <Text style={[s.exampleEnglish, { color: C.green }]}>✓ {tip.right}</Text>
           <Text style={s.marathiBody}>{tip.why}</Text>
           <Listen text={tip.right} compact />

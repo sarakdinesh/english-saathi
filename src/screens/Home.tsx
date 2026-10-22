@@ -98,6 +98,7 @@ export default function Home({ navigation }: any) {
     .map((l) => progress.confidence[l.id])
     .filter(Boolean) as number[];
   const skillSummary = summarize(skillStats(progress, allExercises));
+  const streak = streakFor(progress.dates);
   const avg = rated.length
     ? Math.round(rated.reduce((a, b) => a + b, 0) / rated.length)
     : 0;
@@ -107,7 +108,9 @@ export default function Home({ navigation }: any) {
         <Label>थोडे शिका. रोज बोला.</Label>
         <Text style={s.greeting}>नमस्कार! आज थोडं इंग्रजी बोलूया.</Text>
         <Text style={s.subtitle}>
-          🔥 {streakFor(progress.dates)} दिवसांची सलग वाटचाल
+          {streak > 0
+            ? `🔥 ${streak} दिवसांची सलग वाटचाल`
+            : "आज एक छोटी सुरुवात पुरेशी आहे."}
         </Text>
         {progress.profile && (
           <Text style={s.smallMuted}>
@@ -118,6 +121,7 @@ export default function Home({ navigation }: any) {
       </View>
       <Pressable
         accessibilityRole="button"
+        accessibilityLabel={`तुमचा मार्ग: ${pathInfo[path].mr}. मार्ग बदलण्यासाठी दाबा.`}
         onPress={() => navigation.navigate("Learn")}
         style={s.pathPill}
       >
@@ -152,7 +156,7 @@ export default function Home({ navigation }: any) {
           </Text>
         )}
         <Button
-          secondary
+          accent
           title={
             next
               ? resume
@@ -171,6 +175,7 @@ export default function Home({ navigation }: any) {
       <Section title="आजची बोलण्याची शिफारस" />
       <Pressable
         accessibilityRole="button"
+        accessibilityLabel={`${speakRec.title}. ${speakRec.sub}`}
         onPress={speakRec.go}
         style={({ pressed }) => [s.lessonRow, { opacity: pressed ? 0.65 : 1 }]}
       >
@@ -189,13 +194,14 @@ export default function Home({ navigation }: any) {
           {due ? `${due} गोष्टींची उजळणी बाकी` : "सध्या उजळणी बाकी नाही"}
         </Text>
         <Text style={s.body}>
-          चुकलेले प्रश्न, अवघड शब्द आणि तुम्ही निवडलेली वाक्ये येथे पुन्हा
-          भेटतील.
+          चुकलेले प्रश्न, अवघड शब्द आणि तुम्ही निवडलेली वाक्ये विसरायला
+          लागण्याच्या सुमारास पुन्हा येतात. बरोबर उत्तर दिले की पुढची उजळणी
+          जास्त दिवसांनी येते.
         </Text>
         <View style={{ height: 12 }} />
         <Button
           secondary
-          title="उजळणी आणि सराव"
+          title="उजळणी सुरू करा · Review"
           onPress={() => navigation.navigate("Review")}
         />
       </View>
@@ -271,23 +277,6 @@ export default function Home({ navigation }: any) {
         <Text style={s.smallMuted}>
           या आठवड्यात {week.filter((d) => d.on).length} / ७ दिवस सराव
         </Text>
-      </View>
-      <View style={{ gap: 12, marginTop: 24 }}>
-        <Button
-          title="सर्व धडे · Learn"
-          secondary
-          onPress={() => navigation.navigate("Learn")}
-        />
-        <Button
-          title="पाच शब्द शिका · Words"
-          secondary
-          onPress={() => navigation.navigate("Words", { daily: true })}
-        />
-        <Button
-          title={`जतन केलेले · Saved (${progress.saved.length})`}
-          secondary
-          onPress={() => navigation.navigate("Saved")}
-        />
       </View>
     </Shell>
   );

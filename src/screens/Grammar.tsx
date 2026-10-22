@@ -9,7 +9,7 @@ import {
   tenses,
   type Formula,
 } from "../data/grammar";
-import { AppText as Text, Button, Heading, Label, Shell } from "../components/ui";
+import { AppText as Text, Button, Chips, Heading, Label, Shell } from "../components/ui";
 import { Listen } from "../components/Audio";
 import { s } from "../components/styles";
 
@@ -59,16 +59,25 @@ export default function Grammar({ navigation }: any) {
         title="सूत्र तक्ता"
         sub="V1 = मूळ रूप (go) · V2 = भूतकाळी रूप (went) · V3 = तिसरे रूप (gone). हे पाहण्यासाठी आहे; सराव धड्यांमध्ये करा."
       />
-      <View style={{ gap: 8 }}>
-        {tabs.map(([id, label]) => (
-          <Button
-            key={id}
-            secondary={tab !== id}
-            title={`${tab === id ? "✓ " : ""}${label}`}
-            onPress={() => setTab(id)}
-          />
-        ))}
-      </View>
+      <Chips options={tabs} value={tab} onChange={setTab} label="व्याकरण विभाग" />
+
+      {tab === "tenses" && (
+        <View style={s.noteBox}>
+          <Label>सर्व काळ एका नजरेत · COMPARE</Label>
+          <Text style={s.smallMuted}>
+            प्रत्येक काळाचे एक उदाहरण. क्रियापदाचे रूप कसे बदलते ते पाहा; तपशील
+            खाली आहे.
+          </Text>
+          {tenses.map((t) => (
+            <View key={t.id} style={{ marginTop: 8 }}>
+              <Text style={s.rowTitle}>{t.affirmative.ex}</Text>
+              <Text style={s.smallMuted}>
+                {t.name} · {t.mr}
+              </Text>
+            </View>
+          ))}
+        </View>
+      )}
 
       {tab === "tenses" &&
         tenses.map((t) => (

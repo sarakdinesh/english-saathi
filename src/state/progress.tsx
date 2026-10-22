@@ -24,6 +24,8 @@ import {
   prunePlans,
   type DailyPlan,
 } from "../daily/engine";
+// Never rename: existing installs keep their progress under this key (the app
+// was called English Saathi when it was introduced).
 const KEY = "english-saathi.progress.v1";
 export const localDate = () => dateKey();
 // The day used for daily plans and their completion (see effectiveDate).

@@ -17,9 +17,18 @@ import {
   Heading,
   Label,
   Button,
+  Chips,
 } from "../components/ui";
 import { s } from "../components/styles";
+import { C } from "../components/theme";
 import * as Speech from "expo-speech";
+import { BRAND } from "../brand";
+const TEXT_SIZES = [
+  ["1", "नेहमीचा · Standard"],
+  ["1.15", "मोठा · Large"],
+  ["1.3", "अधिक मोठा · Extra large"],
+] as const;
+
 export default function Settings() {
   const { progress, settings, importProgress, reset, saveReminder } =
     useProgress();
@@ -84,7 +93,7 @@ export default function Settings() {
                 setReminderNote("आठवण सुरू झाली.");
               } else {
                 setReminderNote(
-                  "सूचनांची परवानगी मिळाली नाही. फोनच्या सेटिंग्जमध्ये इंग्रजी साथीसाठी सूचना सुरू करा.",
+                  "सूचनांची परवानगी मिळाली नाही. फोनच्या सेटिंग्जमध्ये इंग्लिश बोलूयासाठी सूचना सुरू करा.",
                 );
               }
             }}
@@ -105,7 +114,7 @@ export default function Settings() {
           {reminder.enabled && permission === "denied" && (
             <Text accessibilityRole="alert" style={s.smallMuted}>
               सूचनांची परवानगी बंद आहे, त्यामुळे आठवण येणार नाही. फोनच्या
-              सेटिंग्जमध्ये इंग्रजी साथीसाठी सूचना सुरू करा.
+              सेटिंग्जमध्ये इंग्लिश बोलूयासाठी सूचना सुरू करा.
             </Text>
           )}
           <Button
@@ -129,20 +138,15 @@ export default function Settings() {
       )}
       <View style={{ height: 24 }} />
       <Label>अक्षरांचा आकार · TEXT SIZE</Label>
-      <View style={{ gap: 10 }}>
-        {[
-          [1, "नेहमीचा · Standard"],
-          [1.15, "मोठा · Large"],
-          [1.3, "अधिक मोठा · Extra large"],
-        ].map(([n, label]) => (
-          <Button
-            key={n}
-            secondary={progress.settings.textSize !== n}
-            title={`${progress.settings.textSize === n ? "✓ " : ""}${label}`}
-            onPress={() => settings({ textSize: n as number })}
-          />
-        ))}
-      </View>
+      <Chips
+        label="अक्षरांचा आकार"
+        options={TEXT_SIZES}
+        value={String(progress.settings.textSize)}
+        onChange={(v) => settings({ textSize: Number(v) })}
+      />
+      <Text style={s.smallMuted}>
+        फोनच्या सेटिंग्जमधील अक्षरांचा आकारही येथे लागू होतो.
+      </Text>
       <View style={{ height: 24 }} />
       <Button
         secondary
@@ -185,7 +189,7 @@ export default function Settings() {
             {
               minHeight: 160,
               borderWidth: 1,
-              borderColor: "#617168",
+              borderColor: C.muted,
               padding: 14,
               textAlignVertical: "top",
             },
@@ -282,6 +286,19 @@ export default function Settings() {
             />
           </>
         )}
+      </View>
+      <View style={[s.dailyCard, { marginTop: 28 }]} accessible>
+        <Label>ॲपबद्दल · ABOUT</Label>
+        <Text style={s.sectionTitle}>{BRAND.full}</Text>
+        <Text style={s.marathiBody}>{BRAND.tagline}</Text>
+        <Text style={[s.smallMuted, { marginTop: 8 }]}>
+          आवृत्ती {BRAND.version} · सर्व धडे इंटरनेटशिवाय चालतात. तुमची प्रगती
+          फक्त या फोनवर राहते; ती कोणत्याही सर्व्हरवर पाठवली जात नाही.
+        </Text>
+        <Text style={s.smallMuted}>
+          उच्चार फोनच्या आवाजाने (text-to-speech) ऐकवले जातात. ॲप तुमचा उच्चार
+          तपासत नाही — रेकॉर्ड करून स्वतः तुलना करा.
+        </Text>
       </View>
     </Shell>
   );

@@ -54,3 +54,23 @@ Affected entries (including propagated advisories):
 - `sprintf-js`: moderate; via sprintf-js.
 - `uuid`: moderate; via uuid.
 - `xcode`: moderate; via uuid.
+
+## Update · 22 October 2026
+
+Reproduced with `npm audit` before changes: **31 entries (23 high, 8 moderate)**, from 7 root packages (braces, image-size, node-forge, postcss, sprintf-js, uuid, js-yaml propagation). The earlier "35" figure had already dropped through upstream patch releases.
+
+Changes (no `--force`, no framework upgrade):
+
+1. `npm audit fix` (semver-compatible only): `expo` 54.0.37 → 54.0.38, `@expo/cli` 54.0.28, `@expo/config-plugins` 54.0.6, `expo-asset` 12.0.14, `expo-modules-autolinking` 3.0.28, `xcode` 4.0.0 (drops the vulnerable `uuid@7`). `npx expo install --check`: "Dependencies are up to date".
+2. `overrides.postcss = ^8.5.31` (was 8.4.49 under `@expo/metro-config`). Same major version; fixes all four PostCSS advisories. Used only by Metro's web CSS pipeline.
+
+Result: **27 entries (22 high, 5 moderate)** from **4 root packages**, all build-time tooling — none is bundled into the app's JavaScript or runs on a learner's phone:
+
+| Root package | Pulled in by | Why not fixed | Exposure |
+| --- | --- | --- | --- |
+| braces 3.0.3 | micromatch → metro / jest-haste-map | 3.0.3 is the latest release; no patched version exists. | Glob patterns in dev tooling; patterns come from this repository. |
+| image-size 1.2.1 | metro | Fix is image-size 2.x (breaking API) under Metro 0.83; needs a Metro/Expo upgrade. | Parses images in `assets/` at build time; all are first-party. |
+| node-forge 1.4.0 | @expo/code-signing-certificates | 1.4.0 is the latest release. | Expo Updates code signing — not used by this app. |
+| sprintf-js 1.0.3 | argparse → js-yaml → istanbul (jest) | Fix requires the React Native 0.88 toolchain. | Test-coverage tooling only. |
+
+`npm audit --omit=dev` reports the same set because `expo` and `react-native` are runtime dependencies that also carry their CLIs; the vulnerable code paths are in those CLIs, not in the app bundle. Re-check at the next Expo SDK upgrade.

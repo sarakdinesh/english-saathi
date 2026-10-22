@@ -118,8 +118,8 @@ export function Exercise({
                 s.option,
                 picked &&
                   result !== null && {
-                    borderColor: result ? C.green : "#B65C4C",
-                    backgroundColor: result ? "#E9F2E8" : "#FBECE7",
+                    borderColor: result ? C.green : C.danger,
+                    backgroundColor: result ? C.successSoft : C.dangerSoft,
                   },
                 { opacity: used && build ? 0.4 : pressed ? 0.7 : 1 },
               ]}
@@ -143,7 +143,7 @@ export function Exercise({
       )}
       {result !== null && (
         <View accessibilityLiveRegion="polite">
-          <Text style={[s.rowTitle, { color: result ? C.green : "#9A3929" }]}>
+          <Text style={[s.rowTitle, { color: result ? C.green : C.dangerInk }]}>
             {result ? "बरोबर! छान प्रयत्न." : "पुन्हा शिकूया."}
           </Text>
           <Text style={s.marathiBody}>{item.explanation}</Text>

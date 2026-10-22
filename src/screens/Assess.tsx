@@ -150,7 +150,7 @@ export function Placement({ navigation }: any) {
           style={[
             s.option,
             { marginTop: 10 },
-            self[i] && { borderColor: C.green, backgroundColor: "#E9F2E8" },
+            self[i] && { borderColor: C.green, backgroundColor: C.successSoft },
           ]}
         >
           <Text style={[s.exampleEnglish, { flex: 1, fontSize: 15 }]}>

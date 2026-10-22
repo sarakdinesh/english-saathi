@@ -1,7 +1,7 @@
 // Bridge to expo-notifications. Loaded lazily and only on iOS/Android; the web
 // build has no local scheduling, so every call there is a safe no-op.
 import { Platform } from "react-native";
-import { planReminders, type Reminder } from "../state/reminders";
+import { planReminders, reminderTitle, type Reminder } from "../state/reminders";
 
 export const remindersSupported = Platform.OS === "android" || Platform.OS === "ios";
 const CHANNEL = "daily-reminder";
@@ -30,7 +30,7 @@ export async function sendTestNotification(seconds = 5): Promise<boolean> {
     });
   await N.scheduleNotificationAsync({
     content: {
-      title: "इंग्रजी साथी",
+      title: reminderTitle,
       body: "ही चाचणी सूचना आहे. तुमच्या फोनवर आठवणी नीट येतील.",
     },
     trigger: {

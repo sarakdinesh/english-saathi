@@ -13,6 +13,7 @@ import {
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText as Text, Icon, IconName } from "../components/ui";
 import { C } from "../components/theme";
+import { TAB_ROUTES } from "../navigation/types";
 
 export type MenuItem = {
   icon: IconName;
@@ -24,16 +25,15 @@ export type MenuItem = {
 type Group = { title: string; tint: string; ink: string; items: MenuItem[] };
 
 // Routes that live inside the bottom-tab navigator rather than the root stack.
-const TAB_ROUTES = ["Home", "Learn", "Speak", "Review"];
-export const isTabRoute = (route: string) => TAB_ROUTES.includes(route);
+export const isTabRoute = (route: string) =>
+  (TAB_ROUTES as readonly string[]).includes(route);
 
 const groups: Group[] = [
   {
     title: "शिका · LEARN",
-    tint: "#E4EFE9",
+    tint: C.greenTint,
     ink: C.green,
     items: [
-      { icon: "home-outline", mr: "घर", en: "Home", route: "Home" },
       { icon: "book-outline", mr: "सर्व धडे", en: "Lessons", route: "Learn" },
       { icon: "list-outline", mr: "व्याकरण तक्ता", en: "Grammar chart", route: "Grammar" },
       { icon: "text-outline", mr: "पाच शब्द शिका", en: "Words", route: "Words" },
@@ -43,8 +43,8 @@ const groups: Group[] = [
   },
   {
     title: "बोला · SPEAK",
-    tint: "#F7F0DD",
-    ink: "#8A6D2B",
+    tint: C.amberTint,
+    ink: C.amberInk,
     items: [
       { icon: "chatbubbles-outline", mr: "बोलण्याची वाक्ये", en: "Phrasebook", route: "Phrasebook" },
       { icon: "mic-outline", mr: "बोलण्याचा सराव", en: "Speaking drill", route: "SpeakDrill" },
@@ -52,9 +52,9 @@ const groups: Group[] = [
     ],
   },
   {
-    title: "सराव · PRACTISE",
-    tint: "#EDF5CC",
-    ink: "#5B7A12",
+    title: "सराव · PRACTICE",
+    tint: C.limeTint,
+    ink: C.olive,
     items: [
       { icon: "flame-outline", mr: "आजचा सराव", en: "Daily quiz", route: "DailyQuiz" },
       { icon: "help-circle-outline", mr: "मिश्र प्रश्न", en: "Mixed quiz", route: "Quiz" },
@@ -64,8 +64,8 @@ const groups: Group[] = [
   },
   {
     title: "माझी प्रगती · MY PROGRESS",
-    tint: "#E6EDF3",
-    ink: "#35607F",
+    tint: C.blueTint,
+    ink: C.blueInk,
     items: [
       { icon: "stats-chart-outline", mr: "कौशल्ये", en: "Skills", route: "Skills" },
       { icon: "bookmark-outline", mr: "जतन केलेले", en: "Saved", route: "Saved" },
@@ -201,7 +201,7 @@ export function MenuSheet({
 
 const m = StyleSheet.create({
   overlay: { flex: 1, justifyContent: "flex-end", alignItems: "center" },
-  scrim: { backgroundColor: "rgba(23,43,36,0.45)" },
+  scrim: { backgroundColor: C.scrim },
   sheet: {
     width: "100%",
     maxWidth: 700,
@@ -209,7 +209,7 @@ const m = StyleSheet.create({
     borderTopLeftRadius: 28,
     borderTopRightRadius: 28,
     overflow: "hidden",
-    shadowColor: "#0C1F19",
+    shadowColor: C.shadow,
     shadowOpacity: 0.2,
     shadowRadius: 24,
     shadowOffset: { width: 0, height: -6 },
@@ -261,12 +261,12 @@ const m = StyleSheet.create({
     paddingHorizontal: 8,
     alignItems: "center",
     minHeight: 112,
-    shadowColor: "#173D35",
+    shadowColor: C.shadow,
     shadowOpacity: 0.05,
     shadowRadius: 8,
     shadowOffset: { width: 0, height: 3 },
   },
-  tilePressed: { backgroundColor: "#EEF3EA", transform: [{ scale: 0.97 }] },
+  tilePressed: { backgroundColor: C.pressed, transform: [{ scale: 0.97 }] },
   iconWrap: {
     width: 46,
     height: 46,

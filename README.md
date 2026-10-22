@@ -1,4 +1,8 @@
-# English Saathi · इंग्रजी साथी
+# English Boluya · इंग्लिश बोलूया
+
+*आपल्या भाषेत शिकूया, इंग्रजीत बोलूया!*
+
+> Formerly **English Saathi**. Internal identifiers (Android package `com.englishsaathi.learn`, storage key `english-saathi.progress.v1`, Expo slug) keep the old name on purpose so existing installs keep their progress — see `docs/release-readiness.md`.
 
 A Marathi-first beginner English app with bundled lessons and local progress. Built with verified installed Expo 54.0.37, React Native 0.81.5, React 19.1.0, TypeScript 5.9.3, React Navigation 7 and AsyncStorage 2.2.0.
 

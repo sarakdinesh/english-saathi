@@ -1,3 +1,4 @@
+import { BRAND } from "../brand";
 // Optional daily reminder: pure planning only (no React, no native modules).
 // Reminders are local notifications; nothing is sent to or from a server.
 export type Reminder = { enabled: boolean; hour: number; minute: number };
@@ -23,7 +24,7 @@ export const isReminder = (v: any): v is Reminder =>
   v.minute >= 0 &&
   v.minute <= 59;
 
-export const reminderTitle = "इंग्रजी साथी";
+export const reminderTitle = BRAND.mr;
 
 // Gentle, varied Marathi copy. No streak or guilt wording: a skipped day is fine.
 export const reminderBodies = (minutes: number) => [

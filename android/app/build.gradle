@@ -92,7 +92,8 @@ android {
         applicationId 'com.englishsaathi.learn'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        versionCode 1
+        // Raise versionCode for every Play upload (or pass -PboluyaVersionCode=N).
+        versionCode((findProperty('boluyaVersionCode') ?: '1') as Integer)
         versionName "1.0.0"
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
@@ -103,6 +104,17 @@ android {
             storePassword 'android'
             keyAlias 'androiddebugkey'
             keyPassword 'android'
+        }
+        // Production upload key. Values come from ~/.gradle/gradle.properties
+        // (or -P flags / CI secrets) and are never committed. See
+        // docs/release-readiness.md.
+        if (findProperty('BOLUYA_UPLOAD_STORE_FILE')) {
+            upload {
+                storeFile file(findProperty('BOLUYA_UPLOAD_STORE_FILE'))
+                storePassword findProperty('BOLUYA_UPLOAD_STORE_PASSWORD')
+                keyAlias findProperty('BOLUYA_UPLOAD_KEY_ALIAS')
+                keyPassword findProperty('BOLUYA_UPLOAD_KEY_PASSWORD')
+            }
         }
     }
     buildTypes {
@@ -120,9 +132,14 @@ android {
             matchingFallbacks = ['debug']
         }
         release {
-            // Caution! In production, you need to generate your own keystore file.
-            // see https://reactnative.dev/docs/signed-apk-android.
-            signingConfig signingConfigs.debug
+            // Signed with the upload key when it is configured; otherwise with
+            // the debug key, which Google Play rejects (local testing only).
+            if (signingConfigs.findByName('upload') != null) {
+                signingConfig signingConfigs.upload
+            } else {
+                logger.warn("English Boluya: BOLUYA_UPLOAD_STORE_FILE not set; release is debug-signed and NOT store-ready.")
+                signingConfig signingConfigs.debug
+            }
             def enableShrinkResources = findProperty('android.enableShrinkResourcesInReleaseBuilds') ?: 'false'
             shrinkResources enableShrinkResources.toBoolean()
             minifyEnabled enableMinifyInReleaseBuilds

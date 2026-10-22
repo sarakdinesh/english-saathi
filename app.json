@@ -6,21 +6,36 @@
     "orientation": "portrait",
     "userInterfaceStyle": "light",
     "icon": "./assets/icon.png",
-    "splash": { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#FEFDF5" },
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FEFDF5"
+    },
     "backgroundColor": "#F7F8F2",
     "android": {
       "package": "com.englishsaathi.learn",
       "adaptiveIcon": {
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FEFDF5"
-      }
+      },
+      "versionCode": 1,
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
     },
     "web": {
       "name": "English Boluya",
       "bundler": "metro"
     },
     "plugins": [
-      ["expo-notifications", { "color": "#174C3C" }],
+      [
+        "expo-notifications",
+        {
+          "color": "#174C3C"
+        }
+      ],
       [
         "expo-audio",
         {

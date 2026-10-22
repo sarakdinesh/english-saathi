@@ -146,8 +146,8 @@ export function ExerciseCard({
               onPress={() => onSelect(i)}
               style={[
                 s.option,
-                right && { borderColor: C.green, backgroundColor: "#E9F2E8" },
-                wrong && { borderColor: "#B65C4C", backgroundColor: "#FBECE7" },
+                right && { borderColor: C.green, backgroundColor: C.successSoft },
+                wrong && { borderColor: C.danger, backgroundColor: C.dangerSoft },
               ]}
             >
               <Text style={s.optionLetter}>{String.fromCharCode(65 + i)}</Text>

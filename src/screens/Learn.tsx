@@ -84,10 +84,10 @@ export default function Learn({ navigation, route }: any) {
             <Text style={[s.sectionTitle, on && { color: C.white }]}>
               {pathInfo[id].mr}
             </Text>
-            <Text style={[s.smallMuted, on && { color: "#C1CEBF" }]}>
+            <Text style={[s.smallMuted, on && { color: C.heroSub }]}>
               {pathInfo[id].sub}
             </Text>
-            <Text style={[s.smallMuted, on && { color: "#C1CEBF" }]}>
+            <Text style={[s.smallMuted, on && { color: C.heroSub }]}>
               {done} / {list.length} धडे वाचले
             </Text>
           </Pressable>

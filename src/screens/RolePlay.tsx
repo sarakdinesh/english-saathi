@@ -114,7 +114,7 @@ export default function RolePlay({ route, navigation }: any) {
               { marginBottom: 10 },
               ticked.includes(i) && {
                 borderColor: C.green,
-                backgroundColor: "#E9F2E8",
+                backgroundColor: C.successSoft,
               },
             ]}
           >

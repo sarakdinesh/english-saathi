@@ -50,7 +50,7 @@ function Choice({
       accessibilityRole="radio"
       accessibilityState={{ checked: on }}
       onPress={onPress}
-      style={[s.option, on && { borderColor: C.green, backgroundColor: "#E9F2E8" }]}
+      style={[s.option, on && { borderColor: C.green, backgroundColor: C.successSoft }]}
     >
       <View style={{ flex: 1 }}>
         <Text style={s.rowTitle}>

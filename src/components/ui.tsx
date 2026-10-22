@@ -14,6 +14,9 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useProgress } from "../state/progress";
 import { C } from "./theme";
 import { s } from "./styles";
+import { BRAND } from "../brand";
+import { TAB_ROUTES } from "../navigation/types";
+const isTabName = (name: string) => (TAB_ROUTES as readonly string[]).includes(name);
 import { Image, StyleSheet } from "react-native";
 export function AppText({ style, ...props }: TextProps) {
   const { progress } = useProgress();
@@ -43,48 +46,56 @@ export const Icon = ({
   size?: number;
   color?: string;
 }) => <Ionicons name={name} size={size} color={color} />;
+// Three variants, used consistently:
+//  - primary (default): deep green, the main action of a card or screen;
+//  - accent: lime, reserved for the single most important action on a screen
+//    (Home's "continue learning");
+//  - secondary: quiet outline for every other action.
 export function Button({
   title,
   onPress,
   secondary = false,
+  accent = false,
   disabled = false,
+  accessibilityLabel,
+  accessibilityHint,
 }: {
   title: string;
   onPress: () => void;
   secondary?: boolean;
+  accent?: boolean;
   disabled?: boolean;
+  accessibilityLabel?: string;
+  accessibilityHint?: string;
 }) {
+  const variant = accent ? s.accent : secondary ? s.secondary : null;
+  const ink = disabled ? C.muted : accent ? C.ink : secondary ? C.green : C.white;
   return (
     <Pressable
       accessibilityRole="button"
+      accessibilityLabel={accessibilityLabel}
+      accessibilityHint={accessibilityHint}
       onPress={onPress}
       disabled={disabled}
       accessibilityState={{ disabled }}
       style={({ pressed }) => [
         s.button,
-        disabled && { opacity: 0.5 },
-        secondary && s.secondary,
-        pressed && { opacity: 0.75 },
+        variant,
+        disabled && s.buttonDisabled,
+        pressed && !disabled && { opacity: 0.8, transform: [{ scale: 0.99 }] },
       ]}
     >
-      <AppText style={[s.buttonText, secondary && { color: C.ink }]}>
-        {title}
-      </AppText>
-      <Icon
-        name="arrow-forward"
-        size={18}
-        color={secondary ? C.ink : C.white}
-      />
+      <AppText style={[s.buttonText, { color: ink }]}>{title}</AppText>
+      <Icon name="arrow-forward" size={18} color={ink} />
     </Pressable>
   );
 }
-const TAB_ROUTES = ["Home", "Learn", "Speak", "Review"];
 // Marathi title with an English subtitle for every routed screen.
 export const screenTitles: Record<string, { mr: string; en: string }> = {
-  Home: { mr: "english saathi", en: "तुमचा इंग्रजीचा सोबती" },
+  Home: { mr: BRAND.mr, en: BRAND.en },
   Learn: { mr: "शिका", en: "Learn" },
   Speak: { mr: "बोला", en: "Speak" },
-  Review: { mr: "उजळणी", en: "Review" },
+  Review: { mr: "सराव", en: "Practice & review" },
   Saved: { mr: "जतन केलेले", en: "Saved" },
   Settings: { mr: "सेटिंग्ज", en: "Settings" },
   Phrasebook: { mr: "बोलण्याची वाक्ये", en: "Phrasebook" },
@@ -133,7 +144,7 @@ export function AppHeader({ title }: { title?: string }) {
   const insets = useSafeAreaInsets();
   const navigation = useNavigation<any>();
   const route = useRoute();
-  const isTab = TAB_ROUTES.includes(route.name);
+  const isTab = isTabName(route.name);
   const isHome = route.name === "Home";
   const names = screenTitles[route.name] ?? { mr: route.name, en: "" };
   const canGoBack = !isTab && navigation.canGoBack();
@@ -163,7 +174,7 @@ export function AppHeader({ title }: { title?: string }) {
         {isHome ? (
           <Image
             source={require("../../assets/logo-horizontal.png")}
-            accessibilityLabel="English Boluya · इंग्लिश बोलूया"
+            accessibilityLabel={BRAND.full}
             resizeMode="contain"
             style={{ width: 190, height: 41 }}
           />
@@ -208,7 +219,7 @@ export function Shell({
 }) {
   const insets = useSafeAreaInsets();
   const route = useRoute();
-  const isTab = TAB_ROUTES.includes(route.name);
+  const isTab = isTabName(route.name);
   return (
     <View style={s.safe}>
       <AppHeader title={title} />
@@ -242,7 +253,7 @@ export function Label({
   light?: boolean;
 }) {
   return (
-    <Text style={[s.eyebrow, light && { color: "#B5C7A4" }]}>{children}</Text>
+    <Text style={[s.eyebrow, light && { color: C.heroMuted }]}>{children}</Text>
   );
 }
 export function Heading({ title, sub }: { title: string; sub?: string }) {
@@ -270,6 +281,43 @@ export function Section({
           <Text style={s.link}>{action} →</Text>
         </Pressable>
       )}
+    </View>
+  );
+}
+
+// Single-choice selector (tabs within a screen). Selection is announced by
+// screen readers and does not rely on colour alone (✓ prefix).
+export function Chips<T extends string>({
+  options,
+  value,
+  onChange,
+  label,
+}: {
+  options: readonly (readonly [T, string])[];
+  value: T;
+  onChange: (value: T) => void;
+  label: string;
+}) {
+  return (
+    <View style={s.chipRow} accessibilityRole="tablist" accessibilityLabel={label}>
+      {options.map(([id, text]) => {
+        const on = id === value;
+        return (
+          <Pressable
+            key={id}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: on }}
+            aria-selected={on}
+            onPress={() => onChange(id)}
+            style={({ pressed }) => [s.chip, on && s.chipOn, pressed && { opacity: 0.8 }]}
+          >
+            <Text style={[s.chipText, on && s.chipTextOn]}>
+              {on ? "✓ " : ""}
+              {text}
+            </Text>
+          </Pressable>
+        );
+      })}
     </View>
   );
 }
