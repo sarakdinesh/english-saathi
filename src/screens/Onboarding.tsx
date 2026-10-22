@@ -1,5 +1,5 @@
 import React, { useState } from "react";
-import { Pressable, View } from "react-native";
+import { Image, Pressable, View } from "react-native";
 import { CommonActions } from "@react-navigation/native";
 import { useProgress } from "../state/progress";
 import {
@@ -91,6 +91,14 @@ export default function Onboarding({ navigation }: any) {
       </Label>
       {step === 0 && (
         <>
+          {first && (
+            <Image
+              source={require("../../assets/logo-stacked.png")}
+              accessibilityLabel="English Boluya · इंग्लिश बोलूया"
+              resizeMode="contain"
+              style={{ width: "100%", height: 170, marginBottom: 12 }}
+            />
+          )}
           <Heading
             title="तुम्हाला इंग्रजी कशासाठी शिकायचे आहे?"
             sub="तुमच्या ध्येयानुसार रोजची वाक्ये निवडली जातील. नंतर बदलता येईल."

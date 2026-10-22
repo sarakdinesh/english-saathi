@@ -9,3 +9,16 @@ web-build/
 # Local installable build artifacts
 artifacts/
 *.apk
+
+# Android signing keys (never commit)
+*.keystore
+*.jks
+
+# Signing material and secrets — never commit
+*.keystore
+*.jks
+*.p12
+*.pem
+credentials.json
+.env
+.env.*

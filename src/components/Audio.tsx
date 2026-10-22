@@ -318,12 +318,19 @@ export function Recorder({
       active.current = true;
       return () => {
         active.current = false;
-        player.pause();
-        if (recorder.isRecording)
-          void recorder
-            .stop()
-            .then(() => erase(recorder.uri))
-            .catch(() => {});
+        // On unmount expo-audio has usually released these native objects
+        // already; touching a released object throws (found on Android), so
+        // every call here must be allowed to fail.
+        try {
+          player.pause();
+        } catch {}
+        try {
+          if (recorder.isRecording)
+            void recorder
+              .stop()
+              .then(() => erase(recorder.uri))
+              .catch(() => {});
+        } catch {}
         erase(uriRef.current);
         uriRef.current = null;
         setUri(null);

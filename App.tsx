@@ -9,7 +9,11 @@ import {
   useWindowDimensions,
 } from "react-native";
 import { StatusBar } from "expo-status-bar";
-import { NavigationContainer, DefaultTheme } from "@react-navigation/native";
+import {
+  NavigationContainer,
+  DefaultTheme,
+  useNavigation,
+} from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import {
   createNativeStackNavigator,
@@ -43,10 +47,13 @@ type StackParams = {
   DailyQuiz: undefined;
   Onboarding: undefined;
   Skills: undefined;
+  Grammar: undefined;
   SkillPractice: { skill: string };
 };
 import Home from "./src/screens/Home";
 import { syncReminders } from "./src/components/reminderService";
+import Menu, { MenuSheet, MenuItem, isTabRoute } from "./src/screens/Menu";
+import Grammar from "./src/screens/Grammar";
 import Skills, { SkillPractice } from "./src/screens/Skills";
 import Onboarding from "./src/screens/Onboarding";
 import { needsOnboarding } from "./src/state/onboarding";
@@ -354,10 +361,20 @@ const tabIcons: Record<string, IconName> = {
   Speak: "chatbubbles-outline",
   Review: "refresh-outline",
   Saved: "bookmark-outline",
+  Menu: "apps-outline",
 };
 function Tabs() {
   const insets = useSafeAreaInsets();
+  const navigation = useNavigation<any>();
+  const [menuOpen, setMenuOpen] = useState(false);
+  function goTo(item: MenuItem) {
+    setMenuOpen(false);
+    if (isTabRoute(item.route))
+      navigation.navigate("Main", { screen: item.route });
+    else navigation.navigate(item.route, item.params);
+  }
   return (
+    <>
     <Tab.Navigator
       screenOptions={({ route }) => ({
         headerShown: false,
@@ -408,7 +425,28 @@ function Tabs() {
           tabBarAccessibilityLabel: "Review · उजळणी",
         }}
       />
+      <Tab.Screen
+        name="Menu"
+        component={Menu}
+        options={{
+          tabBarLabel: "मेनू",
+          tabBarAccessibilityLabel: "Menu · सर्व विभाग",
+        }}
+        listeners={{
+          tabPress: (e) => {
+            // Opens the section popup instead of switching to a page.
+            e.preventDefault();
+            setMenuOpen(true);
+          },
+        }}
+      />
     </Tab.Navigator>
+    <MenuSheet
+      visible={menuOpen}
+      onClose={() => setMenuOpen(false)}
+      onSelect={goTo}
+    />
+    </>
   );
 }
 function useReminderSync() {
@@ -470,6 +508,7 @@ function Root() {
                 component={Onboarding}
                 options={{ title: "स्वागत" }}
               />
+              <Stack.Screen name="Grammar" component={Grammar} options={{ title: "व्याकरण" }} />
               <Stack.Screen name="Skills" component={Skills} options={{ title: "कौशल्ये" }} />
               <Stack.Screen
                 name="SkillPractice"

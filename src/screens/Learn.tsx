@@ -95,6 +95,11 @@ export default function Learn({ navigation, route }: any) {
       })}
       <View style={{ height: 6 }} />
       <Button
+        title="व्याकरण सूत्र तक्ता · Grammar chart"
+        onPress={() => navigation.navigate("Grammar")}
+      />
+      <View style={{ height: 10 }} />
+      <Button
         secondary
         title={
           progress.placement

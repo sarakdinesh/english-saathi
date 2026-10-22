@@ -14,7 +14,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useProgress } from "../state/progress";
 import { C } from "./theme";
 import { s } from "./styles";
-import { StyleSheet } from "react-native";
+import { Image, StyleSheet } from "react-native";
 export function AppText({ style, ...props }: TextProps) {
   const { progress } = useProgress();
   const flat = StyleSheet.flatten(style) ?? {};
@@ -100,6 +100,7 @@ export const screenTitles: Record<string, { mr: string; en: string }> = {
   Lesson: { mr: "धडा", en: "Lesson" },
   Words: { mr: "शब्द", en: "Words" },
   Quiz: { mr: "रोजचा सराव", en: "Daily practice" },
+  Grammar: { mr: "व्याकरण", en: "Grammar" },
   Skills: { mr: "कौशल्ये", en: "Skills" },
   SkillPractice: { mr: "कौशल्य सराव", en: "Skill practice" },
   Onboarding: { mr: "स्वागत", en: "Welcome" },
@@ -154,20 +155,29 @@ export function AppHeader({ title }: { title?: string }) {
           onPress={() => navigation.goBack()}
         />
       ) : isHome ? (
-        <View style={s.logo}>
-          <Text style={s.logoText}>अa</Text>
-        </View>
+        <View style={{ width: 4 }} />
       ) : (
         <View style={{ width: 8 }} />
       )}
       <View style={s.headerTitleWrap} accessibilityRole="header">
-        <Text style={isHome ? s.brandName : s.headerTitle} numberOfLines={1}>
-          {title ?? names.mr}
-        </Text>
-        {!!names.en && (
-          <Text style={s.headerSub} numberOfLines={1}>
-            {names.en}
-          </Text>
+        {isHome ? (
+          <Image
+            source={require("../../assets/logo-horizontal.png")}
+            accessibilityLabel="English Boluya · इंग्लिश बोलूया"
+            resizeMode="contain"
+            style={{ width: 190, height: 41 }}
+          />
+        ) : (
+          <>
+            <Text style={s.headerTitle} numberOfLines={1}>
+              {title ?? names.mr}
+            </Text>
+            {!!names.en && (
+              <Text style={s.headerSub} numberOfLines={1}>
+                {names.en}
+              </Text>
+            )}
+          </>
         )}
       </View>
       {isTab && (

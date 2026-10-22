@@ -10,7 +10,7 @@
     "typecheck": "tsc --noEmit",
     "export:web": "expo export --platform web",
     "export:android": "expo export --platform android --output-dir dist-android",
-    "test": "node --experimental-strip-types scripts/check-content.ts && node --experimental-strip-types scripts/check-progress.ts && node --experimental-strip-types scripts/check-flows.ts && node --experimental-strip-types scripts/check-daily.ts && node --experimental-strip-types scripts/check-onboarding.ts && node --experimental-strip-types scripts/check-reminders.ts && node --experimental-strip-types scripts/check-skills.ts && npm run test:tz",
+    "test": "node --experimental-strip-types scripts/check-content.ts && node --experimental-strip-types scripts/check-progress.ts && node --experimental-strip-types scripts/check-flows.ts && node --experimental-strip-types scripts/check-daily.ts && node --experimental-strip-types scripts/check-onboarding.ts && node --experimental-strip-types scripts/check-reminders.ts && node --experimental-strip-types scripts/check-skills.ts && node --experimental-strip-types scripts/check-grammar.ts && npm run test:tz",
     "test:tz": "for z in UTC Asia/Kolkata America/New_York Europe/London Australia/Lord_Howe Pacific/Kiritimati America/Los_Angeles; do TZ=$z node --experimental-strip-types scripts/check-time.ts && TZ=$z node --experimental-strip-types scripts/check-reminders.ts || exit 1; done",
     "ios": "expo run:ios",
     "report:inventory": "node --experimental-strip-types scripts/report-inventory.ts",

@@ -1,19 +1,22 @@
 {
   "expo": {
-    "name": "English Saathi",
+    "name": "English Boluya",
     "slug": "english-saathi",
     "version": "1.0.0",
     "orientation": "portrait",
     "userInterfaceStyle": "light",
+    "icon": "./assets/icon.png",
+    "splash": { "image": "./assets/splash-icon.png", "resizeMode": "contain", "backgroundColor": "#FEFDF5" },
     "backgroundColor": "#F7F8F2",
     "android": {
       "package": "com.englishsaathi.learn",
       "adaptiveIcon": {
-        "backgroundColor": "#173D35"
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FEFDF5"
       }
     },
     "web": {
-      "name": "English Saathi",
+      "name": "English Boluya",
       "bundler": "metro"
     },
     "plugins": [

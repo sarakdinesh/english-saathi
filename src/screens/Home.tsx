@@ -238,6 +238,12 @@ export default function Home({ navigation }: any) {
           title="सर्व कौशल्ये पाहा · Skills"
           onPress={() => navigation.navigate("Skills")}
         />
+        <View style={{ height: 10 }} />
+        <Button
+          secondary
+          title="व्याकरण सूत्र तक्ता · Grammar"
+          onPress={() => navigation.navigate("Grammar")}
+        />
       </View>
       <View style={s.goalCard}>
         <Label>आजचे ध्येय · DAILY GOAL</Label>
