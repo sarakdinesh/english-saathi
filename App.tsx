@@ -1,6 +1,7 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
   AppState,
+  Platform,
   View,
   useColorScheme,
   useWindowDimensions,
@@ -76,11 +77,16 @@ function Tabs() {
         tabBarStyle: {
           backgroundColor: C.white,
           borderTopColor: C.line,
-          height: 62 + insets.bottom,
+          // Web draws the Devanagari label lower than Android; give it room.
+          height: (Platform.OS === "web" ? 70 : 62) + insets.bottom,
           paddingTop: 8,
           paddingBottom: Math.max(insets.bottom, 8),
         },
-        tabBarLabelStyle: { fontSize: 11, fontWeight: "600" },
+        tabBarLabelStyle: {
+          fontSize: 11,
+          fontWeight: "600",
+          ...(Platform.OS === "web" ? { lineHeight: 18 } : {}),
+        },
         tabBarAllowFontScaling: true,
         tabBarIcon: ({ color }) => (
           <Icon name={tabIcons[route.name]} color={color} size={24} />

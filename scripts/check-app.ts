@@ -262,9 +262,14 @@ assert.ok(Object.values(theme.font).every((f: any) => f.fontSize >= 12 && f.line
 
 // ---- Release safety --------------------------------------------------------------
 const manifest = read("android/app/src/main/AndroidManifest.xml");
-for (const p of ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE"])
+for (const p of ["READ_EXTERNAL_STORAGE", "WRITE_EXTERNAL_STORAGE", "FOREGROUND_SERVICE", "FOREGROUND_SERVICE_MEDIA_PLAYBACK"])
   assert.match(manifest, new RegExp(`${p}" tools:node="remove"`));
 assert.ok(!/permission\.SYSTEM_ALERT_WINDOW"/.test(manifest), "overlay permission only in debug");
+// Unused expo-audio foreground services stay out of the store build.
+for (const svc of ["AudioControlsService", "AudioRecordingService"])
+  assert.match(manifest, new RegExp(`audio\\.service\\.${svc}" tools:node="remove"`));
+assert.match(read("app.json"), /"enableBackgroundRecording": false/);
+assert.match(read("app.json"), /"enableBackgroundPlayback": false/);
 const gradle = read("android/app/build.gradle");
 assert.ok(!/BOLUYA_UPLOAD_STORE_PASSWORD\s*=|storePassword\s+'(?!android')/.test(gradle), "no committed upload password");
 const ignore = read(".gitignore");

@@ -8,6 +8,12 @@
        (src/debug/AndroidManifest.xml). Removed even if a library requests them. -->
   <uses-permission android:name="android.permission.READ_EXTERNAL_STORAGE" tools:node="remove"/>
   <uses-permission android:name="android.permission.WRITE_EXTERNAL_STORAGE" tools:node="remove"/>
+  <!-- expo-audio's lock-screen controls and background recording are not used
+       (enableBackgroundPlayback/Recording are false), so its foreground
+       services and their permissions are removed; otherwise Play asks for a
+       foreground-service declaration. -->
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE" tools:node="remove"/>
+  <uses-permission android:name="android.permission.FOREGROUND_SERVICE_MEDIA_PLAYBACK" tools:node="remove"/>
   <queries>
     <intent>
       <action android:name="android.intent.action.VIEW"/>
@@ -23,6 +29,8 @@
     </intent>
   </queries>
   <application android:name=".MainApplication" android:label="@string/app_name" android:icon="@mipmap/ic_launcher" android:roundIcon="@mipmap/ic_launcher_round" android:allowBackup="true" android:theme="@style/AppTheme" android:supportsRtl="true" android:enableOnBackInvokedCallback="false">
+    <service android:name="expo.modules.audio.service.AudioControlsService" tools:node="remove"/>
+    <service android:name="expo.modules.audio.service.AudioRecordingService" tools:node="remove"/>
     <meta-data android:name="expo.modules.updates.ENABLED" android:value="false"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_CHECK_ON_LAUNCH" android:value="ALWAYS"/>
     <meta-data android:name="expo.modules.updates.EXPO_UPDATES_LAUNCH_WAIT_MS" android:value="0"/>
