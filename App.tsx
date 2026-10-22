@@ -1,6 +1,5 @@
 import React, { useEffect, useRef, useState } from "react";
 import {
-  ActivityIndicator,
   AppState,
   View,
   useColorScheme,
@@ -20,9 +19,9 @@ import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-cont
 import { ProgressProvider, useProgress, localDate } from "./src/state/progress";
 import { C, currentScheme, setScheme, type Scheme } from "./src/components/theme";
 import { refreshStyles, s } from "./src/components/styles";
-import { BRAND } from "./src/brand";
 import type { AppNavigation, StackParams, TabParams } from "./src/navigation/types";
 import ErrorBoundary from "./src/components/ErrorBoundary";
+import { Splash } from "./src/components/Splash";
 import { syncReminders } from "./src/components/reminderService";
 import { needsOnboarding } from "./src/state/onboarding";
 import { Icon, IconName, AppText as Text } from "./src/components/ui";
@@ -178,6 +177,8 @@ function Root() {
   const navState = useRef<NavigationState | undefined>(undefined);
   const base = scheme === "dark" ? DarkTheme : DefaultTheme;
   const { width } = useWindowDimensions();
+  // Shown once per launch, over the app, until storage is ready.
+  const [splash, setSplash] = useState(true);
   return (
     <View style={[s.root, width > 700 && { paddingVertical: 20 }]}>
       <View style={s.appFrame}>
@@ -188,11 +189,7 @@ function Root() {
           </Text>
         )}
         {!ready ? (
-          <View style={s.empty}>
-            <ActivityIndicator color={C.green} />
-            <Text style={s.sectionTitle}>{BRAND.mr}</Text>
-            <Text style={s.body}>तुमचे धडे तयार होत आहेत…</Text>
-          </View>
+          <View style={{ flex: 1 }} />
         ) : (
           <NavigationContainer
             key={scheme}
@@ -319,6 +316,7 @@ function Root() {
             </Stack.Navigator>
           </NavigationContainer>
         )}
+        {splash && <Splash ready={ready} onDone={() => setSplash(false)} />}
       </View>
     </View>
   );

@@ -26,6 +26,7 @@ const light = {
   onLime: "#172B24",
   tileAccent: "#D8F36A", // icon on the dark speaking tiles
   logoPlate: "transparent", // behind the logo artwork (dark lettering)
+  splash: "#FEFDF5", // launch screen; matches the native splash and icon
   // Hero card and speaking tiles stay dark in both schemes
   hero: "#174C3C",
   tile: "#172B24",
@@ -78,6 +79,7 @@ const dark: Palette = {
   onLime: "#172B24",
   tileAccent: "#D8F36A",
   logoPlate: "#F7F8F2",
+  splash: "#FEFDF5", // the brand launch screen stays light in both schemes
   hero: "#1D4536",
   tile: "#1D3A2F",
   heroText: "#EEF4EF",

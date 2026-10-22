@@ -91,10 +91,12 @@ export function Exercise({
       )}
       <View
         style={{
-          gap: 10,
-          marginVertical: 18,
+          gap: build ? 8 : 10,
+          marginTop: 14,
+          marginBottom: build || result !== null ? 14 : 0,
           flexDirection: build ? "row" : "column",
-          flexWrap: "wrap",
+          // Wrapping a column shrink-wraps each option; only word tiles wrap.
+          flexWrap: build ? "wrap" : "nowrap",
         }}
       >
         {item.options.map((option, i) => {
@@ -124,7 +126,18 @@ export function Exercise({
                 { opacity: used && build ? 0.4 : pressed ? 0.7 : 1 },
               ]}
             >
-              <Text style={s.exampleEnglish}>{option}</Text>
+              {!build && (
+                <View
+                  style={[
+                    s.radio,
+                    picked && {
+                      borderColor: result === false ? C.danger : C.green,
+                      backgroundColor: result === false ? C.danger : C.green,
+                    },
+                  ]}
+                />
+              )}
+              <Text style={[s.exampleEnglish, !build && { flex: 1 }]}>{option}</Text>
             </Pressable>
           );
         })}

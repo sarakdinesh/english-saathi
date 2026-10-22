@@ -141,10 +141,10 @@ export default function Home({ navigation }: TabProps<"Home">) {
             {count}/{list.length} धडे
           </Text>
         </View>
-        <Text style={[s.heroTitle, { fontSize: 30, lineHeight: 40 }]}>
+        <Text style={s.heroTitle}>
           {next ? next.title : "अभिनंदन! छान वाटचाल."}
         </Text>
-        <Text style={[s.heroMarathi, { fontSize: 17, lineHeight: 29 }]}>
+        <Text style={[s.heroMarathi, { fontSize: 16, lineHeight: 27 }]}>
           {next
             ? nextKit
               ? nextKit.can[1]
@@ -152,7 +152,7 @@ export default function Home({ navigation }: TabProps<"Home">) {
             : "या मार्गातील सर्व धडे वाचले आहेत. आता सराव आणि उजळणी सुरू ठेवा."}
         </Text>
         {!!unit && next && (
-          <Text style={[s.heroMarathi, { marginBottom: 18 }]}>
+          <Text style={[s.heroMarathi, { marginBottom: 14 }]}>
             {unit.title} · सुमारे {duration(next.id) + (nextKit ? 8 : 0)} मिनिटे
           </Text>
         )}
