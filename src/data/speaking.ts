@@ -27,7 +27,7 @@ export const situations: Situation[] = [
       {
         en: "I am fine, thank you.",
         mr: "मी ठीक आहे, धन्यवाद.",
-        say: "आय अॅम फाइन, थॅंक यू.",
+        say: "आय ॲम फाइन, थॅंक यू.",
       },
       {
         en: "My name is Asha.",
@@ -121,7 +121,7 @@ export const situations: Situation[] = [
       {
         en: "Turn left at the signal.",
         mr: "सिग्नलला डावीकडे वळा.",
-        say: "टर्न लेफ्ट अॅट द सिग्नल.",
+        say: "टर्न लेफ्ट ॲट द सिग्नल.",
       },
     ],
   },
@@ -283,7 +283,7 @@ export const situations: Situation[] = [
       {
         en: "I am still learning English.",
         mr: "मी अजून इंग्रजी शिकत आहे.",
-        say: "आय अॅम स्टिल लर्निंग इंग्लिश.",
+        say: "आय ॲम स्टिल लर्निंग इंग्लिश.",
       },
     ],
   },
@@ -444,7 +444,7 @@ export const mistakes: Mistake[] = [
     wrong: "Myself Rahul.",
     right: "I am Rahul. / My name is Rahul.",
     why: "'मी राहुल' = I am Rahul. Myself शब्दाने वाक्य सुरू करत नाहीत.",
-    say: "आय अॅम राहुल.",
+    say: "आय ॲम राहुल.",
   },
   {
     wrong: "What is your good name?",
@@ -468,7 +468,7 @@ export const mistakes: Mistake[] = [
     wrong: "I am going to home.",
     right: "I am going home.",
     why: "home च्या आधी to लागत नाही.",
-    say: "आय अॅम गोइंग होम.",
+    say: "आय ॲम गोइंग होम.",
   },
   {
     wrong: "I will come tomorrow morning only.",
@@ -516,13 +516,13 @@ export const mistakes: Mistake[] = [
     wrong: "My age is 25 years.",
     right: "I am 25 years old.",
     why: "वय सांगताना I am … years old म्हणा.",
-    say: "आय अॅम ट्वेंटी-फाइव्ह इअर्स ओल्ड.",
+    say: "आय ॲम ट्वेंटी-फाइव्ह इअर्स ओल्ड.",
   },
   {
     wrong: "I am coming from Pune.",
     right: "I am from Pune.",
     why: "तुम्ही कुठले आहात हे सांगताना I am from….",
-    say: "आय अॅम फ्रॉम पुणे.",
+    say: "आय ॲम फ्रॉम पुणे.",
   },
   {
     wrong: "Yesterday I am going to market.",

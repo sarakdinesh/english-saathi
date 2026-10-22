@@ -205,8 +205,8 @@ assert.match(micSrc, /status !== "undetermined"/);
 assert.match(micSrc, /catch/);
 
 // "ॲप" is one letter (U+0972). "अॅप" (अ + ॅ) draws as "अ ॅप" on Android.
-// Checked in app UI text; pronunciation guides in src/data still use अॅ.
-for (const f of tsx)
+// Checked everywhere, including pronunciation guides ("आय ॲम").
+for (const f of [...walk("src"), "App.tsx"].filter((f) => /\.tsx?$/.test(f)))
   assert.ok(!read(f).includes("अॅ"), `${f}: write ॲ (U+0972), not अ + ॅ`);
 
 // ---- Design tokens --------------------------------------------------------------

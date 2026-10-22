@@ -9,7 +9,7 @@ export const foundationTips: (Mistake & { id: string })[] = [
     wrong: "This is a egg.",
     right: "This is an egg.",
     why: "स्वराच्या आवाजाने सुरू होणाऱ्या शब्दापुढे an येते: an egg, an apple. बाकी शब्दांपुढे a: a pen.",
-    say: "दिस इज अॅन एग.",
+    say: "दिस इज ॲन एग.",
   },
   {
     id: "ftip-article",
@@ -23,7 +23,7 @@ export const foundationTips: (Mistake & { id: string })[] = [
     wrong: "i am a student.",
     right: "I am a student.",
     why: "'मी' साठी I नेहमी मोठ्या अक्षरात लिहितात. वाक्याची सुरुवातही मोठ्या अक्षराने करतात.",
-    say: "आय अॅम अ स्टुडंट.",
+    say: "आय ॲम अ स्टुडंट.",
   },
   {
     id: "ftip-day-capital",
@@ -65,7 +65,7 @@ export const foundationTips: (Mistake & { id: string })[] = [
     wrong: "I am ten year old.",
     right: "I am ten years old.",
     why: "एकापेक्षा जास्त वर्षे असतील तर years: ten years old. फक्त one year old.",
-    say: "आय अॅम टेन इयर्झ ओल्ड.",
+    say: "आय ॲम टेन इयर्झ ओल्ड.",
   },
   {
     id: "ftip-she",
