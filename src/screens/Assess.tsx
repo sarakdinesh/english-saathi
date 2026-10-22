@@ -315,7 +315,7 @@ export function LongTalk({ route, navigation }: StackProps<"LongTalk">) {
       <View style={s.noteBox}>
         <Text style={s.resultScore}>{mm}</Text>
         <Text style={s.smallMuted}>
-          ध्येय: सुमारे १ ते २ मिनिटे. फक्त वेळेचा अंदाज; अॅप तुमचे बोलणे तपासत
+          ध्येय: सुमारे १ ते २ मिनिटे. फक्त वेळेचा अंदाज; ॲप तुमचे बोलणे तपासत
           नाही.
         </Text>
         <View style={{ height: 10 }} />

@@ -165,14 +165,19 @@ export function WordCheck({ target, disabled = false }: { target: string; disabl
         <View accessibilityLiveRegion="polite">
           <Text style={s.rowTitle}>{heardLine(result)}</Text>
           <View style={s.heardRow}>
+            {/* The chip is a View: on Android a Text with its own background
+                was measured shorter than drawn and overlapped the next line. */}
             {result.words.map((w, i) => (
-              <Text
+              <View
                 key={i}
-                style={[s.heardChip, !w.heard && s.heardChipMissed]}
+                accessible
                 accessibilityLabel={`${w.text}: ${w.heard ? "ऐकू आला" : "ऐकू आला नाही"}`}
+                style={[s.heardChip, !w.heard && s.heardChipMissed]}
               >
-                {w.text}
-              </Text>
+                <Text style={[s.heardChipText, !w.heard && s.heardChipTextMissed]}>
+                  {w.text}
+                </Text>
+              </View>
             ))}
           </View>
           <Text style={s.smallMuted}>

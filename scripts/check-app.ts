@@ -204,6 +204,11 @@ assert.match(micSrc, /Platform\.OS === "web"\) return/);
 assert.match(micSrc, /status !== "undetermined"/);
 assert.match(micSrc, /catch/);
 
+// "ॲप" is one letter (U+0972). "अॅप" (अ + ॅ) draws as "अ ॅप" on Android.
+// Checked in app UI text; pronunciation guides in src/data still use अॅ.
+for (const f of tsx)
+  assert.ok(!read(f).includes("अॅ"), `${f}: write ॲ (U+0972), not अ + ॅ`);
+
 // ---- Design tokens --------------------------------------------------------------
 const theme = load("src/components/theme.ts");
 // Screens and components use tokens, not their own hex colours. Lesson and

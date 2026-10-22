@@ -690,18 +690,16 @@ const build = themed(() =>
   },
   heardRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginVertical: 8 },
   heardChip: {
-    fontSize: 16,
-    color: C.ink,
     backgroundColor: C.successSoft,
     borderRadius: 8,
     paddingHorizontal: 8,
     paddingVertical: 2,
-    overflow: "hidden",
   },
+  heardChipText: { fontSize: 16, color: C.ink },
   // Missed words: colour plus bold underline, so it does not rely on colour.
-  heardChipMissed: {
+  heardChipMissed: { backgroundColor: C.amberSoft },
+  heardChipTextMissed: {
     color: C.amberInk,
-    backgroundColor: C.amberSoft,
     fontWeight: "700",
     textDecorationLine: "underline",
   },

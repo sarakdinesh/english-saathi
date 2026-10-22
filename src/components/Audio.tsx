@@ -425,7 +425,7 @@ export function Recorder({
         current={state.isRecording ? 1 : uri ? (playerState.playing ? 2 : 3) : model ? 0 : 1}
       />
       <Text style={s.body}>
-        बोला, ऐका, स्वतः तुलना करा — अॅप गुण देत नाही. (कमाल ६० सेकंद)
+        बोला, ऐका, स्वतः तुलना करा — ॲप गुण देत नाही. (कमाल ६० सेकंद)
       </Text>
       {!!model && (
         <View>

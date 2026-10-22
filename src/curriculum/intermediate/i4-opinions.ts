@@ -143,7 +143,7 @@ export const kits: Record<string, Enrich> = {
       [
         "B",
         "I am not sure, but I think good apps can help.",
-        "मला खात्री नाही, पण चांगले अॅप्स मदत करू शकतात असे वाटते.",
+        "मला खात्री नाही, पण चांगले ॲप्स मदत करू शकतात असे वाटते.",
       ],
     ],
     [

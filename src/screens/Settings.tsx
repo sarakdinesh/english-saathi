@@ -80,7 +80,7 @@ export default function Settings() {
       </Text>
       {!remindersSupported ? (
         <Text style={s.smallMuted}>
-          ही सुविधा Android आणि iPhone अॅपमध्ये उपलब्ध आहे.
+          ही सुविधा Android आणि iPhone ॲपमध्ये उपलब्ध आहे.
         </Text>
       ) : (
         <View style={{ gap: 10, marginTop: 10 }}>

@@ -121,7 +121,7 @@ export const lessons = [
     "sounds",
     "Understanding fast and informal speech",
     "वेगवान आणि अनौपचारिक बोलणे समजणे",
-    "खऱ्या संभाषणात लोक वेगाने बोलतात, शब्द जोडतात आणि लहान रूपे वापरतात: gonna = going to, wanna = want to, gotta = have to, 'cause = because, kinda = kind of. शब्द ऐकायला कठीण वाटले तर पूर्ण रूप आठवा. लोकांचे उच्चार आणि वेग वेगवेगळे असतात; या अॅपमध्ये एकच संगणकीय आवाज आहे (काही devices वर अनेक इंग्रजी आवाज असू शकतात). वेगवेगळ्या वेगाने ऐकून सराव करा.",
+    "खऱ्या संभाषणात लोक वेगाने बोलतात, शब्द जोडतात आणि लहान रूपे वापरतात: gonna = going to, wanna = want to, gotta = have to, 'cause = because, kinda = kind of. शब्द ऐकायला कठीण वाटले तर पूर्ण रूप आठवा. लोकांचे उच्चार आणि वेग वेगवेगळे असतात; या ॲपमध्ये एकच संगणकीय आवाज आहे (काही devices वर अनेक इंग्रजी आवाज असू शकतात). वेगवेगळ्या वेगाने ऐकून सराव करा.",
     "gonna = going to · wanna = want to · gotta = have to · 'cause = because",
     [
       ["I'm gonna call you later.", "मी तुम्हाला नंतर फोन करणार आहे."],
