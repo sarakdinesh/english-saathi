@@ -4,24 +4,60 @@ import { View } from "react-native";
 import { useNavigation } from "@react-navigation/native";
 import { lessons } from "../data/course";
 import {
+  grammarSummary,
   modals,
   passiveNotes,
   passiveSteps,
   patterns,
   tenses,
   type Formula,
+  type GrammarTab,
 } from "../data/grammar";
-import { AppText as Text, Button, Chips, Heading, Label, Shell } from "../components/ui";
+import {
+  AppText as Text,
+  Button,
+  Collapsible,
+  Heading,
+  Label,
+  SegmentTabs,
+  Shell,
+} from "../components/ui";
 import { Listen } from "../components/Audio";
 import { s } from "../components/styles";
 
+// Four tabs; each opens with the same kind of "at a glance" summary.
 const tabs = [
-  ["tenses", "काळ · Tenses"],
-  ["modals", "Modal verbs"],
-  ["passive", "Active & Passive"],
-  ["patterns", "If · Reported · Who/Which"],
-] as const;
-type Tab = (typeof tabs)[number][0];
+  ["tenses", "काळ", "time-outline"],
+  ["modals", "मोडल", "key-outline"],
+  ["passive", "कर्मणी", "swap-vertical-outline"],
+  ["patterns", "वाक्यरचना", "git-branch-outline"],
+] as const satisfies readonly (readonly [GrammarTab, string, string])[];
+type Tab = GrammarTab;
+const summaryTitle: Record<Tab, { title: string; sub: string }> = {
+  tenses: { title: "सर्व काळ एका नजरेत", sub: "१२ काळ · प्रत्येकी एक उदाहरण · Tenses" },
+  modals: { title: "सर्व मोडल एका नजरेत", sub: "can, should, must… · Modal verbs" },
+  passive: { title: "सर्व कर्मणी रूपे एका नजरेत", sub: "प्रत्येक काळाचे कर्मणी वाक्य · Active & passive" },
+  patterns: { title: "सर्व वाक्यरचना एका नजरेत", sub: "If · Reported speech · Who/Which" },
+};
+
+// The tab's summary, closed by default; tap to show or hide.
+function Summary({ tab }: { tab: Tab }) {
+  return (
+    <Collapsible
+      key={tab}
+      icon="list-outline"
+      title={summaryTitle[tab].title}
+      sub={summaryTitle[tab].sub}
+    >
+      {grammarSummary(tab).map((r, i) => (
+        <View key={i} style={{ marginTop: 8 }}>
+          <Text style={s.rowTitle}>{r.en}</Text>
+          <Text style={s.smallMuted}>{r.sub}</Text>
+        </View>
+      ))}
+    </Collapsible>
+  );
+}
 
 // One labelled formula with its example, sentence audio and Marathi meaning.
 function Row({ label, f }: { label: string; f: Formula }) {
@@ -62,25 +98,9 @@ export default function Grammar({ navigation }: StackProps<"Grammar">) {
         title="सूत्र तक्ता"
         sub="V1 = मूळ रूप (go) · V2 = भूतकाळी रूप (went) · V3 = तिसरे रूप (gone). हे पाहण्यासाठी आहे; सराव धड्यांमध्ये करा."
       />
-      <Chips options={tabs} value={tab} onChange={setTab} label="व्याकरण विभाग" />
-
-      {tab === "tenses" && (
-        <View style={s.noteBox}>
-          <Label>सर्व काळ एका नजरेत · COMPARE</Label>
-          <Text style={s.smallMuted}>
-            प्रत्येक काळाचे एक उदाहरण. क्रियापदाचे रूप कसे बदलते ते पाहा; तपशील
-            खाली आहे.
-          </Text>
-          {tenses.map((t) => (
-            <View key={t.id} style={{ marginTop: 8 }}>
-              <Text style={s.rowTitle}>{t.affirmative.ex}</Text>
-              <Text style={s.smallMuted}>
-                {t.name} · {t.mr}
-              </Text>
-            </View>
-          ))}
-        </View>
-      )}
+      <SegmentTabs options={tabs} value={tab} onChange={setTab} label="व्याकरण विभाग" />
+      <View style={{ height: 8 }} />
+      <Summary tab={tab} />
 
       {tab === "tenses" &&
         tenses.map((t) => (
@@ -140,7 +160,7 @@ export default function Grammar({ navigation }: StackProps<"Grammar">) {
               </View>
             ))}
             <Text style={[s.sectionTitle, { marginTop: 14 }]}>
-              Active and passive together
+              दोन्ही एकत्र · Active and passive
             </Text>
             <Text style={s.exampleEnglish}>
               Active: The cook makes food.{"\n"}Passive: Food is made by the cook.

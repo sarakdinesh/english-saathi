@@ -22,6 +22,7 @@ import { refreshStyles, s } from "./src/components/styles";
 import type { AppNavigation, StackParams, TabParams } from "./src/navigation/types";
 import ErrorBoundary from "./src/components/ErrorBoundary";
 import { Splash } from "./src/components/Splash";
+import { askMicrophoneOnce } from "./src/components/micPermission";
 import { syncReminders } from "./src/components/reminderService";
 import { needsOnboarding } from "./src/state/onboarding";
 import { Icon, IconName, AppText as Text } from "./src/components/ui";
@@ -316,7 +317,15 @@ function Root() {
             </Stack.Navigator>
           </NavigationContainer>
         )}
-        {splash && <Splash ready={ready} onDone={() => setSplash(false)} />}
+        {splash && (
+          <Splash
+            ready={ready}
+            onDone={() => {
+              setSplash(false);
+              void askMicrophoneOnce();
+            }}
+          />
+        )}
       </View>
     </View>
   );

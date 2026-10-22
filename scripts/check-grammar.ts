@@ -1,4 +1,5 @@
 import assert from "node:assert/strict";
+import fs from "node:fs";
 import { load } from "./lib.ts";
 const g = load("src/data/grammar.ts");
 const { lessons } = load("src/data/course.ts");
@@ -27,4 +28,21 @@ for (const p of g.patterns) {
   if (p.lesson) assert.ok(ids.has(p.lesson), p.id);
   for (const x of p.forms) assert.ok(x.f.en && /[.?]$/.test(x.f.ex) && deva(x.f.mr), `${p.id}: ${x.label}`);
 }
-console.log(`Grammar checks passed: ${g.tenses.length} tenses, ${g.modals.length} modal groups, passive, lesson links.`);
+// Every tab has the same kind of "at a glance" summary.
+const expected: Record<string, number> = {
+  tenses: g.tenses.length,
+  modals: g.modals.length,
+  passive: g.tenses.filter((x: any) => x.passive).length,
+  patterns: g.patterns.reduce((n: number, p: any) => n + p.forms.length, 0),
+};
+for (const [tab, n] of Object.entries(expected)) {
+  const rows = g.grammarSummary(tab);
+  assert.equal(rows.length, n, `${tab} summary rows`);
+  for (const r of rows) assert.ok(/[.?]$/.test(r.en) && r.sub, `${tab}: ${r.en}`);
+}
+const screen = fs.readFileSync("src/screens/Grammar.tsx", "utf8");
+assert.match(screen, /<SegmentTabs/, "Grammar uses tabs");
+assert.match(screen, /<Summary tab=\{tab\} \/>/, "one summary component for every tab");
+assert.match(screen, /<Collapsible/, "summary can be shown and hidden");
+for (const tab of Object.keys(expected)) assert.match(screen, new RegExp(`\\["${tab}", "[^"]*[\\u0900-\\u097F]`), `${tab} tab label in Marathi`);
+console.log(`Grammar checks passed: ${g.tenses.length} tenses, ${g.modals.length} modal groups, passive, lesson links, tab summaries.`);

@@ -135,7 +135,7 @@ export function MenuSheet({
         <Animated.View style={[StyleSheet.absoluteFill, m.scrim, { opacity: progress }]}>
           <Pressable
             accessibilityRole="button"
-            accessibilityLabel="Close menu · बंद करा"
+            accessibilityLabel="बंद करा · Close menu"
             style={StyleSheet.absoluteFill}
             onPress={onClose}
           />
@@ -155,7 +155,7 @@ export function MenuSheet({
             </View>
             <Pressable
               accessibilityRole="button"
-              accessibilityLabel="Close menu · बंद करा"
+              accessibilityLabel="बंद करा · Close menu"
               hitSlop={8}
               onPress={onClose}
               style={({ pressed }) => [m.close, pressed && { opacity: 0.6 }]}
@@ -178,7 +178,7 @@ export function MenuSheet({
                     <View key={it.route} style={m.cell}>
                       <Pressable
                         accessibilityRole="button"
-                        accessibilityLabel={`${it.en} · ${it.mr}`}
+                        accessibilityLabel={`${it.mr} · ${it.en}`}
                         onPress={() => onSelect(it)}
                         style={({ pressed }) => [m.tile, pressed && m.tilePressed]}
                       >

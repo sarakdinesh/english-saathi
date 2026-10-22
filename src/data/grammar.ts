@@ -259,3 +259,21 @@ export const patterns: PatternRow[] = [
     note: "Who व्यक्तींसाठी, which वस्तूंसाठी, that दोन्हींसाठी. वस्तू कर्म असेल तर that/which सोडता येते: the book I bought.",
   },
 ];
+
+// "At a glance" rows for each Grammar tab: one example sentence per item with
+// its name. Every tab shows the same kind of summary behind a show/hide toggle.
+export type GrammarTab = "tenses" | "modals" | "passive" | "patterns";
+export type SummaryRow = { en: string; sub: string };
+export function grammarSummary(tab: GrammarTab): SummaryRow[] {
+  if (tab === "tenses")
+    return tenses.map((t) => ({ en: t.affirmative.ex, sub: `${t.name} · ${t.mr}` }));
+  if (tab === "modals")
+    return modals.map((m) => ({ en: m.affirmative.ex, sub: `${m.modal} · ${m.mr}` }));
+  if (tab === "passive")
+    return tenses
+      .filter((t) => t.passive)
+      .map((t) => ({ en: t.passive!.ex, sub: `${t.name} · ${t.affirmative.ex}` }));
+  return patterns.flatMap((p) =>
+    p.forms.map((x) => ({ en: x.f.ex, sub: `${p.name} · ${x.label}` })),
+  );
+}

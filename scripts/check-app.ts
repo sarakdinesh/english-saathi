@@ -137,6 +137,13 @@ for (const banned of ["CONTINUE LEARNING", "PATH COMPLETE", "FIND YOUR ENGLISH V
 // Tab labels, spoken tab labels and browser titles also lead in Marathi.
 for (const m of appSrc.matchAll(/(?:tabBarAccessibilityLabel|tabBarLabel|title): "([^"]+)"/g))
   assert.ok(devanagari.test(firstWords(m[1])), `App.tsx:${lineOf(appSrc, m.index!)} "${m[1]}" must start in Marathi`);
+// Spoken labels lead in Marathi too (literal "English · मराठी" labels are not allowed).
+for (const f of tsx) {
+  const text = read(f);
+  for (const m of text.matchAll(/accessibilityLabel=(?:"|\{`)([A-Z][A-Za-z ]+) · [\u0900-\u097F]/g))
+    assert.fail(`${f}:${lineOf(text, m.index!)} spoken label starts in English: "${m[1]}"`);
+  assert.ok(!/accessibilityLabel=\{`\$\{\w+\.en\} · \$\{\w+\.mr\}`\}/.test(text), `${f}: spoken label puts English first`);
+}
 // Header titles: Marathi title, English subtitle.
 for (const [route, t] of Object.entries(
   [...uiSrc.matchAll(/^\s+(\w+): \{ mr: "([^"]+)", en: "([^"]+)" \}/gm)].reduce(
@@ -188,6 +195,14 @@ assert.deepEqual(
   ["android.permission.INTERNET", "android.permission.MODIFY_AUDIO_SETTINGS", "android.permission.RECORD_AUDIO", "android.permission.VIBRATE"],
   "no new Android permission",
 );
+
+// Microphone: asked once after the splash on first launch, never on web,
+// never again after a refusal, never blocking.
+const micSrc = read("src/components/micPermission.ts");
+assert.match(appSrc, /onDone=\{\(\) => \{\s*setSplash\(false\);\s*void askMicrophoneOnce\(\);/);
+assert.match(micSrc, /Platform\.OS === "web"\) return/);
+assert.match(micSrc, /status !== "undetermined"/);
+assert.match(micSrc, /catch/);
 
 // ---- Design tokens --------------------------------------------------------------
 const theme = load("src/components/theme.ts");
