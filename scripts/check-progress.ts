@@ -55,6 +55,9 @@ for (const bad of [
   { ...legacy, version: 3 },
 ])
   assert.throws(() => validateProgress(bad));
+// Level 4 path is accepted; unknown paths are still rejected.
+assert.equal(validateProgress({ ...migrated, path: "advanced" }).path, "advanced");
+assert.throws(() => validateProgress({ ...migrated, path: "expert" }));
 // Theme preference: optional (older data has none), validated, round-trips.
 assert.equal(validateProgress(legacy).settings.theme, undefined);
 const themed = validateProgress({ ...migrated, settings: { textSize: 1.15, sound: false, theme: "dark" } });

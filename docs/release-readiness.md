@@ -1,5 +1,7 @@
 # Release readiness — English Boluya (Android)
 
+> Step-by-step for the two owner tasks (upload key, phone test): [upload-key-and-phone-test.md](upload-key-and-phone-test.md).
+
 Status on 22 October 2026. "Verified" means checked in this repository by a command or file inspection; nothing here was tested on a physical device in this round.
 
 ## Identity

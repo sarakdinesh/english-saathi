@@ -281,13 +281,22 @@ const menuStyles = themed(() =>
     justifyContent: "center",
     marginBottom: 9,
   },
+  // alignSelf: stretch — a centred label that shrinks to its measured width
+  // clipped its last word on Android ("संवाद सराव" showed "संवाद").
   tileMr: {
+    alignSelf: "stretch",
     fontSize: 13,
     fontWeight: "700",
     color: C.ink,
     textAlign: "center",
-    lineHeight: 19,
+    lineHeight: 21,
   },
-  tileEn: { fontSize: 11, color: C.muted, textAlign: "center", lineHeight: 16 },
+  tileEn: {
+    alignSelf: "stretch",
+    fontSize: 11,
+    color: C.muted,
+    textAlign: "center",
+    lineHeight: 16,
+  },
   }),
 );

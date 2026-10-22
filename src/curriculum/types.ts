@@ -1,6 +1,9 @@
 // Reusable curriculum schemas. Every ID here is stable: it is stored in
 // learner progress, so renaming one would orphan saved data.
-export type PathId = "foundation" | "beginner" | "intermediate";
+export type PathId = "foundation" | "beginner" | "intermediate" | "advanced";
+// Every learning path, in order. "advanced" (Level 4) was added later; stored
+// progress from older versions never contains it.
+export const PATHS: readonly PathId[] = ["foundation", "beginner", "intermediate", "advanced"];
 export type Bi = [en: string, mr: string];
 
 export type Skill =

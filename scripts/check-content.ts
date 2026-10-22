@@ -53,7 +53,7 @@ const { placementQuestions, foundationQuestions, recommend } = load("src/curricu
 unique(units, "id", "unit id");
 const seen = new Map<string, string>();
 for (const u of units) {
-  assert(["foundation", "beginner", "intermediate", "reading"].includes(u.path), u.id);
+  assert(["foundation", "beginner", "intermediate", "advanced", "reading"].includes(u.path), u.id);
   assert(
     u.title && u.en && u.outcome[0] && marathi(u.outcome[1]),
     `${u.id} outcome`,
@@ -177,8 +177,8 @@ for (const u of units) {
       rp.level,
       u.path === "reading"
         ? "beginner"
-        : u.path === "intermediate"
-          ? "intermediate"
+        : u.path === "intermediate" || u.path === "advanced"
+          ? u.path
           : u.path === "foundation"
             ? "foundation"
             : "beginner",
@@ -267,7 +267,7 @@ console.log(
   `Validated ${lessons.length} lessons, ${words.length} words, ${questions.length} quiz questions, ${categories.length} categories.`,
 );
 console.log(
-  `Curriculum: ${foundation.length} foundation units, ${beginner.length} beginner units, ${inter.length} intermediate units, ${units.filter((u: any) => u.path === "reading").length} reading unit; ` +
+  `Curriculum: ${foundation.length} foundation units, ${beginner.length} beginner units, ${inter.length} intermediate units, ${units.filter((u: any) => u.path === "advanced").length} advanced unit(s), ${units.filter((u: any) => u.path === "reading").length} reading unit; ` +
     `${stats.complete}/${stats.lessons} lessons with full kits, ${stats.exercises} guided exercises, ${stats.roleplays} lesson role-plays, ` +
     `${stats.checkpoints} checkpoints (${stats.checkpointEx} questions), ${talks.length} long talks, ${placementQuestions.length} placement questions.`,
 );

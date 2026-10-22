@@ -92,7 +92,7 @@ export default function Home({ navigation }: TabProps<"Home">) {
     .filter(
       ([id]) =>
         list.some((l) => id === l.id || id === `rp-${l.id}`) ||
-        (path === "intermediate" && id.startsWith("talk-")),
+        ((path === "intermediate" || path === "advanced") && id.startsWith("talk-")),
     )
     .reduce((n, [, v]) => n + v.task + v.role, 0);
   const rated = list

@@ -28,6 +28,7 @@ import * as i7 from "./intermediate/i7-problems";
 import * as i8 from "./intermediate/i8-modals-conditionals";
 import * as i9 from "./intermediate/i9-natural-language";
 import * as i10 from "./intermediate/i10-presenting";
+import * as a1 from "./advanced/a1-professional";
 import type { Enrich, Unit } from "./types";
 import type { Lesson } from "../data/course";
 
@@ -64,6 +65,7 @@ export const unitFiles: UnitFile[] = [
   i8,
   i9,
   i10,
+  a1,
 ];
 export const curriculumLessons: Lesson[] = unitFiles.flatMap(
   (f) => f.lessons ?? [],

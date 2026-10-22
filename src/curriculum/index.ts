@@ -4,6 +4,7 @@ import { lessons, type Lesson } from "../data/course";
 import { exercises as legacyExercises, buildAnswers } from "../data/journey";
 import { unitFiles } from "./registry";
 import { talks } from "./talks";
+import { reviewedExplanations } from "./reviewed";
 import type { Enrich, Ex, PathId, RolePlay, Unit } from "./types";
 
 export type { Enrich, Ex, PathId, RolePlay, Unit } from "./types";
@@ -76,6 +77,15 @@ export const isEnriched = (id: string) => !!kits[id];
 
 export const rolePlays: RolePlay[] = Object.values(kits).map((k) => k.rp);
 export const rolePlayById = (id: string) => rolePlays.find((r) => r.id === id);
+
+// Reviewed explanations (./reviewed.ts) replace the authored ones by ID.
+for (const e of [
+  ...Object.values(kits).flatMap((k) => k.ex),
+  ...units.flatMap((u) => u.checkpoint?.ex ?? []),
+]) {
+  const reviewed = reviewedExplanations[e.id];
+  if (reviewed) e.explanation = reviewed;
+}
 
 export const checkpointExercises: Ex[] = units.flatMap(
   (u) => u.checkpoint?.ex ?? [],

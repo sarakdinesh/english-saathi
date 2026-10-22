@@ -13,14 +13,14 @@ const base = (date: string, path: string, history: any[] = [], mastered: string[
 });
 
 // Deterministic: identical inputs, identical plan; different days differ.
-for (const path of ["foundation", "beginner", "intermediate"]) {
+for (const path of ["foundation", "beginner", "intermediate", "advanced"]) {
   const a = buildPlan(base(day(5), path));
   assert.deepEqual(a, buildPlan(base(day(5), path)));
   assert.notDeepEqual(a.words, buildPlan(base(day(6), path)).words);
 }
 
 // 90-day simulation with history: valid content, no short-term repeats.
-for (const path of ["foundation", "beginner", "intermediate"]) {
+for (const path of ["foundation", "beginner", "intermediate", "advanced"]) {
   const plans: any[] = [];
   for (let i = 0; i < 90; i++) {
     const p = buildPlan(base(day(i), path, plans));

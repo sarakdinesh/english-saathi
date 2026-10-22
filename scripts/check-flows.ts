@@ -23,6 +23,17 @@ assert.equal(
   "I drink tea.",
 );
 
+// ---- Reviewed explanations -----------------------------------------------------
+const { reviewedExplanations } = load("src/curriculum/reviewed.ts");
+const reviewedIds = Object.keys(reviewedExplanations);
+assert.ok(reviewedIds.length >= 100);
+for (const id of reviewedIds) {
+  const e = cur.exerciseById(id);
+  assert.ok(e, `reviewed explanation for unknown exercise ${id}`);
+  assert.equal(e.explanation, reviewedExplanations[id], `${id} not applied`);
+  assert.ok(/[\u0900-\u097F]/.test(e.explanation) && e.explanation.length >= 25, `${id} too short`);
+}
+
 // ---- Exercise scoring -------------------------------------------------------
 // Repeated words are selected by position, so "the" twice is handled.
 const dup = finish("t", "p", [

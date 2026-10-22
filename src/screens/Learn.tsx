@@ -11,6 +11,7 @@ import {
   unitById,
 } from "../curriculum";
 import type { PathId } from "../curriculum";
+import { PATHS } from "../curriculum/types";
 import { useProgress } from "../state/progress";
 import {
   AppText as Text,
@@ -41,6 +42,11 @@ export const pathInfo: Record<PathId, { mr: string; en: string; sub: string }> =
       en: "Intermediate",
       sub: "लांब उत्तरे, मत, कामाचे आणि रोजचे प्रसंग",
     },
+    advanced: {
+      mr: "व्यावसायिक इंग्रजी (प्रायोगिक)",
+      en: "Advanced · Preview",
+      sub: "सौम्य भाषा, वाटाघाटी, आक्षेप आणि औपचारिक ईमेल · पहिला युनिट",
+    },
   };
 
 export default function Learn({ navigation, route }: TabProps<"Learn">) {
@@ -65,7 +71,7 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
         title="शब्दांपासून संवादापर्यंत"
         sub="मार्ग निवडा किंवा कोणताही धडा उघडा. सर्व धडे खुले आहेत; कोणताही कालावधी किंवा प्रवाहीपणाचे आश्वासन नाही."
       />
-      {(["foundation", "beginner", "intermediate"] as PathId[]).map((id) => {
+      {PATHS.map((id) => {
         const list = pathLessons(id);
         const done = list.filter((l) =>
           progress.completed.includes(l.id),

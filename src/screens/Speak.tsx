@@ -160,7 +160,7 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
         onPress={() => navigation.navigate("RolePlayList")}
       />
 
-      {path === "intermediate" || progress.completed.length > 20 ? (
+      {path === "intermediate" || path === "advanced" || progress.completed.length > 20 ? (
         <>
           <Section
             title="४. दीर्घ बोलणे · 1–2 minute talks"

@@ -345,11 +345,14 @@ const build = themed(() =>
     borderRadius: 16,
     minHeight: 54,
   },
+  // flex: 1 (not flexShrink) so the label always gets the full row width.
+  // Android measures bold Devanagari slightly narrow; a shrink-to-fit label
+  // then wraps its last word onto a clipped second line (seen on device).
   buttonText: {
     color: C.onPrimary,
     fontSize: 15,
     fontWeight: "600",
-    flexShrink: 1,
+    flex: 1,
   },
   secondary: {
     backgroundColor: C.white,

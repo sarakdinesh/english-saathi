@@ -19,13 +19,19 @@ import { BRAND } from "../brand";
 import { TAB_ROUTES } from "../navigation/types";
 const isTabName = (name: string) => (TAB_ROUTES as readonly string[]).includes(name);
 import { Image, StyleSheet } from "react-native";
-export function AppText({ style, ...props }: TextProps) {
+// Every visible string goes through AppText. On Android the default
+// "highQuality" line breaking measures Devanagari differently from how it
+// draws it, so a wrapped last word can land on a clipped line (seen on a
+// vivo V2415, Android 16: "संवाद सराव" showed only "संवाद"). "simple" keeps
+// measurement and drawing in agreement.
+export function AppText({ style, textBreakStrategy = "simple", ...props }: TextProps) {
   const { progress } = useProgress();
   const flat = StyleSheet.flatten(style) ?? {};
   const size = progress.settings.textSize;
   return (
     <NativeText
       {...props}
+      textBreakStrategy={textBreakStrategy}
       style={[
         style,
         {

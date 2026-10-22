@@ -8,7 +8,7 @@ import {
   talkIds,
   unitIds,
 } from "../curriculum";
-import type { PathId } from "../curriculum/types";
+import { PATHS, type PathId } from "../curriculum/types";
 import { normalizeProfile, type Profile } from "./onboarding";
 import { isReminder, type Reminder } from "./reminders";
 import {
@@ -200,16 +200,13 @@ export function validateProgress(p: any): Progress {
     }
   }
   const path: PathId = p.path ?? "beginner";
-  if (path !== "foundation" && path !== "beginner" && path !== "intermediate")
-    throw Error("Invalid path");
+  if (!PATHS.includes(path)) throw Error("Invalid path");
   let placement: Placement | undefined;
   if (p.placement !== undefined) {
     const x = p.placement;
     if (
       !plain(x) ||
-      (x.path !== "foundation" &&
-        x.path !== "beginner" &&
-        x.path !== "intermediate") ||
+      !PATHS.includes(x.path) ||
       !unitIds.includes(x.unit) ||
       (x.foundation !== undefined && ![0, 1, 2, 3].includes(x.foundation)) ||
       !Number.isInteger(x.score) ||
@@ -299,7 +296,7 @@ export function validateProgress(p: any): Progress {
         !isDate(day) ||
         !plain(x) ||
         x.date !== day ||
-        (x.path !== "foundation" && x.path !== "beginner" && x.path !== "intermediate") ||
+        !PATHS.includes(x.path) ||
         !only(x.words, words.map((w) => w.id), 5) ||
         !drillCards.some((c) => c.id === x.sentence) ||
         !lessonIds.includes(x.conversation) ||

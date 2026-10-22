@@ -95,3 +95,19 @@ Verification: `npx tsc --noEmit` pass; `npm test` exit 0 (10 suites). Web previe
 Scores after round 2 (same scale as above): visual design 7.5 → 8, accessibility 7 → 7.5, engineering 7.5 → 8, learning effectiveness 7 → 7.5 (clearer mistake feedback); others unchanged. Overall about 7.5 → 8.
 
 Still open: device pass (P0 list above), `Lesson.tsx` split into step components, teacher review of the flagged explanations, phoneme audio, Level 4 content.
+
+---
+
+# Round 3 — device run, content review, Lesson split, Level 4 pilot
+
+| Area | Change | Files |
+| --- | --- | --- |
+| Real device | QA build installed on the owner's vivo V2415 (Android 16, three-button navigation, font scale 0.85) over wireless debugging. **Two device-only bugs found and fixed:** bold Devanagari labels that shrink to their measured width lost their last word (Home button "शिकायला सुरुवात करा" → "…सुरुवात"; More tiles "संवाद सराव" → "संवाद"). Button labels now fill the row (`flex: 1`), tile labels stretch to the tile, and all text uses `textBreakStrategy="simple"`. Re-checked on the phone after rebuilding. | `styles.ts`, `ui.tsx`, `Menu.tsx` |
+| Content review | 178 explanations that only restated the answer rewritten (rule in simple Marathi + why the tempting wrong option fails), kept by ID in one file so the authored text is untouched and each line can be compared or reverted; 56 plain vocabulary explanations deliberately left. Applied at load; a test checks every ID exists and is applied. | `src/curriculum/reviewed.ts`, `index.ts`, `docs/explanation-review.md` |
+| Lesson split | `Lesson.tsx` 555 → 121 lines; seven stage components, header/navigation parts and the legacy flow in `src/screens/lesson/`. Behaviour preserved (all 7 stages verified in the browser); one fix: the role-play button now says "पुन्हा संवाद करा" after any role-play attempt (it previously also required a recorded speaking task). | `src/screens/Lesson.tsx`, `src/screens/lesson/*` |
+| Level 4 pilot | New "advanced" path (stored progress from older versions stays valid; unknown paths still rejected). Unit `a1` — softening, negotiating with conditions, handling objections, formal email: 4 lessons, 24 exercises, 4 role-plays, 4-question checkpoint. Labelled "प्रायोगिक / Preview" in Learn; placement never routes to it. | `src/curriculum/advanced/a1-professional.ts`, `types.ts`, `model.ts`, `Learn.tsx` and 4 other screens |
+| Guide for the owner | Step-by-step upload key creation, AAB build and signature check; 20-row phone test table. | `docs/upload-key-and-phone-test.md` |
+
+Content now: 119 lessons, 812 exercises (693 lesson + 119 checkpoint), 119 role-plays. Everything from before is unchanged.
+
+Honesty notes: the rewritten explanations and the Level 4 unit are AI-written and have **not** been reviewed by a Marathi-medium teacher. Recorded phoneme audio needs a human voice and was not attempted. The device check was a smoke test of a few screens, not the 20-row pass.
