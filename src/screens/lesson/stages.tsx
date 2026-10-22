@@ -188,8 +188,10 @@ export function TaskStage({ item, kit }: StageProps) {
       </Text>
       <Recorder model={bLines[0]?.en} />
       <Button
+        small
         secondary
-        title="मी मोठ्याने बोललो/बोलले ✓"
+        icon="checkmark"
+        title="मी मोठ्याने बोललो/बोलले"
         onPress={() => {
           markSpeaking(item.id, "task");
           setTasked(true);
@@ -274,14 +276,14 @@ export function RecapStage({ item, kit }: StageProps) {
             <Text style={s.marathiBody}>{l.mr}</Text>
             <View style={{ flexDirection: "row", gap: 10, alignItems: "center", marginTop: 8 }}>
               <Speaker text={l.en} />
-              <View style={{ flex: 1 }}>
-                <Button
-                  secondary
-                  disabled={added}
-                  title={added ? "उजळणीत जोडले ✓" : "उजळणीसाठी जोडा"}
-                  onPress={() => review(id, false)}
-                />
-              </View>
+              <Button
+                small
+                secondary
+                icon={added ? "checkmark" : "add"}
+                disabled={added}
+                title={added ? "उजळणीत जोडले" : "उजळणीसाठी जोडा"}
+                onPress={() => review(id, false)}
+              />
             </View>
           </View>
         );

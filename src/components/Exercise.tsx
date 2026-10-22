@@ -143,14 +143,21 @@ export function Exercise({
         })}
       </View>
       {build && result === null && (
-        <View style={{ gap: 10 }}>
+        <View style={s.pillRow}>
           <Button
-            title="शब्द पुन्हा लावा · Clear"
+            small
             secondary
+            icon="backspace-outline"
+            title="पुन्हा लावा · Clear"
             onPress={() => setChosen([])}
           />
           {chosen.length > 0 && (
-            <Button title="उत्तर तपासा · Check" onPress={() => check(chosen)} />
+            <Button
+              small
+              icon="checkmark"
+              title="उत्तर तपासा · Check"
+              onPress={() => check(chosen)}
+            />
           )}
         </View>
       )}
@@ -186,9 +193,11 @@ export function Exercise({
               हा प्रश्न उजळणीत लवकरच पुन्हा येईल.
             </Text>
           )}
-          <View style={{ height: 16 }} />
+          <View style={{ height: 12 }} />
           {!result ? (
             <Button
+              small
+              icon="refresh"
               title="पुन्हा प्रयत्न करा · Retry"
               onPress={() => {
                 setResult(null);
@@ -196,7 +205,7 @@ export function Exercise({
               }}
             />
           ) : onDone ? (
-            <Button title="पुढे · Next" onPress={onDone} />
+            <Button small icon="arrow-forward" title="पुढे · Next" onPress={onDone} />
           ) : (
             <Text style={s.smallMuted}>पुढील उजळणी नियोजित केली आहे. ✓</Text>
           )}

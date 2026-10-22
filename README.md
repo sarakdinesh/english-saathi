@@ -77,6 +77,10 @@ npm run export:android
 
 See [verification notes](docs/verification.md), [content editorial notes](docs/content-review.md) and [dependency advisory review](docs/dependency-review.md). Tests cover the exact bundled content, migration, backup round trips, rejected invalid imports, revision intervals, curriculum coverage and exercise answers. Production Android export is a JavaScript/Hermes bundle, not an APK or a physical-device test.
 
+## Publish to Google Play
+
+See [docs/publishing.md](docs/publishing.md). Short version: `npm run release:check`, then `npm run release:android -- patch`, upload the AAB from `artifacts/` to internal testing, test, promote to production.
+
 ## Build a test APK
 
 The existing `eas.json` preview profile produces an APK. From this project directory:

@@ -3,6 +3,9 @@ apply plugin: "org.jetbrains.kotlin.android"
 apply plugin: "com.facebook.react"
 
 def projectRoot = rootDir.getAbsoluteFile().getParentFile().getAbsolutePath()
+// app.json is the single source of the app version (Gradle, EAS and the
+// release script all read it). scripts/release-android.sh bumps it.
+def expoConfig = new groovy.json.JsonSlurper().parse(new File(projectRoot, "app.json")).expo
 
 /**
  * This is the configuration block to customize your React Native Android app.
@@ -92,9 +95,10 @@ android {
         applicationId 'com.englishsaathi.learn'
         minSdkVersion rootProject.ext.minSdkVersion
         targetSdkVersion rootProject.ext.targetSdkVersion
-        // Raise versionCode for every Play upload (or pass -PboluyaVersionCode=N).
-        versionCode((findProperty('boluyaVersionCode') ?: '1') as Integer)
-        versionName "1.0.0"
+        // From app.json; raised for every Play upload by `npm run release:android`.
+        // -PboluyaVersionCode=N still overrides it for one-off builds.
+        versionCode((findProperty('boluyaVersionCode') ?: expoConfig.android.versionCode) as Integer)
+        versionName expoConfig.version
 
         buildConfigField "String", "REACT_NATIVE_RELEASE_LEVEL", "\"${findProperty('reactNativeReleaseLevel') ?: 'stable'}\""
     }
@@ -136,6 +140,9 @@ android {
             // the debug key, which Google Play rejects (local testing only).
             if (signingConfigs.findByName('upload') != null) {
                 signingConfig signingConfigs.upload
+            } else if ((findProperty('boluyaStoreRelease') ?: 'false').toBoolean()) {
+                // Set by scripts/release-android.sh: never fall back to the debug key.
+                throw new GradleException("English Boluya: store release requested but BOLUYA_UPLOAD_STORE_FILE is not set. See docs/publishing.md.")
             } else {
                 logger.warn("English Boluya: BOLUYA_UPLOAD_STORE_FILE not set; release is debug-signed and NOT store-ready.")
                 signingConfig signingConfigs.debug

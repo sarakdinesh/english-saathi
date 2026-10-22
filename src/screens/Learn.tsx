@@ -19,35 +19,43 @@ import {
   Heading,
   Label,
   Button,
+  Collapsible,
+  SegmentTabs,
 } from "../components/ui";
 import { LessonCard } from "../components/cards";
 import { s } from "../components/styles";
 import { C } from "../components/theme";
 
 export { nextLessonFor };
-export const pathInfo: Record<PathId, { mr: string; en: string; sub: string }> =
-  {
-    foundation: {
-      mr: "पाया: अक्षरे आणि आवाज",
-      en: "Foundation",
-      sub: "वर्णमाला, उच्चार आवाज आणि पहिले शब्द",
-    },
-    beginner: {
-      mr: "सुरुवातीपासून शिका",
-      en: "Beginner",
-      sub: "अक्षरांपासून रोजच्या संभाषणापर्यंत",
-    },
-    intermediate: {
-      mr: "आत्मविश्वासाने बोला",
-      en: "Intermediate",
-      sub: "लांब उत्तरे, मत, कामाचे आणि रोजचे प्रसंग",
-    },
-    advanced: {
-      mr: "व्यावसायिक इंग्रजी (प्रायोगिक)",
-      en: "Advanced · Preview",
-      sub: "सौम्य भाषा, वाटाघाटी, आक्षेप आणि औपचारिक ईमेल · पहिला युनिट",
-    },
-  };
+export const pathInfo: Record<
+  PathId,
+  { mr: string; en: string; sub: string; short: string }
+> = {
+  foundation: {
+    short: "पाया",
+    mr: "पाया: अक्षरे आणि आवाज",
+    en: "Foundation",
+    sub: "वर्णमाला, उच्चार आवाज आणि पहिले शब्द",
+  },
+  beginner: {
+    short: "सुरुवात",
+    mr: "सुरुवातीपासून शिका",
+    en: "Beginner",
+    sub: "अक्षरांपासून रोजच्या संभाषणापर्यंत",
+  },
+  intermediate: {
+    short: "मध्यम",
+    mr: "आत्मविश्वासाने बोला",
+    en: "Intermediate",
+    sub: "लांब उत्तरे, मत, कामाचे आणि रोजचे प्रसंग",
+  },
+  advanced: {
+    short: "व्यावसायिक",
+    mr: "व्यावसायिक इंग्रजी (प्रायोगिक)",
+    en: "Advanced · Preview",
+    sub: "सौम्य भाषा, वाटाघाटी, आक्षेप आणि औपचारिक ईमेल · पहिला युनिट",
+  },
+};
 
 export default function Learn({ navigation, route }: TabProps<"Learn">) {
   const { progress, setPath } = useProgress();
@@ -71,50 +79,45 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
         title="शब्दांपासून संवादापर्यंत"
         sub="मार्ग निवडा किंवा कोणताही धडा उघडा. सर्व धडे खुले आहेत; कोणताही कालावधी किंवा प्रवाहीपणाचे आश्वासन नाही."
       />
-      {PATHS.map((id) => {
-        const list = pathLessons(id);
-        const done = list.filter((l) =>
-          progress.completed.includes(l.id),
-        ).length;
-        const on = path === id;
-        return (
-          <Pressable
-            key={id}
-            accessibilityRole="button"
-            accessibilityState={{ selected: on }}
-            onPress={() => setPath(id)}
-            style={[s.pathCard, on && s.pathCardOn]}
-          >
-            <Label light={on}>
-              {pathInfo[id].en.toUpperCase()} {on ? "· निवडलेला" : ""}
-            </Label>
-            <Text style={[s.sectionTitle, on && { color: C.heroText }]}>
-              {pathInfo[id].mr}
-            </Text>
-            <Text style={[s.smallMuted, on && { color: C.heroSub }]}>
-              {pathInfo[id].sub}
-            </Text>
-            <Text style={[s.smallMuted, on && { color: C.heroSub }]}>
-              {done} / {list.length} धडे वाचले
-            </Text>
-          </Pressable>
-        );
-      })}
-      <View style={{ height: 6 }} />
-      <Button
-        title="व्याकरण सूत्र तक्ता · Grammar chart"
-        onPress={() => navigation.navigate("Grammar")}
+      <SegmentTabs
+        label="शिकण्याचा मार्ग · Level"
+        value={path}
+        onChange={setPath}
+        options={PATHS.map((id) => [id, pathInfo[id].short] as const)}
       />
-      <View style={{ height: 10 }} />
-      <Button
-        secondary
-        title={
-          progress.placement
-            ? "सुरुवातीची चाचणी पुन्हा करा · ऐच्छिक"
-            : "कुठून सुरू करू? · ऐच्छिक चाचणी"
-        }
-        onPress={() => navigation.navigate("Placement")}
-      />
+      <View style={[s.pathCard, s.pathCardOn, { marginTop: 8 }]}>
+        <Label light>{pathInfo[path].en.toUpperCase()} · निवडलेला</Label>
+        <Text style={[s.sectionTitle, { color: C.heroText }]}>
+          {pathInfo[path].mr}
+        </Text>
+        <Text style={[s.smallMuted, { color: C.heroSub }]}>
+          {pathInfo[path].sub} ·{" "}
+          {
+            pathLessons(path).filter((l) => progress.completed.includes(l.id))
+              .length
+          }{" "}
+          / {pathLessons(path).length} धडे वाचले
+        </Text>
+      </View>
+      <View style={s.pillRow}>
+        <Button
+          small
+          icon="grid-outline"
+          title="व्याकरण तक्ता · Grammar"
+          onPress={() => navigation.navigate("Grammar")}
+        />
+        <Button
+          small
+          secondary
+          icon="compass-outline"
+          title={
+            progress.placement
+              ? "चाचणी पुन्हा करा · ऐच्छिक"
+              : "कुठून सुरू करू? · चाचणी"
+          }
+          onPress={() => navigation.navigate("Placement")}
+        />
+      </View>
       {progress.placement && (
         <Text style={s.smallMuted}>
           मागील शिफारस: {unitById(progress.placement.unit)?.title}. ही प्रमाणित
@@ -122,9 +125,11 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
         </Text>
       )}
       {readingUnit && (
-        <View style={s.dailyCard}>
-          <Label>ऐच्छिक · READING FOUNDATIONS</Label>
-          <Text style={s.sectionTitle}>इंग्रजी वाचायला अडचण येते का?</Text>
+        <Collapsible
+          icon="reader-outline"
+          title="इंग्रजी वाचायला अडचण येते का?"
+          sub="ऐच्छिक · Reading foundations"
+        >
           <Text style={s.body}>
             अक्षरांचे आवाज, शब्द जोडून वाचणे आणि छोटी वाक्ये. हे आवश्यक नाही;
             कधीही सुरू करा.
@@ -136,9 +141,9 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
               onPress={() => navigation.navigate("Lesson", { id: l.id })}
             />
           ))}
-        </View>
+        </Collapsible>
       )}
-      <View style={{ height: 16 }} />
+      <View style={{ height: 6 }} />
       <View style={s.search}>
         <TextInput
           accessibilityLabel="धडे शोधा · Search lessons"
@@ -202,19 +207,19 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
           ).length;
           const cp = progress.checkpoints[unit.id];
           return (
-            <View key={unit.id} style={{ marginTop: 26 }}>
-              <Label>
-                UNIT {index + 1} · {unit.en}
-                {unit.optional ? " · ऐच्छिक" : ""}
-              </Label>
-              <Text style={s.sectionTitle}>{unit.title}</Text>
+            <Collapsible
+              key={unit.id}
+              icon={done === all.length ? "checkmark-circle" : "albums-outline"}
+              title={`${index + 1}. ${unit.title}`}
+              sub={`${done}/${all.length} धडे · ${unit.en}${unit.optional ? " · ऐच्छिक" : ""}`}
+              initiallyOpen={
+                next ? all.some((l) => l.id === next.id) : index === 0
+              }
+            >
               <Text style={s.body}>
                 {unit.outcome[0]}
                 {"\n"}
                 {unit.outcome[1]}
-              </Text>
-              <Text style={s.smallMuted}>
-                {done}/{all.length} धडे वाचले
               </Text>
               {all.map((l) => (
                 <View key={l.id}>
@@ -258,7 +263,7 @@ export default function Learn({ navigation, route }: TabProps<"Learn">) {
                   </View>
                 </Pressable>
               )}
-            </View>
+            </Collapsible>
           );
         })
       )}

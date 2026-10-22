@@ -1,5 +1,5 @@
 import type { AppNavigation } from "../navigation/types";
-import React from "react";
+import React, { useState } from "react";
 import {
   KeyboardAvoidingView,
   Platform,
@@ -64,6 +64,8 @@ export function Button({
   secondary = false,
   accent = false,
   disabled = false,
+  small = false,
+  icon,
   accessibilityLabel,
   accessibilityHint,
 }: {
@@ -72,6 +74,9 @@ export function Button({
   secondary?: boolean;
   accent?: boolean;
   disabled?: boolean;
+  // A compact pill sized to its label, for in-card actions (listen, retry).
+  small?: boolean;
+  icon?: IconName;
   accessibilityLabel?: string;
   accessibilityHint?: string;
 }) {
@@ -91,15 +96,27 @@ export function Button({
       onPress={onPress}
       disabled={disabled}
       accessibilityState={{ disabled }}
+      // Small pills draw at 40dp; the hit area still reaches the 48dp minimum.
+      hitSlop={small ? 4 : undefined}
       style={({ pressed }) => [
-        s.button,
+        small ? s.buttonSmall : s.button,
         variant,
+        small && secondary && s.secondarySmall,
         disabled && s.buttonDisabled,
         pressed && !disabled && { opacity: 0.8, transform: [{ scale: 0.99 }] },
       ]}
     >
-      <AppText style={[s.buttonText, { color: ink }]}>{title}</AppText>
-      <Icon name="arrow-forward" size={18} color={ink} />
+      {small ? (
+        <>
+          {!!icon && <Icon name={icon} size={16} color={ink} />}
+          <AppText style={[s.buttonSmallText, { color: ink }]}>{title}</AppText>
+        </>
+      ) : (
+        <>
+          <AppText style={[s.buttonText, { color: ink }]}>{title}</AppText>
+          <Icon name={icon ?? "arrow-forward"} size={18} color={ink} />
+        </>
+      )}
     </Pressable>
   );
 }
@@ -333,6 +350,82 @@ export function Chips<T extends string>({
           </Pressable>
         );
       })}
+    </View>
+  );
+}
+
+// Segmented tabs that split a long screen into a few short views. Labels
+// should be one or two short words; they may wrap to two lines.
+export function SegmentTabs<T extends string>({
+  options,
+  value,
+  onChange,
+  label,
+}: {
+  options: readonly (readonly [T, string, IconName?])[];
+  value: T;
+  onChange: (value: T) => void;
+  label: string;
+}) {
+  return (
+    <View style={s.segTrack} accessibilityRole="tablist" accessibilityLabel={label}>
+      {options.map(([id, text, icon]) => {
+        const on = id === value;
+        return (
+          <Pressable
+            key={id}
+            accessibilityRole="tab"
+            accessibilityState={{ selected: on }}
+            aria-selected={on}
+            onPress={() => onChange(id)}
+            style={[s.seg, on && s.segOn]}
+          >
+            {!!icon && <Icon name={icon} size={18} color={on ? C.green : C.muted} />}
+            <AppText style={[s.segText, on && s.segTextOn]}>{text}</AppText>
+          </Pressable>
+        );
+      })}
+    </View>
+  );
+}
+
+// A titled section that opens and closes; closed sections cost one row.
+export function Collapsible({
+  title,
+  sub,
+  icon,
+  initiallyOpen = false,
+  children,
+}: {
+  title: string;
+  sub?: string;
+  icon?: IconName;
+  initiallyOpen?: boolean;
+  children: React.ReactNode;
+}) {
+  const [open, setOpen] = useState(initiallyOpen);
+  return (
+    <View style={s.collapse}>
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={sub ? `${title}. ${sub}` : title}
+        accessibilityState={{ expanded: open }}
+        aria-expanded={open}
+        onPress={() => setOpen(!open)}
+        style={s.collapseHead}
+      >
+        {!!icon && (
+          <View style={[s.smallIcon, { backgroundColor: C.greenMist }]}>
+            <Icon name={icon} color={C.ink} />
+          </View>
+        )}
+        <View style={{ flex: 1 }}>
+          <AppText style={s.rowTitle}>{title}</AppText>
+          {!!sub && <AppText style={s.smallMuted}>{sub}</AppText>}
+        </View>
+        <Icon name={open ? "chevron-up" : "chevron-down"} color={C.muted} />
+      </Pressable>
+      {open && <View style={s.collapseBody}>{children}</View>}
     </View>
   );
 }

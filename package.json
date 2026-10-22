@@ -13,6 +13,8 @@
     "test": "node --experimental-strip-types scripts/check-content.ts && node --experimental-strip-types scripts/check-progress.ts && node --experimental-strip-types scripts/check-flows.ts && node --experimental-strip-types scripts/check-daily.ts && node --experimental-strip-types scripts/check-onboarding.ts && node --experimental-strip-types scripts/check-reminders.ts && node --experimental-strip-types scripts/check-skills.ts && node --experimental-strip-types scripts/check-grammar.ts && node --experimental-strip-types scripts/check-app.ts && npm run test:tz",
     "test:tz": "for z in UTC Asia/Kolkata America/New_York Europe/London Australia/Lord_Howe Pacific/Kiritimati America/Los_Angeles; do TZ=$z node --experimental-strip-types scripts/check-time.ts && TZ=$z node --experimental-strip-types scripts/check-reminders.ts || exit 1; done",
     "ios": "expo run:ios",
+    "release:android": "bash scripts/release-android.sh",
+    "release:check": "bash scripts/release-android.sh check",
     "report:inventory": "node --experimental-strip-types scripts/report-inventory.ts",
     "report:coverage": "node --experimental-strip-types scripts/report-coverage.ts"
   },

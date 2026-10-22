@@ -110,9 +110,11 @@ export function DailyToday() {
   const finish = (k: string) => (
     <View style={{ marginTop: 12 }}>
       <Button
+        small
         secondary
+        icon={isDone(k) ? "checkmark-done" : "checkmark"}
         disabled={isDone(k)}
-        title={isDone(k) ? "पूर्ण ✓" : "पूर्ण केले · Mark done"}
+        title={isDone(k) ? "पूर्ण झाले" : "पूर्ण केले · Mark done"}
         onPress={() => mark(k)}
       />
     </View>

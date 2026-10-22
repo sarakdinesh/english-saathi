@@ -163,6 +163,11 @@ const gradle = read("android/app/build.gradle");
 assert.ok(!/BOLUYA_UPLOAD_STORE_PASSWORD\s*=|storePassword\s+'(?!android')/.test(gradle), "no committed upload password");
 const ignore = read(".gitignore");
 for (const p of ["*.keystore", "*.jks", ".env"]) assert.ok(ignore.includes(p), `${p} must be git-ignored`);
-assert.ok(Number.isInteger(app.android.versionCode));
+assert.ok(Number.isInteger(app.android.versionCode) && app.android.versionCode >= 1);
+assert.match(app.version, /^\d+\.\d+\.\d+$/);
+// app.json is the single version source; store builds refuse the debug key.
+assert.match(gradle, /versionName expoConfig\.version/);
+assert.match(gradle, /expoConfig\.android\.versionCode/);
+assert.match(gradle, /boluyaStoreRelease/);
 
 console.log("App checks passed: branding, compatibility IDs, navigation, accessibility props, design tokens and contrast, release safety.");

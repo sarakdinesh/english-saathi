@@ -13,6 +13,8 @@ import {
   Button,
   Icon,
   IconName,
+  SegmentTabs,
+  Collapsible,
 } from "../components/ui";
 import { Listen, Recorder } from "../components/Audio";
 import { s } from "../components/styles";
@@ -27,10 +29,19 @@ function Section({ title, sub }: { title: string; sub?: string }) {
   );
 }
 
+type SpeakTab = "listen" | "own" | "role" | "translate";
+const SPEAK_TABS = [
+  ["listen", "ऐका-म्हणा", "volume-high-outline"],
+  ["own", "स्वतः बोला", "mic-outline"],
+  ["role", "संवाद", "people-outline"],
+  ["translate", "भाषांतर", "swap-horizontal-outline"],
+] as const;
+
 export default function Speak({ navigation }: TabProps<"Speak">) {
   const { progress, activity, markSpeaking } = useProgress();
   const [revealed, setRevealed] = useState<string[]>([]);
   const [topic, setTopic] = useState("conversation");
+  const [tab, setTab] = useState<SpeakTab>("listen");
   const [prompt, setPrompt] = useState<string | null>(null);
   const path = progress.path;
   const dayIndex = Math.floor(Date.now() / 86400000);
@@ -52,223 +63,253 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
         title="Let's talk, a little."
         sub={`${pathInfo[path].mr} · परिपूर्ण बोलण्यापेक्षा, बोलायला सुरुवात करा.`}
       />
-      <View style={s.noteBox}>
-        <Text style={s.body}>
-          येथे स्वतःचा सराव आहे. अॅप तुमचे बोलणे ऐकत नाही, उच्चार तपासत नाही आणि
-          प्रवाहीपणाचे गुण देत नाही. मोठ्याने बोला, ऐका, पुन्हा करा.
-        </Text>
-      </View>
-
-      <Section
-        title="१. ऐका आणि म्हणा · Listen and repeat"
-        sub="रोजची वाक्ये, ऐका, मग स्वतः म्हणा"
+      <Text style={[s.smallMuted, { marginTop: 4 }]}>
+        स्वतःचा सराव: अॅप तुमचे बोलणे ऐकत नाही किंवा गुण देत नाही. मोठ्याने
+        बोला, ऐका, पुन्हा करा.
+      </Text>
+      <SegmentTabs
+        label="बोलण्याचा सराव"
+        value={tab}
+        onChange={setTab}
+        options={SPEAK_TABS}
       />
-      <View style={s.speakTiles}>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => navigation.navigate("Phrasebook")}
-          style={s.speakTile}
-        >
-          <Icon name="chatbox-ellipses-outline" color={C.tileAccent} size={26} />
-          <Text style={s.speakTileTitle}>रोजची वाक्ये</Text>
-          <Text style={s.speakTileSub}>दुकान, प्रवास, ऑफिस</Text>
-        </Pressable>
-        <Pressable
-          accessibilityRole="button"
-          onPress={() => navigation.navigate("Phrasebook", { sounds: true })}
-          style={s.speakTile}
-        >
-          <Icon name="volume-high-outline" color={C.tileAccent} size={26} />
-          <Text style={s.speakTileTitle}>उच्चार टिप्स</Text>
-          <Text style={s.speakTileSub}>V/W, TH, S आणि जोर</Text>
-        </Pressable>
-      </View>
-      <Button
-        title="वाक्य बोलून पाहा · Speaking drill"
-        onPress={() => navigation.navigate("SpeakDrill")}
-      />
-      <View style={{ height: 10 }} />
-      <Button
-        secondary
-        title="सामान्य चुका · Common mistakes"
-        onPress={() => navigation.navigate("Mistakes")}
-      />
-
-      <Section
-        title="२. तुमच्या स्वतःच्या विषयावर बोला · Personal prompts"
-        sub="आज तुमच्या मार्गातील तीन विषय"
-      />
-      {personal.map((l) => (
-        <View key={l.id} style={s.phraseCard}>
-          <Text style={s.rowTitle}>{l.title}</Text>
-          <Text style={s.marathiBody}>{l.task}</Text>
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => setPrompt(prompt === l.id ? null : l.id)}
-          >
-            <Text style={[s.link, { marginTop: 10 }]}>
-              {prompt === l.id ? "बंद करा ↑" : "रेकॉर्ड करा आणि नोंदवा →"}
-            </Text>
-          </Pressable>
-          {prompt === l.id && (
-            <>
-              <Recorder />
-              <Button
-                secondary
-                title="मी मोठ्याने बोललो/बोलले ✓"
-                onPress={() => markSpeaking(l.id, "task")}
-              />
-              {(progress.speaking[l.id]?.task ?? 0) > 0 && (
-                <Text style={s.smallMuted}>
-                  नोंदवले: {progress.speaking[l.id].task} वेळा
-                </Text>
-              )}
-            </>
-          )}
-        </View>
-      ))}
-
-      <Section
-        title="३. संवाद सराव · Role-play"
-        sub="ठरलेला संवाद. अॅप तुमचे बोलणे तपासत नाही."
-      />
-      {featured.map((r) => (
-        <Pressable
-          key={r.id}
-          accessibilityRole="button"
-          onPress={() => navigation.navigate("RolePlay", { id: r.id })}
-          style={({ pressed }) => [s.lessonRow, pressed && { opacity: 0.65 }]}
-        >
-          <View style={[s.smallIcon, { backgroundColor: C.lime }]}>
-            <Icon name="people-outline" color={C.onLime} />
-          </View>
-          <View style={{ flex: 1 }}>
-            <Text style={s.rowTitle}>{r.title}</Text>
-            <Text style={s.smallMuted}>
-              {r.en}{" "}
-              {progress.speaking[r.id]?.role
-                ? `· ${progress.speaking[r.id].role} वेळा`
-                : ""}
-            </Text>
-          </View>
-          <Icon name="chevron-forward" color={C.muted} />
-        </Pressable>
-      ))}
-      <Button
-        secondary
-        title={`सर्व संवाद पाहा (${level.length})`}
-        onPress={() => navigation.navigate("RolePlayList")}
-      />
-
-      {path === "intermediate" || path === "advanced" || progress.completed.length > 20 ? (
+      {tab === "listen" && (
         <>
-          <Section
-            title="४. दीर्घ बोलणे · 1–2 minute talks"
-            sub="तयारी ऐच्छिक. मुद्दे, सुरुवातीची वाक्ये आणि टायमर"
-          />
-          {talks.map((t) => (
+          <Text style={s.sectionHint}>रोजची वाक्ये ऐका, मग स्वतः म्हणा.</Text>
+          <View style={s.speakTiles}>
             <Pressable
-              key={t.id}
               accessibilityRole="button"
-              onPress={() => navigation.navigate("LongTalk", { id: t.id })}
+              onPress={() => navigation.navigate("Phrasebook")}
+              style={s.speakTile}
+            >
+              <Icon
+                name="chatbox-ellipses-outline"
+                color={C.tileAccent}
+                size={26}
+              />
+              <Text style={s.speakTileTitle}>रोजची वाक्ये</Text>
+              <Text style={s.speakTileSub}>दुकान, प्रवास, ऑफिस</Text>
+            </Pressable>
+            <Pressable
+              accessibilityRole="button"
+              onPress={() =>
+                navigation.navigate("Phrasebook", { sounds: true })
+              }
+              style={s.speakTile}
+            >
+              <Icon name="volume-high-outline" color={C.tileAccent} size={26} />
+              <Text style={s.speakTileTitle}>उच्चार टिप्स</Text>
+              <Text style={s.speakTileSub}>V/W, TH, S आणि जोर</Text>
+            </Pressable>
+          </View>
+          <Button
+            title="वाक्य बोलून पाहा · Speaking drill"
+            onPress={() => navigation.navigate("SpeakDrill")}
+          />
+          <View style={{ height: 10 }} />
+          <Button
+            secondary
+            title="सामान्य चुका · Common mistakes"
+            onPress={() => navigation.navigate("Mistakes")}
+          />
+        </>
+      )}
+      {tab === "own" && (
+        <>
+          <Text style={s.sectionHint}>आज तुमच्या मार्गातील तीन विषय.</Text>
+          {personal.map((l) => (
+            <View key={l.id} style={s.phraseCard}>
+              <Text style={s.rowTitle}>{l.title}</Text>
+              <Text style={s.marathiBody}>{l.task}</Text>
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => setPrompt(prompt === l.id ? null : l.id)}
+              >
+                <Text style={[s.link, { marginTop: 10 }]}>
+                  {prompt === l.id ? "बंद करा ↑" : "रेकॉर्ड करा आणि नोंदवा →"}
+                </Text>
+              </Pressable>
+              {prompt === l.id && (
+                <>
+                  <Recorder />
+                  <Button
+                    small
+                    secondary
+                    icon="checkmark"
+                    title="मी मोठ्याने बोललो/बोलले"
+                    onPress={() => markSpeaking(l.id, "task")}
+                  />
+                  {(progress.speaking[l.id]?.task ?? 0) > 0 && (
+                    <Text style={s.smallMuted}>
+                      नोंदवले: {progress.speaking[l.id].task} वेळा
+                    </Text>
+                  )}
+                </>
+              )}
+            </View>
+          ))}
+          {path === "intermediate" ||
+          path === "advanced" ||
+          progress.completed.length > 20 ? (
+            <>
+              <Section
+                title="दीर्घ बोलणे · 1–2 minute talks"
+                sub="तयारी ऐच्छिक. मुद्दे, सुरुवातीची वाक्ये आणि टायमर"
+              />
+              {talks.map((t) => (
+                <Pressable
+                  key={t.id}
+                  accessibilityRole="button"
+                  onPress={() => navigation.navigate("LongTalk", { id: t.id })}
+                  style={({ pressed }) => [
+                    s.lessonRow,
+                    pressed && { opacity: 0.65 },
+                  ]}
+                >
+                  <View style={[s.smallIcon, { backgroundColor: C.lime }]}>
+                    <Icon name={"mic-outline" as IconName} color={C.onLime} />
+                  </View>
+                  <View style={{ flex: 1 }}>
+                    <Text style={s.rowTitle}>{t.mr}</Text>
+                    <Text style={s.smallMuted}>{t.title}</Text>
+                  </View>
+                  <Icon name="chevron-forward" color={C.muted} />
+                </Pressable>
+              ))}
+            </>
+          ) : (
+            <View style={[s.noteBox, { marginTop: 22 }]}>
+              <Text style={s.body}>
+                दीर्घ बोलण्याचे विषय (१–२ मिनिटे) “आत्मविश्वासाने बोला” मार्गात
+                उपलब्ध आहेत. Learn मध्ये मार्ग बदलून पाहा.
+              </Text>
+            </View>
+          )}
+        </>
+      )}
+      {tab === "role" && (
+        <>
+          <Text style={s.sectionHint}>
+            ठरलेला संवाद. अॅप तुमचे बोलणे तपासत नाही.
+          </Text>
+          {featured.map((r) => (
+            <Pressable
+              key={r.id}
+              accessibilityRole="button"
+              onPress={() => navigation.navigate("RolePlay", { id: r.id })}
               style={({ pressed }) => [
                 s.lessonRow,
                 pressed && { opacity: 0.65 },
               ]}
             >
               <View style={[s.smallIcon, { backgroundColor: C.lime }]}>
-                <Icon name={"mic-outline" as IconName} color={C.onLime} />
+                <Icon name="people-outline" color={C.onLime} />
               </View>
               <View style={{ flex: 1 }}>
-                <Text style={s.rowTitle}>{t.mr}</Text>
-                <Text style={s.smallMuted}>{t.title}</Text>
+                <Text style={s.rowTitle}>{r.title}</Text>
+                <Text style={s.smallMuted}>
+                  {r.en}{" "}
+                  {progress.speaking[r.id]?.role
+                    ? `· ${progress.speaking[r.id].role} वेळा`
+                    : ""}
+                </Text>
               </View>
               <Icon name="chevron-forward" color={C.muted} />
             </Pressable>
           ))}
+          <Button
+            secondary
+            title={`सर्व संवाद पाहा (${level.length})`}
+            onPress={() => navigation.navigate("RolePlayList")}
+          />
         </>
-      ) : (
-        <View style={[s.noteBox, { marginTop: 22 }]}>
-          <Text style={s.body}>
-            दीर्घ बोलण्याचे विषय (१–२ मिनिटे) “आत्मविश्वासाने बोला” मार्गात
-            उपलब्ध आहेत. Learn मध्ये मार्ग बदलून पाहा.
-          </Text>
-        </View>
       )}
-
-      <Section
-        title="५. मराठीतून इंग्रजी · Translate aloud"
-        sub="मराठी वाक्य वाचा, इंग्रजीत म्हणा, मग उत्तर पाहा"
-      />
-      <ScrollView
-        horizontal
-        showsHorizontalScrollIndicator={false}
-        contentContainerStyle={s.filters}
-      >
-        {["conversation", "formulas", "tenses", "modals"].map((id) => (
-          <Pressable
-            accessibilityRole="button"
-            key={id}
-            onPress={() => {
-              setTopic(id);
-              setRevealed([]);
-            }}
-            style={[s.filter, topic === id && s.filterActive]}
+      {tab === "translate" && (
+        <>
+          <Text style={s.sectionHint}>
+            मराठी वाक्य वाचा, इंग्रजीत म्हणा, मग उत्तर पाहा.
+          </Text>
+          <ScrollView
+            horizontal
+            showsHorizontalScrollIndicator={false}
+            contentContainerStyle={s.filters}
           >
-            <Text style={[s.filterText, topic === id && { color: C.onPrimary }]}>
-              {categories.find((c) => c.id === id)?.title}
-            </Text>
-          </Pressable>
-        ))}
-      </ScrollView>
-      {prompts.map((l) => (
-        <View key={l.id} style={s.dailyCard}>
-          <Text style={s.sectionTitle}>{l.title}</Text>
-          <Text style={s.marathiBody}>{l.task}</Text>
-          {l.examples.map((e, i) => {
-            const key = l.id + i;
-            return (
-              <View key={key} style={s.speakingExample}>
-                <Text style={s.marathiBody}>{e.mr}</Text>
-                {revealed.includes(key) ? (
-                  <View>
-                    <Text
-                      style={[
-                        s.exampleEnglish,
-                        { color: C.green, marginTop: 8 },
-                      ]}
-                    >
-                      {e.en}
-                    </Text>
-                    <Listen text={e.en} compact />
+            {["conversation", "formulas", "tenses", "modals"].map((id) => (
+              <Pressable
+                accessibilityRole="button"
+                key={id}
+                onPress={() => {
+                  setTopic(id);
+                  setRevealed([]);
+                }}
+                style={[s.filter, topic === id && s.filterActive]}
+              >
+                <Text
+                  style={[s.filterText, topic === id && { color: C.onPrimary }]}
+                >
+                  {categories.find((c) => c.id === id)?.title}
+                </Text>
+              </Pressable>
+            ))}
+          </ScrollView>
+          {prompts.map((l, n) => (
+            <Collapsible
+              key={topic + l.id}
+              title={l.title}
+              sub={`${l.examples.length} वाक्ये`}
+              initiallyOpen={n === 0}
+            >
+              <Text style={s.marathiBody}>{l.task}</Text>
+              {l.examples.map((e, i) => {
+                const key = l.id + i;
+                return (
+                  <View key={key} style={s.speakingExample}>
+                    <Text style={s.marathiBody}>{e.mr}</Text>
+                    {revealed.includes(key) ? (
+                      <View>
+                        <Text
+                          style={[
+                            s.exampleEnglish,
+                            { color: C.green, marginTop: 8 },
+                          ]}
+                        >
+                          {e.en}
+                        </Text>
+                        <Listen text={e.en} compact />
+                      </View>
+                    ) : (
+                      <Pressable
+                        accessibilityRole="button"
+                        onPress={() => setRevealed([...revealed, key])}
+                      >
+                        <Text style={[s.link, { marginTop: 10 }]}>
+                          Reveal English →
+                        </Text>
+                      </Pressable>
+                    )}
                   </View>
-                ) : (
-                  <Pressable
-                    accessibilityRole="button"
-                    onPress={() => setRevealed([...revealed, key])}
-                  >
-                    <Text style={[s.link, { marginTop: 10 }]}>
-                      Reveal English →
-                    </Text>
-                  </Pressable>
-                )}
-              </View>
-            );
-          })}
-          <Pressable
-            accessibilityRole="button"
-            onPress={() => navigation.navigate("Lesson", { id: l.id })}
-          >
-            <Text style={s.link}>Read full lesson →</Text>
-          </Pressable>
-        </View>
-      ))}
-      <View style={{ height: 8 }} />
-      <Button
-        secondary
-        title="मी मोठ्याने बोलून सराव केला ✓"
-        onPress={() => activity("speak")}
-      />
+                );
+              })}
+              <Pressable
+                accessibilityRole="button"
+                onPress={() => navigation.navigate("Lesson", { id: l.id })}
+              >
+                <Text style={[s.link, { marginTop: 10 }]}>
+                  Read full lesson →
+                </Text>
+              </Pressable>
+            </Collapsible>
+          ))}
+          <View style={{ height: 8 }} />
+          <Button
+            small
+            secondary
+            icon="checkmark"
+            title="मी मोठ्याने बोलून सराव केला"
+            onPress={() => activity("speak")}
+          />
+        </>
+      )}
     </Shell>
   );
 }

@@ -18,6 +18,7 @@ import {
   Button,
   Icon,
   Section,
+  SegmentTabs,
 } from "../components/ui";
 import { ProgressCard } from "../components/cards";
 import { s } from "../components/styles";
@@ -33,6 +34,9 @@ const confidenceWord = [
 export default function Home({ navigation }: TabProps<"Home">) {
   const { progress } = useProgress();
   const [now, setNow] = useState(Date.now());
+  const [panel, setPanel] = useState<"goal" | "review" | "progress" | "skills">(
+    "goal",
+  );
   useFocusEffect(
     useCallback(() => {
       setNow(Date.now());
@@ -92,7 +96,8 @@ export default function Home({ navigation }: TabProps<"Home">) {
     .filter(
       ([id]) =>
         list.some((l) => id === l.id || id === `rp-${l.id}`) ||
-        ((path === "intermediate" || path === "advanced") && id.startsWith("talk-")),
+        ((path === "intermediate" || path === "advanced") &&
+          id.startsWith("talk-")),
     )
     .reduce((n, [, v]) => n + v.task + v.role, 0);
   const rated = list
@@ -189,96 +194,118 @@ export default function Home({ navigation }: TabProps<"Home">) {
         </View>
         <Icon name="chevron-forward" />
       </Pressable>
-      <View style={s.dailyCard}>
-        <Label>आठवण पक्की करूया · REVIEW</Label>
-        <Text style={s.sectionTitle}>
-          {due ? `${due} गोष्टींची उजळणी बाकी` : "सध्या उजळणी बाकी नाही"}
-        </Text>
-        <Text style={s.body}>
-          चुकलेले प्रश्न, अवघड शब्द आणि तुम्ही निवडलेली वाक्ये विसरायला
-          लागण्याच्या सुमारास पुन्हा येतात. बरोबर उत्तर दिले की पुढची उजळणी
-          जास्त दिवसांनी येते.
-        </Text>
-        <View style={{ height: 12 }} />
-        <Button
-          secondary
-          title="उजळणी सुरू करा · Review"
-          onPress={() => navigation.navigate("Review")}
-        />
-      </View>
-      <ProgressCard
-        label="तुमची प्रगती · PRACTICAL PROGRESS"
-        note="चार गोष्टी वेगवेगळ्या मोजल्या जातात. त्या बोलण्याच्या पातळीचा पुरावा नाहीत."
-        rows={[
-          ["धडे वाचले", `${count} / ${list.length}`],
-          [
-            "प्रश्नांवरील कामगिरी (सध्या बरोबर)",
-            exTotal ? `${exOk} / ${exTotal}` : "—",
-          ],
-          ["बोलण्याचा सराव (स्वतः नोंदवलेला)", `${speakCount} वेळा`],
-          [
-            "तुमचा आत्मविश्वास (स्वतः सांगितलेला)",
-            avg ? confidenceWord[avg] : "अजून नोंद नाही",
-          ],
+      <Section title="तुमचा आढावा" />
+      <SegmentTabs
+        label="तुमचा आढावा"
+        value={panel}
+        onChange={setPanel}
+        options={[
+          ["goal", "आजचे ध्येय", "flag-outline"],
+          ["review", due ? `उजळणी (${due})` : "उजळणी", "refresh-outline"],
+          ["progress", "प्रगती", "stats-chart-outline"],
+          ["skills", "कौशल्ये", "ribbon-outline"],
         ]}
-        value={count}
-        total={list.length}
       />
-      <View style={s.goalCard}>
-        <Label>कौशल्य प्रगती · SKILLS</Label>
-        <Text style={s.body}>
-          {skillSummary.strengths.length || skillSummary.weaknesses.length
-            ? [
-                skillSummary.strengths.length
-                  ? `बलस्थाने: ${skillSummary.strengths.map((x) => skillInfo[x.skill].mr).join(", ")}`
-                  : "",
-                skillSummary.weaknesses.length
-                  ? `सराव हवा: ${skillSummary.weaknesses.map((x) => skillInfo[x.skill].mr).join(", ")}`
-                  : "",
-              ]
-                .filter(Boolean)
-                .join("\n")
-            : "वाचन, श्रवण, व्याकरण आणि शब्दसंग्रहातील तुमची प्रगती पाहा."}
-        </Text>
-        <Button
-          secondary
-          title="सर्व कौशल्ये पाहा · Skills"
-          onPress={() => navigation.navigate("Skills")}
-        />
-        <View style={{ height: 10 }} />
-        <Button
-          secondary
-          title="व्याकरण सूत्र तक्ता · Grammar"
-          onPress={() => navigation.navigate("Grammar")}
-        />
-      </View>
-      <View style={s.goalCard}>
-        <Label>आजचे ध्येय · DAILY GOAL</Label>
-        <Text style={s.sectionTitle}>
-          {goals.every((g) => g.done)
-            ? "आजचे ध्येय पूर्ण! 🎉"
-            : `${goals.filter((g) => g.done).length} / ${goals.length} पूर्ण`}
-        </Text>
-        {goals.map((g) => (
-          <View key={g.label} style={s.goalRow}>
-            <View style={[s.goalDot, g.done && s.goalDotDone]}>
-              {g.done && <Icon name="checkmark" size={16} color={C.onPrimary} />}
-            </View>
-            <Text style={s.body}>{g.label}</Text>
-          </View>
-        ))}
-        <View style={s.weekRow}>
-          {week.map((d) => (
-            <View key={d.date} style={s.weekDay}>
-              <View style={[s.weekBar, d.on && s.weekBarOn]} />
-              <Text style={s.smallMuted}>{d.label}</Text>
+      {panel === "goal" && (
+        <View style={s.goalCard}>
+          <Label>आजचे ध्येय · DAILY GOAL</Label>
+          <Text style={s.sectionTitle}>
+            {goals.every((g) => g.done)
+              ? "आजचे ध्येय पूर्ण! 🎉"
+              : `${goals.filter((g) => g.done).length} / ${goals.length} पूर्ण`}
+          </Text>
+          {goals.map((g) => (
+            <View key={g.label} style={s.goalRow}>
+              <View style={[s.goalDot, g.done && s.goalDotDone]}>
+                {g.done && (
+                  <Icon name="checkmark" size={16} color={C.onPrimary} />
+                )}
+              </View>
+              <Text style={s.body}>{g.label}</Text>
             </View>
           ))}
+          <View style={s.weekRow}>
+            {week.map((d) => (
+              <View key={d.date} style={s.weekDay}>
+                <View style={[s.weekBar, d.on && s.weekBarOn]} />
+                <Text style={s.smallMuted}>{d.label}</Text>
+              </View>
+            ))}
+          </View>
+          <Text style={s.smallMuted}>
+            या आठवड्यात {week.filter((d) => d.on).length} / ७ दिवस सराव
+          </Text>
         </View>
-        <Text style={s.smallMuted}>
-          या आठवड्यात {week.filter((d) => d.on).length} / ७ दिवस सराव
-        </Text>
-      </View>
+      )}
+      {panel === "review" && (
+        <View style={s.dailyCard}>
+          <Label>आठवण पक्की करूया · REVIEW</Label>
+          <Text style={s.sectionTitle}>
+            {due ? `${due} गोष्टींची उजळणी बाकी` : "सध्या उजळणी बाकी नाही"}
+          </Text>
+          <Text style={s.body}>
+            चुकलेले प्रश्न, अवघड शब्द आणि तुम्ही निवडलेली वाक्ये विसरायला
+            लागण्याच्या सुमारास पुन्हा येतात. बरोबर उत्तर दिले की पुढची उजळणी
+            जास्त दिवसांनी येते.
+          </Text>
+          <View style={{ height: 12 }} />
+          <Button
+            secondary
+            title="उजळणी सुरू करा · Review"
+            onPress={() => navigation.navigate("Review")}
+          />
+        </View>
+      )}
+      {panel === "progress" && (
+        <ProgressCard
+          label="तुमची प्रगती · PRACTICAL PROGRESS"
+          note="चार गोष्टी वेगवेगळ्या मोजल्या जातात. त्या बोलण्याच्या पातळीचा पुरावा नाहीत."
+          rows={[
+            ["धडे वाचले", `${count} / ${list.length}`],
+            [
+              "प्रश्नांवरील कामगिरी (सध्या बरोबर)",
+              exTotal ? `${exOk} / ${exTotal}` : "—",
+            ],
+            ["बोलण्याचा सराव (स्वतः नोंदवलेला)", `${speakCount} वेळा`],
+            [
+              "तुमचा आत्मविश्वास (स्वतः सांगितलेला)",
+              avg ? confidenceWord[avg] : "अजून नोंद नाही",
+            ],
+          ]}
+          value={count}
+          total={list.length}
+        />
+      )}
+      {panel === "skills" && (
+        <View style={s.goalCard}>
+          <Label>कौशल्य प्रगती · SKILLS</Label>
+          <Text style={s.body}>
+            {skillSummary.strengths.length || skillSummary.weaknesses.length
+              ? [
+                  skillSummary.strengths.length
+                    ? `बलस्थाने: ${skillSummary.strengths.map((x) => skillInfo[x.skill].mr).join(", ")}`
+                    : "",
+                  skillSummary.weaknesses.length
+                    ? `सराव हवा: ${skillSummary.weaknesses.map((x) => skillInfo[x.skill].mr).join(", ")}`
+                    : "",
+                ]
+                  .filter(Boolean)
+                  .join("\n")
+              : "वाचन, श्रवण, व्याकरण आणि शब्दसंग्रहातील तुमची प्रगती पाहा."}
+          </Text>
+          <Button
+            secondary
+            title="सर्व कौशल्ये पाहा · Skills"
+            onPress={() => navigation.navigate("Skills")}
+          />
+          <View style={{ height: 10 }} />
+          <Button
+            secondary
+            title="व्याकरण सूत्र तक्ता · Grammar"
+            onPress={() => navigation.navigate("Grammar")}
+          />
+        </View>
+      )}
     </Shell>
   );
 }

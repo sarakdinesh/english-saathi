@@ -120,35 +120,29 @@ export function Listen({
 }) {
   const { play, stop, status, playing } = useSpeech();
   return (
-    <View style={{ gap: 10, marginTop: 14 }}>
-      {compact ? (
-        <View style={{ flexDirection: "row", gap: 10 }}>
-          <View style={{ flex: 1 }}>
-            <Button secondary title="ऐका" onPress={() => void play(text, 1)} />
-          </View>
-          <View style={{ flex: 1 }}>
+    <View style={{ gap: 8, marginTop: 12 }}>
+      <View style={s.pillRow}>
+        {playing ? (
+          <Button small icon="stop" title="थांबवा · Stop" onPress={stop} />
+        ) : (
+          <>
             <Button
+              small
               secondary
-              title="हळू"
-              onPress={() => void play(text, 0.6)}
+              icon="play"
+              title={compact ? "ऐका" : "ऐका · Listen"}
+              onPress={() => void play(text, 1)}
             />
-          </View>
-        </View>
-      ) : (
-        <>
-          <Button
-            secondary
-            title="ऐका · Listen"
-            onPress={() => void play(text, 1)}
-          />
-          <Button
-            secondary
-            title="हळू ऐका · Listen slowly"
-            onPress={() => void play(text, 0.65)}
-          />
-        </>
-      )}
-      {playing && <Button title="आवाज थांबवा · Stop" onPress={stop} />}
+            <Button
+              small
+              secondary
+              icon="hourglass-outline"
+              title={compact ? "हळू" : "हळू · Slow"}
+              onPress={() => void play(text, compact ? 0.6 : 0.65)}
+            />
+          </>
+        )}
+      </View>
       {!!status && (
         <Text accessibilityLiveRegion="polite" style={s.body}>
           {status}
@@ -196,23 +190,28 @@ export function ListenAll({
   return (
     <View style={{ gap: 10 }}>
       {!!title && <Text style={s.rowTitle}>{title}</Text>}
-      <View style={{ flexDirection: "row", gap: 10 }}>
-        <View style={{ flex: 1 }}>
-          <Button
-            secondary
-            title="पूर्ण ऐका"
-            onPress={() => void play(lines, 0.95)}
-          />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Button
-            secondary
-            title="हळू ऐका"
-            onPress={() => void play(lines, 0.6)}
-          />
-        </View>
+      <View style={s.pillRow}>
+        {playing ? (
+          <Button small icon="stop" title="थांबवा · Stop" onPress={stop} />
+        ) : (
+          <>
+            <Button
+              small
+              secondary
+              icon="play"
+              title="पूर्ण ऐका"
+              onPress={() => void play(lines, 0.95)}
+            />
+            <Button
+              small
+              secondary
+              icon="hourglass-outline"
+              title="हळू ऐका"
+              onPress={() => void play(lines, 0.6)}
+            />
+          </>
+        )}
       </View>
-      {playing && <Button title="आवाज थांबवा · Stop" onPress={stop} />}
       {!!status && (
         <Text accessibilityLiveRegion="polite" style={s.body}>
           {status}
@@ -268,13 +267,9 @@ export function VoiceVariety({ text }: { text: string }) {
             onPress={() => void play(text, 0.9, l)}
           />
         ))}
-      <View style={{ flexDirection: "row", gap: 10 }}>
-        <View style={{ flex: 1 }}>
-          <Button secondary title="जलद" onPress={() => void play(text, 1.25)} />
-        </View>
-        <View style={{ flex: 1 }}>
-          <Button secondary title="हळू" onPress={() => void play(text, 0.6)} />
-        </View>
+      <View style={s.pillRow}>
+        <Button small secondary icon="flash-outline" title="जलद" onPress={() => void play(text, 1.25)} />
+        <Button small secondary icon="hourglass-outline" title="हळू" onPress={() => void play(text, 0.6)} />
       </View>
       {!!status && <Text style={s.smallMuted}>{status}</Text>}
     </View>

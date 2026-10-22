@@ -1,5 +1,7 @@
 # Release readiness — English Boluya (Android)
 
+> **To publish a release, follow [publishing.md](publishing.md).**
+>
 > Step-by-step for the two owner tasks (upload key, phone test): [upload-key-and-phone-test.md](upload-key-and-phone-test.md).
 
 Status on 22 October 2026. "Verified" means checked in this repository by a command or file inspection; nothing here was tested on a physical device in this round.
@@ -12,7 +14,7 @@ Status on 22 October 2026. "Verified" means checked in this repository by a comm
 | Marathi name / tagline | इंग्लिश बोलूया · आपल्या भाषेत शिकूया, इंग्रजीत बोलूया! (`src/brand.ts`) | Verified |
 | Application ID | `com.englishsaathi.learn` — **kept** | Decision needed (below) |
 | Storage key | `english-saathi.progress.v1` — **kept** | Must never change without a migration |
-| Version | `versionName 1.0.0`, `versionCode 1` (override with `-PboluyaVersionCode=N`) | Raise for every Play upload |
+| Version | `app.json` `version` / `android.versionCode`, read by Gradle and EAS | Raised for every upload by `npm run release:android` |
 | Icon / adaptive icon / splash | New English Boluya artwork in `assets/` and `mipmap-*` | Present; not re-reviewed on a device this round |
 
 ### Should the application ID change?
