@@ -1,3 +1,4 @@
+import type { StackProps, TabProps } from "../navigation/types";
 import React, { useMemo, useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import { categories, lessons } from "../data/course";
@@ -26,7 +27,7 @@ function Section({ title, sub }: { title: string; sub?: string }) {
   );
 }
 
-export default function Speak({ navigation }: any) {
+export default function Speak({ navigation }: TabProps<"Speak">) {
   const { progress, activity, markSpeaking } = useProgress();
   const [revealed, setRevealed] = useState<string[]>([]);
   const [topic, setTopic] = useState("conversation");
@@ -68,7 +69,7 @@ export default function Speak({ navigation }: any) {
           onPress={() => navigation.navigate("Phrasebook")}
           style={s.speakTile}
         >
-          <Icon name="chatbox-ellipses-outline" color={C.lime} size={26} />
+          <Icon name="chatbox-ellipses-outline" color={C.tileAccent} size={26} />
           <Text style={s.speakTileTitle}>रोजची वाक्ये</Text>
           <Text style={s.speakTileSub}>दुकान, प्रवास, ऑफिस</Text>
         </Pressable>
@@ -77,7 +78,7 @@ export default function Speak({ navigation }: any) {
           onPress={() => navigation.navigate("Phrasebook", { sounds: true })}
           style={s.speakTile}
         >
-          <Icon name="volume-high-outline" color={C.lime} size={26} />
+          <Icon name="volume-high-outline" color={C.tileAccent} size={26} />
           <Text style={s.speakTileTitle}>उच्चार टिप्स</Text>
           <Text style={s.speakTileSub}>V/W, TH, S आणि जोर</Text>
         </Pressable>
@@ -139,7 +140,7 @@ export default function Speak({ navigation }: any) {
           style={({ pressed }) => [s.lessonRow, pressed && { opacity: 0.65 }]}
         >
           <View style={[s.smallIcon, { backgroundColor: C.lime }]}>
-            <Icon name="people-outline" />
+            <Icon name="people-outline" color={C.onLime} />
           </View>
           <View style={{ flex: 1 }}>
             <Text style={s.rowTitle}>{r.title}</Text>
@@ -176,7 +177,7 @@ export default function Speak({ navigation }: any) {
               ]}
             >
               <View style={[s.smallIcon, { backgroundColor: C.lime }]}>
-                <Icon name={"mic-outline" as IconName} />
+                <Icon name={"mic-outline" as IconName} color={C.onLime} />
               </View>
               <View style={{ flex: 1 }}>
                 <Text style={s.rowTitle}>{t.mr}</Text>
@@ -214,7 +215,7 @@ export default function Speak({ navigation }: any) {
             }}
             style={[s.filter, topic === id && s.filterActive]}
           >
-            <Text style={[s.filterText, topic === id && { color: C.white }]}>
+            <Text style={[s.filterText, topic === id && { color: C.onPrimary }]}>
               {categories.find((c) => c.id === id)?.title}
             </Text>
           </Pressable>
@@ -273,7 +274,7 @@ export default function Speak({ navigation }: any) {
 }
 
 // Every role-play for the chosen path, grouped by lesson order.
-export function RolePlayList({ navigation }: any) {
+export function RolePlayList({ navigation }: StackProps<"RolePlayList">) {
   const { progress } = useProgress();
   const list = rolePlays.filter((r) => r.level === progress.path);
   return (

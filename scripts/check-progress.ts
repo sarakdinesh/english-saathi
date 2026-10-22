@@ -50,10 +50,16 @@ for (const bad of [
   { ...legacy, steps: { intro: 100 } },
   { ...legacy, reviews: { oops: { due: 0, interval: 0, correct: 0 } } },
   { ...legacy, settings: { textSize: 9, sound: true } },
+  { ...legacy, settings: { textSize: 1, sound: true, theme: "sepia" } },
   { ...legacy, completed: ["__proto__"] },
   { ...legacy, version: 3 },
 ])
   assert.throws(() => validateProgress(bad));
+// Theme preference: optional (older data has none), validated, round-trips.
+assert.equal(validateProgress(legacy).settings.theme, undefined);
+const themed = validateProgress({ ...migrated, settings: { textSize: 1.15, sound: false, theme: "dark" } });
+assert.deepEqual(themed.settings, { textSize: 1.15, sound: false, theme: "dark" });
+assert.deepEqual(validateProgress(JSON.parse(JSON.stringify(themed))).settings, themed.settings);
 const now = 1000000;
 let r = scheduleReview(undefined, false, now);
 assert.equal(r.due, now + 600000);
@@ -82,5 +88,5 @@ for (const e of exercises) {
     );
 }
 console.log(
-  "Passed legacy migration, backup round-trip, 11 invalid imports, revision intervals, curriculum coverage and 8 beginner exercise checks.",
+  "Passed legacy migration, backup round-trip, 12 invalid imports, theme setting, revision intervals, curriculum coverage and 8 beginner exercise checks.",
 );

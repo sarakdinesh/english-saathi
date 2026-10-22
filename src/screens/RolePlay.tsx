@@ -1,3 +1,4 @@
+import type { StackProps } from "../navigation/types";
 import React, { useState } from "react";
 import { Pressable, View } from "react-native";
 import { advanceTurn, rolePlayById } from "../curriculum";
@@ -8,6 +9,7 @@ import {
   Heading,
   Label,
   Button,
+  ProgressBar,
 } from "../components/ui";
 import { Listen, Recorder, Speaker } from "../components/Audio";
 import { s } from "../components/styles";
@@ -26,7 +28,7 @@ const confidence: [1 | 2 | 3, string][] = [
 
 // Reusable scripted role-play. The partner's lines are fixed; the app does not
 // listen to or assess the learner. Support reduces at the intermediate level.
-export default function RolePlay({ route, navigation }: any) {
+export default function RolePlay({ route, navigation }: StackProps<"RolePlay">) {
   const rp = rolePlayById(route.params?.id);
   const { progress, markSpeaking, setConfidence } = useProgress();
   const [stage, setStage] = useState<"intro" | "play" | "review">("intro");
@@ -148,7 +150,7 @@ export default function RolePlay({ route, navigation }: any) {
               <Text
                 style={[
                   s.filterText,
-                  progress.confidence[rp.id] === v && { color: C.white },
+                  progress.confidence[rp.id] === v && { color: C.onPrimary },
                 ]}
               >
                 {label}
@@ -196,14 +198,7 @@ export default function RolePlay({ route, navigation }: any) {
       <Label>
         {rp.en.toUpperCase()} · {step + 1} / {rp.turns.length}
       </Label>
-      <View style={s.track}>
-        <View
-          style={[
-            s.trackFill,
-            { width: `${((step + 1) / rp.turns.length) * 100}%` },
-          ]}
-        />
-      </View>
+      <ProgressBar value={step + 1} max={rp.turns.length} label="संवादातील टप्पा" />
       <View style={s.scripted}>
         <Text style={s.sayLabel}>ठरलेला सराव · अॅप तुमचा आवाज तपासत नाही</Text>
       </View>

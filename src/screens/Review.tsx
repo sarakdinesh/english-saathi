@@ -1,3 +1,4 @@
+import type { StackProps, TabProps } from "../navigation/types";
 import { Listen } from "../components/Audio";
 import { drillCards, mistakes } from "../data/speaking";
 import React, { useState } from "react";
@@ -16,7 +17,7 @@ import {
   Section,
 } from "../components/ui";
 import { s } from "../components/styles";
-export default function Review({ navigation }: any) {
+export default function Review({ navigation }: TabProps<"Review">) {
   const { progress, review } = useProgress();
   const [held, setHeld] = useState<string[]>([]);
   const [now, setNow] = useState(Date.now());
@@ -204,7 +205,7 @@ export default function Review({ navigation }: any) {
     </Shell>
   );
 }
-export function UnitPractice({ route }: any) {
+export function UnitPractice({ route }: StackProps<"UnitPractice">) {
   return (
     <Shell>
       <Heading

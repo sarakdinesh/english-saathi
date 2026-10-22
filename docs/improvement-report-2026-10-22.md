@@ -64,11 +64,7 @@ Overall roughly 7 → 7.5. Not 9: the remaining gap is device testing, a dark th
 
 **P0 — before release:** rotate the leaked GitHub token; create upload key and build an AAB; physical-device checklist; privacy policy; decide application ID.
 
-**P1 — next round:**
-- Dark theme. Styles are created once at module load (`StyleSheet.create` with static tokens), so dark mode needs styles built from a theme context (`useStyles()` hook). Tokens are now centralised, which makes this a mechanical change, but it touches every screen and must be checked visually — deliberately not done in this round.
-- Lesson flow: apply the brief's 10-step structure (goal → context → listen → Marathi explanation → repeat → guided → exercise → conversation → checkpoint → next) consistently in `Lesson.tsx` (545 lines; split into step components first).
-- Replace remaining `any` navigation props (Home, Learn, Lesson, Review, Speak…) with `NativeStackScreenProps<StackParams, …>`.
-- Wrong-answer feedback: every exercise has an explanation field; audit that each one explains the rule rather than restating the answer.
+**P1 — next round:** done in round 2 (see below), except splitting `Lesson.tsx` into step components.
 
 **P2 — product:**
 - Human review of Marathi wording (`docs/content-review.md` lists flagged items); no expert review has happened.
@@ -76,3 +72,26 @@ Overall roughly 7 → 7.5. Not 9: the remaining gap is device testing, a dark th
 - Speech recognition: options and trade-offs are in `docs/speech-options.md`; the on-device route (`expo-speech-recognition`, Android 13+) fits the offline requirement but gives transcripts, not pronunciation scores — label it that way if added.
 
 **P3 — Level 4 (advanced) gap analysis:** current intermediate units (`i1`–`i10`) reach opinions, workplace, interviews, problems, modals/conditionals, natural language and presenting at roughly CEFR A2–B1. A genuine advanced level needs new content for: meetings and negotiation, formal writing (email/report), extended listening (2–5 min audio), reported speech and complex clauses in use (not just reference), idiom and register, and presentation practice with timed long-talk recording. None of the existing lessons should be relabelled as advanced.
+
+---
+
+# Round 2 — same day
+
+| Area | Change | Files |
+| --- | --- | --- |
+| Dark theme | Light and dark palettes with identical keys; Settings → रंगसंगती (System / Light / Dark), stored as optional `settings.theme` (older data and backups without it stay valid; invalid values are rejected on import). The palette is swapped in place and module-level styles are rebuilt (`themed()`), then the navigation tree is re-mounted with its saved state so the learner stays on the same screen. Hero card and speaking tiles stay dark in both schemes; the logo sits on a light plate in dark mode. `app.json` `userInterfaceStyle` → `automatic`. | `src/components/theme.ts`, `styles.ts`, `App.tsx`, `src/screens/Settings.tsx`, `src/state/model.ts`, `Menu.tsx`, `Skills.tsx` |
+| Semantic tokens | `onPrimary` (text on green/ink fills), `onLime`, `hero`, `tile`, `tileAccent`, `logoPlate` replace places where `white`/`ink` did double duty. | 12 files |
+| Typed navigation | Every screen uses `StackProps<…>` / `TabProps<…>`; `Main` takes typed nested params; menu routes are a checked union of parameter-free screens; `SkillPractice.skill` is a `SkillArea`. No `any` screen props remain. | `src/navigation/types.ts`, all screens |
+| Mistake feedback | A wrong answer shows **your answer** (struck through) vs the **complete correct answer** (gap-fill sentences completed), then "का? · Why" with the explanation and a note that the question will come back in review. Headline changed to a neutral "हरकत नाही! फरक पाहूया." | `src/components/Exercise.tsx`, `src/curriculum/score.ts` |
+| Explanation audit | 784 explanations: none empty, none without Marathi; 234 short or restating the answer, listed for a teacher in `docs/explanation-review.md`. Not rewritten (needs human Marathi review). | `docs/explanation-review.md` |
+| Lesson flow | The existing 7 stages already cover the brief's sequence (goal + conversation → Marathi meaning/formula → listen & repeat → guided practice → own speaking → conversation practice → review/next), so they were not reordered (stored step positions depend on them). Added: "पुढे: <next stage>" hint, an announced stage progress bar, and a compact Save link instead of a full-width button on every stage. | `src/screens/Lesson.tsx` |
+| Android | Dark window background while the app loads (`values-night/colors.xml`). `./gradlew :app:mergeReleaseResources` passes and produced the release JS bundle; no APK/AAB built. | `android/app/src/main/res/values-night/colors.xml` |
+| Accessibility | Reusable `ProgressBar` (role, value, label; also aria props for web) used in Lesson, Practice and RolePlay; test enforces progressbar semantics on every track. | `src/components/ui.tsx`, `scripts/check-app.ts` |
+
+Tests added: both palettes pass 4.5:1 on 25 text pairs and 3:1 for icons; scheme switching invalidates cached styles; theme setting validation and round-trip; every exercise yields a complete correct answer that scores as correct.
+
+Verification: `npx tsc --noEmit` pass; `npm test` exit 0 (10 suites). Web preview at 375×812 in dark mode: Home, Learn, Speak, Settings, Lesson stage 4 with a wrong answer; Light/Dark/System switching from Settings keeps the screen and back stack; no console errors. Not verified on Android hardware.
+
+Scores after round 2 (same scale as above): visual design 7.5 → 8, accessibility 7 → 7.5, engineering 7.5 → 8, learning effectiveness 7 → 7.5 (clearer mistake feedback); others unchanged. Overall about 7.5 → 8.
+
+Still open: device pass (P0 list above), `Lesson.tsx` split into step components, teacher review of the flagged explanations, phoneme audio, Level 4 content.

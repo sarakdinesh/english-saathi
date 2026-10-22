@@ -1,5 +1,7 @@
+import type { AppNavigation, StackProps } from "../navigation/types";
 import React, { useState } from "react";
 import { Pressable, View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { useProgress, localDate } from "../state/progress";
 import { words } from "../data/course";
 import { kits, lessonById } from "../curriculum";
@@ -55,7 +57,7 @@ function DailyCard({
         style={s.goalRow}
       >
         <View style={[s.smallIcon, { backgroundColor: done ? C.lime : C.greenMist }]}>
-          <Icon name={done ? "checkmark" : icon} />
+          <Icon name={done ? "checkmark" : icon} color={done ? C.onLime : C.ink} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={s.rowTitle}>{title}</Text>
@@ -70,7 +72,8 @@ function DailyCard({
 
 // Today's content, chosen by the daily engine. Completion here is stored
 // separately from lesson progress and is self-reported for speaking items.
-export function DailyToday({ navigation }: { navigation: any }) {
+export function DailyToday() {
+  const navigation = useNavigation<AppNavigation>();
   const { plan, previous, done, mark } = useDaily();
   const { progress } = useProgress();
   const [open, setOpen] = useState<string | null>(null);
@@ -285,7 +288,7 @@ function Yesterday({ plan }: { plan: DailyPlan }) {
   );
 }
 
-export function DailyQuiz({ navigation }: any) {
+export function DailyQuiz({ navigation }: StackProps<"DailyQuiz">) {
   const { plan, mark, done } = useDaily();
   const { review } = useProgress();
   // Replaying today's quiz is allowed, but only the first completed run counts

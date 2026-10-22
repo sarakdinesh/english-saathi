@@ -22,6 +22,9 @@ import {
 } from "../daily/engine";
 import { talks, rolePlays } from "../curriculum";
 export type ReviewItem = { due: number; interval: number; correct: number };
+export const THEMES = ["system", "light", "dark"] as const;
+export type ThemeChoice = (typeof THEMES)[number];
+
 export type Progress = {
   completed: string[];
   saved: string[];
@@ -37,7 +40,8 @@ export type Progress = {
   // Listening questions whose latest answer was given after the transcript had
   // been revealed: they are not counted as listening evidence.
   assisted?: string[];
-  settings: { textSize: number; sound: boolean };
+  // `theme` was added later; missing means "system" (follow the phone).
+  settings: { textSize: number; sound: boolean; theme?: ThemeChoice };
   daily: Record<string, string[]>;
   // Added after the first release. All are optional in stored/imported data.
   path: PathId;
@@ -178,7 +182,8 @@ export function validateProgress(p: any): Progress {
   if (
     !plain(settings) ||
     ![1, 1.15, 1.3].includes(settings.textSize) ||
-    typeof settings.sound !== "boolean"
+    typeof settings.sound !== "boolean" ||
+    (settings.theme !== undefined && !THEMES.includes(settings.theme))
   )
     throw Error("Invalid settings");
   const daily: Record<string, string[]> = {};
@@ -355,7 +360,11 @@ export function validateProgress(p: any): Progress {
     reviews,
     mastered: ids(p.mastered ?? [], reviewIds),
     ...(p.assisted ? { assisted: ids(p.assisted, reviewIds) } : {}),
-    settings: { ...settings },
+    settings: {
+      textSize: settings.textSize,
+      sound: settings.sound,
+      ...(settings.theme ? { theme: settings.theme } : {}),
+    },
     daily,
     path,
     ...(placement ? { placement } : {}),

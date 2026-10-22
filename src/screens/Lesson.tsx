@@ -1,3 +1,4 @@
+import type { StackProps } from "../navigation/types";
 import React, { useState } from "react";
 import { Pressable, View } from "react-native";
 import { exercises as legacyList } from "../data/journey";
@@ -16,6 +17,8 @@ import {
   Heading,
   Label,
   Button,
+  Icon,
+  ProgressBar,
 } from "../components/ui";
 import { s } from "../components/styles";
 import { C } from "../components/theme";
@@ -68,7 +71,7 @@ function Chips({
           onPress={() => onPick(v)}
           style={[s.chip, value === v && s.chipOn]}
         >
-          <Text style={[s.filterText, value === v && { color: C.white }]}>
+          <Text style={[s.filterText, value === v && { color: C.onPrimary }]}>
             {label}
           </Text>
         </Pressable>
@@ -77,7 +80,7 @@ function Chips({
   );
 }
 
-export default function Lesson({ navigation, route }: any) {
+export default function Lesson({ navigation, route }: StackProps<"Lesson">) {
   const {
     progress,
     step,
@@ -110,6 +113,8 @@ export default function Lesson({ navigation, route }: any) {
     : legacy.length
       ? [0, 1, 2, 3, 4, 5, 6]
       : [0, 1, 2, 5, 6];
+  const names = kit ? stageNames : legacyNames;
+  const saved = progress.saved.includes(item.id);
   const position = Math.max(stages.indexOf(n), 0);
   const current = stages[position];
   const go = (value: number) => {
@@ -136,28 +141,32 @@ export default function Lesson({ navigation, route }: any) {
       <Label>
         {unit ? `${unit.en.toUpperCase()} · ` : ""}
         {position + 1} / {stages.length} ·{" "}
-        {kit ? stageNames[current] : legacyNames[current]}
+        {names[current]}
       </Label>
-      <View style={s.track}>
-        <View
-          style={[
-            s.trackFill,
-            { width: `${((position + 1) / stages.length) * 100}%` },
-          ]}
-        />
-      </View>
-      <View style={{ height: 20 }} />
-      <Heading title={item.title} sub={item.subtitle} />
-      <Button
-        secondary
-        title={
-          progress.saved.includes(item.id)
-            ? "जतन केले ✓ · Remove bookmark"
-            : "जतन करा · Bookmark"
-        }
-        onPress={() => toggleSave(item.id)}
+      <ProgressBar
+        value={position + 1}
+        max={stages.length}
+        label={`धड्याचा टप्पा: ${names[current]}`}
       />
-      <View style={{ height: 20 }} />
+      {position < stages.length - 1 && (
+        <Text style={[s.smallMuted, { marginTop: 6 }]}>
+          पुढे: {names[stages[position + 1]]}
+        </Text>
+      )}
+      <View style={{ height: 16 }} />
+      <Heading title={item.title} sub={item.subtitle} />
+      <Pressable
+        accessibilityRole="button"
+        accessibilityLabel={saved ? "धडा जतन केला आहे. काढण्यासाठी दाबा." : "हा धडा जतन करा"}
+        accessibilityState={{ selected: saved }}
+        onPress={() => toggleSave(item.id)}
+        hitSlop={8}
+        style={({ pressed }) => [s.inlineAction, pressed && { opacity: 0.6 }]}
+      >
+        <Icon name={saved ? "bookmark" : "bookmark-outline"} color={C.green} size={20} />
+        <Text style={s.link}>{saved ? "जतन केले · Saved" : "जतन करा · Save"}</Text>
+      </Pressable>
+      <View style={{ height: 12 }} />
     </>
   );
   const nav = (

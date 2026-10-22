@@ -1,3 +1,4 @@
+import type { StackProps } from "../navigation/types";
 import React, { useRef, useState } from "react";
 import { Pressable, TextInput, View } from "react-native";
 import { CommonActions } from "@react-navigation/native";
@@ -23,7 +24,7 @@ import { s } from "../components/styles";
 import { C } from "../components/theme";
 
 // Optional starting-level check. Results recommend a start only.
-export function Placement({ navigation }: any) {
+export function Placement({ navigation }: StackProps<"Placement">) {
   const { savePlacement, setPath, progress } = useProgress();
   const first = useRef<Record<string, boolean>>({});
   const [done, setDone] = useState(0);
@@ -174,7 +175,7 @@ export function Placement({ navigation }: any) {
 }
 
 // Unit checkpoint: new situation, applying the unit's patterns.
-export function Checkpoint({ route, navigation }: any) {
+export function Checkpoint({ route, navigation }: StackProps<"Checkpoint">) {
   const unit = unitById(route.params.unit);
   const { saveCheckpoint, activity, progress } = useProgress();
   const first = useRef<Record<string, boolean>>({});
@@ -252,7 +253,7 @@ export function Checkpoint({ route, navigation }: any) {
 }
 
 // Longer speaking task with optional preparation and a plain timer.
-export function LongTalk({ route, navigation }: any) {
+export function LongTalk({ route, navigation }: StackProps<"LongTalk">) {
   const talk = talks.find((t) => t.id === route.params.id);
   const { markSpeaking, progress, setConfidence } = useProgress();
   const [notes, setNotes] = useState("");
@@ -382,7 +383,7 @@ export function LongTalk({ route, navigation }: any) {
             <Text
               style={[
                 s.filterText,
-                progress.confidence[talk.id] === v && { color: C.white },
+                progress.confidence[talk.id] === v && { color: C.onPrimary },
               ]}
             >
               {l}

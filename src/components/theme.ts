@@ -3,7 +3,7 @@
 // Text colours are checked against WCAG AA (4.5:1) on the surfaces they are
 // used on — see scripts/check-design.ts.
 
-export const C = {
+const light = {
   // Brand
   green: "#174C3C", // primary: deep green
   lime: "#D8F36A", // highlight for the one most important action
@@ -21,7 +21,15 @@ export const C = {
   body: "#566558",
   bodyMr: "#536452",
   muted: "#617168",
-  // Hero (text on the deep-green card)
+  // Text and icons on green / ink fills, and on lime
+  onPrimary: "#FFFFFF",
+  onLime: "#172B24",
+  tileAccent: "#D8F36A", // icon on the dark speaking tiles
+  logoPlate: "transparent", // behind the logo artwork (dark lettering)
+  // Hero card and speaking tiles stay dark in both schemes
+  hero: "#174C3C",
+  tile: "#172B24",
+  // Text on the hero card and speaking tiles
   heroText: "#F4F6E8",
   heroSub: "#C1CEBF",
   heroMuted: "#B5C7A4",
@@ -47,6 +55,84 @@ export const C = {
   blueTint: "#E6EDF3",
   blueInk: "#35607F",
 };
+export type Palette = typeof light;
+
+// Dark palette: same keys. Primary fills (buttons, links, selected chips)
+// become a soft green with dark text; the hero card and tiles stay dark.
+const dark: Palette = {
+  green: "#8FD3AE",
+  lime: "#D8F36A",
+  ink: "#E6EEE8",
+  bg: "#0E1714",
+  white: "#17241F",
+  frame: "#09100D",
+  sand: "#1E2C26",
+  line: "#2C3D35",
+  pressed: "#22332B",
+  shadow: "#000000",
+  scrim: "rgba(0,0,0,0.6)",
+  body: "#BCCAC1",
+  bodyMr: "#C4D1C8",
+  muted: "#97A89D",
+  onPrimary: "#0E1714",
+  onLime: "#172B24",
+  tileAccent: "#D8F36A",
+  logoPlate: "#F7F8F2",
+  hero: "#1D4536",
+  tile: "#1D3A2F",
+  heroText: "#EEF4EF",
+  heroSub: "#BFD1C5",
+  heroMuted: "#B2CBA2",
+  heroFaint: "#CFDBD2",
+  heroLine: "#36624F",
+  successSoft: "#1C3329",
+  danger: "#F0A090",
+  dangerInk: "#F4B3A5",
+  dangerSoft: "#3A2420",
+  greenTint: "#1F3329",
+  greenMist: "#1D2E27",
+  limeSoft: "#2E3A17",
+  limeTint: "#2A3616",
+  limeMist: "#232E14",
+  olive: "#C9E77A",
+  amberInk: "#E6CB8E",
+  amberSoft: "#2E2818",
+  amberTint: "#332B17",
+  coralSoft: "#3A2620",
+  coralInk: "#F2B39F",
+  blueTint: "#1C2A35",
+  blueInk: "#9CC3E0",
+};
+
+export const palettes = { light, dark: dark as Palette };
+export type Scheme = keyof typeof palettes;
+
+// The live palette. Components read `C.x` while rendering, so switching the
+// scheme (setScheme) and re-rendering is enough; module-level styles are
+// rebuilt through `themed` below.
+export const C: Palette = { ...light };
+let schemeVersion = 0;
+let current: Scheme = "light";
+export const currentScheme = () => current;
+export function setScheme(scheme: Scheme) {
+  if (scheme === current) return;
+  Object.assign(C, palettes[scheme]);
+  current = scheme;
+  schemeVersion++;
+}
+// Wraps a style factory so it is rebuilt once per scheme change.
+export function themed<T>(make: () => T): () => T {
+  let version = -1;
+  let cache: T;
+  return () => {
+    if (version !== schemeVersion) {
+      cache = make();
+      version = schemeVersion;
+    }
+    return cache;
+  };
+}
+
 
 // 4-point spacing scale.
 export const space = { xs: 4, sm: 8, md: 12, lg: 16, xl: 24, xxl: 32 } as const;

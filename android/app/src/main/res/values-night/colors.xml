@@ -1,1 +1,5 @@
-<resources/>
+<resources>
+  <!-- Window behind the app while JavaScript loads; matches the dark palette
+       bg (src/components/theme.ts) so dark-mode launches do not flash white. -->
+  <color name="activityBackground">#0E1714</color>
+</resources>

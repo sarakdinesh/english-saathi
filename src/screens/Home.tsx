@@ -1,3 +1,4 @@
+import type { TabProps } from "../navigation/types";
 import React, { useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { View, Pressable } from "react-native";
@@ -29,7 +30,7 @@ const confidenceWord = [
   "आत्मविश्वास आहे",
 ];
 
-export default function Home({ navigation }: any) {
+export default function Home({ navigation }: TabProps<"Home">) {
   const { progress } = useProgress();
   const [now, setNow] = useState(Date.now());
   useFocusEffect(
@@ -171,7 +172,7 @@ export default function Home({ navigation }: any) {
           }
         />
       </View>
-      <DailyToday navigation={navigation} />
+      <DailyToday />
       <Section title="आजची बोलण्याची शिफारस" />
       <Pressable
         accessibilityRole="button"
@@ -180,7 +181,7 @@ export default function Home({ navigation }: any) {
         style={({ pressed }) => [s.lessonRow, { opacity: pressed ? 0.65 : 1 }]}
       >
         <View style={[s.smallIcon, { backgroundColor: C.lime }]}>
-          <Icon name="mic-outline" />
+          <Icon name="mic-outline" color={C.onLime} />
         </View>
         <View style={{ flex: 1 }}>
           <Text style={s.rowTitle}>{speakRec.title}</Text>
@@ -261,7 +262,7 @@ export default function Home({ navigation }: any) {
         {goals.map((g) => (
           <View key={g.label} style={s.goalRow}>
             <View style={[s.goalDot, g.done && s.goalDotDone]}>
-              {g.done && <Icon name="checkmark" size={16} color={C.white} />}
+              {g.done && <Icon name="checkmark" size={16} color={C.onPrimary} />}
             </View>
             <Text style={s.body}>{g.label}</Text>
           </View>

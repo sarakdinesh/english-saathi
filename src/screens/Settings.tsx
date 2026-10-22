@@ -1,3 +1,4 @@
+import type { AppNavigation } from "../navigation/types";
 import React, { useCallback, useState } from "react";
 import { View, TextInput, Share, Platform } from "react-native";
 import { validateProgress } from "../state/model";
@@ -29,6 +30,12 @@ const TEXT_SIZES = [
   ["1.3", "अधिक मोठा · Extra large"],
 ] as const;
 
+const THEME_OPTIONS = [
+  ["system", "फोनप्रमाणे · System"],
+  ["light", "उजळ · Light"],
+  ["dark", "गडद · Dark"],
+] as const;
+
 export default function Settings() {
   const { progress, settings, importProgress, reset, saveReminder } =
     useProgress();
@@ -42,7 +49,7 @@ export default function Settings() {
       getPermission().then(setPermission, () => setPermission("unknown"));
     }, []),
   );
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<AppNavigation>();
   const [backup, setBackup] = useState("");
   const [message, setMessage] = useState("");
   const [confirm, setConfirm] = useState(false);
@@ -146,6 +153,18 @@ export default function Settings() {
       />
       <Text style={s.smallMuted}>
         फोनच्या सेटिंग्जमधील अक्षरांचा आकारही येथे लागू होतो.
+      </Text>
+      <View style={{ height: 20 }} />
+      <Label>रंगसंगती · APPEARANCE</Label>
+      <Chips
+        label="रंगसंगती"
+        options={THEME_OPTIONS}
+        value={progress.settings.theme ?? "system"}
+        onChange={(theme) => settings({ theme })}
+      />
+      <Text style={s.smallMuted}>
+        गडद रंग रात्री डोळ्यांना आरामदायक वाटतात. “फोनप्रमाणे” निवडल्यास फोनची
+        सेटिंग वापरली जाते.
       </Text>
       <View style={{ height: 24 }} />
       <Button

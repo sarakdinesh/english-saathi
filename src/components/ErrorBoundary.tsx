@@ -53,7 +53,7 @@ export default class ErrorBoundary extends React.Component<
             marginTop: space.lg,
           }}
         >
-          <Text style={{ ...font.body, color: C.white, fontWeight: "700" }}>
+          <Text style={{ ...font.body, color: C.onPrimary, fontWeight: "700" }}>
             पुन्हा प्रयत्न करा · Try again
           </Text>
         </Pressable>

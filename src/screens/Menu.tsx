@@ -12,23 +12,27 @@ import {
 } from "react-native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { AppText as Text, Icon, IconName } from "../components/ui";
-import { C } from "../components/theme";
-import { TAB_ROUTES } from "../navigation/types";
+import { C, themed } from "../components/theme";
+import { TAB_ROUTES, type StackParams } from "../navigation/types";
 
 export type MenuItem = {
   icon: IconName;
   mr: string;
   en: string;
-  route: string;
-  params?: object;
+  // Stack screens (no params needed from the menu) or a tab inside Main.
+  route: MenuRoute;
 };
 type Group = { title: string; tint: string; ink: string; items: MenuItem[] };
 
 // Routes that live inside the bottom-tab navigator rather than the root stack.
-export const isTabRoute = (route: string) =>
+type ParamFree = {
+  [K in keyof StackParams]: undefined extends StackParams[K] ? K : never;
+}[keyof StackParams];
+export type MenuRoute = Exclude<ParamFree, "Main"> | (typeof TAB_ROUTES)[number];
+export const isTabRoute = (route: string): route is (typeof TAB_ROUTES)[number] =>
   (TAB_ROUTES as readonly string[]).includes(route);
 
-const groups: Group[] = [
+const groups = (): Group[] => [
   {
     title: "शिका · LEARN",
     tint: C.greenTint,
@@ -91,6 +95,7 @@ export function MenuSheet({
 }) {
   const insets = useSafeAreaInsets();
   const { height } = useWindowDimensions();
+  const m = menuStyles();
   const [mounted, setMounted] = useState(visible);
   const progress = useRef(new Animated.Value(0)).current;
 
@@ -165,7 +170,7 @@ export function MenuSheet({
               paddingBottom: 20 + insets.bottom,
             }}
           >
-            {groups.map((g) => (
+            {groups().map((g) => (
               <View key={g.title} style={{ marginTop: 14 }}>
                 <Text style={m.groupTitle}>{g.title}</Text>
                 <View style={m.grid}>
@@ -199,7 +204,8 @@ export function MenuSheet({
   );
 }
 
-const m = StyleSheet.create({
+const menuStyles = themed(() =>
+  StyleSheet.create({
   overlay: { flex: 1, justifyContent: "flex-end", alignItems: "center" },
   scrim: { backgroundColor: C.scrim },
   sheet: {
@@ -283,4 +289,5 @@ const m = StyleSheet.create({
     lineHeight: 19,
   },
   tileEn: { fontSize: 11, color: C.muted, textAlign: "center", lineHeight: 16 },
-});
+  }),
+);

@@ -1,5 +1,7 @@
+import type { AppNavigation, StackProps } from "../navigation/types";
 import React, { useState } from "react";
 import { View } from "react-native";
+import { useNavigation } from "@react-navigation/native";
 import { lessons } from "../data/course";
 import {
   modals,
@@ -36,7 +38,8 @@ function Row({ label, f }: { label: string; f: Formula }) {
 
 const lessonTitle = (id?: string) => lessons.find((l) => l.id === id)?.title;
 
-function LessonLink({ id, navigation }: { id?: string; navigation: any }) {
+function LessonLink({ id }: { id?: string }) {
+  const navigation = useNavigation<AppNavigation>();
   const title = lessonTitle(id);
   if (!id || !title) return null;
   return (
@@ -50,7 +53,7 @@ function LessonLink({ id, navigation }: { id?: string; navigation: any }) {
   );
 }
 
-export default function Grammar({ navigation }: any) {
+export default function Grammar({ navigation }: StackProps<"Grammar">) {
   const [tab, setTab] = useState<Tab>("tenses");
   return (
     <Shell>
@@ -96,7 +99,7 @@ export default function Grammar({ navigation }: any) {
                 या काळात passive क्वचित वापरतात.
               </Text>
             )}
-            <LessonLink id={t.lesson} navigation={navigation} />
+            <LessonLink id={t.lesson} />
           </View>
         ))}
 
@@ -117,7 +120,7 @@ export default function Grammar({ navigation }: any) {
               <Row label="नकारार्थी · NEGATIVE" f={m.negative} />
               <Row label="प्रश्नार्थी · QUESTION" f={m.question} />
               <Row label="कर्मणी · PASSIVE" f={m.passive} />
-              <LessonLink id={m.lesson} navigation={navigation} />
+              <LessonLink id={m.lesson} />
             </View>
           ))}
         </>
@@ -160,7 +163,7 @@ export default function Grammar({ navigation }: any) {
                 <Text style={s.smallMuted}>{n.mr}</Text>
               </View>
             ))}
-            <LessonLink id="passive-intro" navigation={navigation} />
+            <LessonLink id="passive-intro" />
           </View>
         </>
       )}
@@ -174,7 +177,7 @@ export default function Grammar({ navigation }: any) {
               <Row key={x.label} label={x.label} f={x.f} />
             ))}
             {!!p.note && <Text style={[s.smallMuted, { marginTop: 10 }]}>{p.note}</Text>}
-            <LessonLink id={p.lesson} navigation={navigation} />
+            <LessonLink id={p.lesson} />
           </View>
         ))}
       <Text style={s.smallMuted}>

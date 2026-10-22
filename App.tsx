@@ -1,19 +1,27 @@
-import React, { useEffect, useState } from "react";
-import { ActivityIndicator, AppState, View, useWindowDimensions } from "react-native";
+import React, { useEffect, useRef, useState } from "react";
+import {
+  ActivityIndicator,
+  AppState,
+  View,
+  useColorScheme,
+  useWindowDimensions,
+} from "react-native";
 import { StatusBar } from "expo-status-bar";
 import {
   NavigationContainer,
+  DarkTheme,
   DefaultTheme,
   useNavigation,
+  type NavigationState,
 } from "@react-navigation/native";
 import { createBottomTabNavigator } from "@react-navigation/bottom-tabs";
 import { createNativeStackNavigator } from "@react-navigation/native-stack";
 import { SafeAreaProvider, useSafeAreaInsets } from "react-native-safe-area-context";
 import { ProgressProvider, useProgress, localDate } from "./src/state/progress";
-import { C } from "./src/components/theme";
-import { s } from "./src/components/styles";
+import { C, currentScheme, setScheme, type Scheme } from "./src/components/theme";
+import { refreshStyles, s } from "./src/components/styles";
 import { BRAND } from "./src/brand";
-import type { StackParams, TabParams } from "./src/navigation/types";
+import type { AppNavigation, StackParams, TabParams } from "./src/navigation/types";
 import ErrorBoundary from "./src/components/ErrorBoundary";
 import { syncReminders } from "./src/components/reminderService";
 import { needsOnboarding } from "./src/state/onboarding";
@@ -48,13 +56,13 @@ const tabIcons: Record<keyof TabParams, IconName> = {
 };
 function Tabs() {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<AppNavigation>();
   const [menuOpen, setMenuOpen] = useState(false);
   function goTo(item: MenuItem) {
     setMenuOpen(false);
     if (isTabRoute(item.route))
       navigation.navigate("Main", { screen: item.route });
-    else navigation.navigate(item.route, item.params);
+    else navigation.navigate(item.route);
   }
   return (
     <>
@@ -148,14 +156,32 @@ function useReminderSync() {
     syncReminders(reminder, profile?.studyMinutes ?? 15, studied).catch(() => {});
   }, [ready, reminder, profile?.studyMinutes, studied, tick]);
 }
+// Light, dark or follow the phone. Applied before anything below renders,
+// and the navigation tree is re-mounted (keeping its state) so every screen
+// picks up the new palette and styles.
+function useScheme(): Scheme {
+  const { progress } = useProgress();
+  const system = useColorScheme();
+  const choice = progress.settings.theme ?? "system";
+  const scheme: Scheme =
+    choice === "system" ? (system === "dark" ? "dark" : "light") : choice;
+  if (currentScheme() !== scheme) {
+    setScheme(scheme);
+    refreshStyles();
+  }
+  return scheme;
+}
 function Root() {
   const { ready, error, progress } = useProgress();
   useReminderSync();
+  const scheme = useScheme();
+  const navState = useRef<NavigationState | undefined>(undefined);
+  const base = scheme === "dark" ? DarkTheme : DefaultTheme;
   const { width } = useWindowDimensions();
   return (
     <View style={[s.root, width > 700 && { paddingVertical: 20 }]}>
       <View style={s.appFrame}>
-        <StatusBar style="dark" />
+        <StatusBar style={scheme === "dark" ? "light" : "dark"} />
         {!!error && (
           <Text accessibilityRole="alert" style={s.error}>
             {error}
@@ -169,11 +195,17 @@ function Root() {
           </View>
         ) : (
           <NavigationContainer
+            key={scheme}
+            initialState={navState.current}
+            onStateChange={(state) => (navState.current = state)}
             theme={{
-              ...DefaultTheme,
+              ...base,
               colors: {
-                ...DefaultTheme.colors,
+                ...base.colors,
                 background: C.bg,
+                card: C.white,
+                text: C.ink,
+                border: C.line,
                 primary: C.green,
               },
             }}

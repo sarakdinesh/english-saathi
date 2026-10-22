@@ -10,6 +10,7 @@ import {
   Button,
   Icon,
   IconName,
+  ProgressBar,
 } from "../components/ui";
 import { Listen } from "../components/Audio";
 import { s } from "../components/styles";
@@ -71,7 +72,7 @@ export function SpeakDrill() {
             }}
             style={[s.filter, topic === x.id && s.filterActive]}
           >
-            <Text style={[s.filterText, topic === x.id && { color: C.white }]}>
+            <Text style={[s.filterText, topic === x.id && { color: C.onPrimary }]}>
               {x.mr}
             </Text>
           </Pressable>
@@ -81,14 +82,7 @@ export function SpeakDrill() {
         {seen.length} / {pool.length} पूर्ण · बरोबर {rated.good} · पुन्हा{" "}
         {rated.again}
       </Text>
-      <View style={s.track}>
-        <View
-          style={[
-            s.trackFill,
-            { width: `${(seen.length / Math.max(pool.length, 1)) * 100}%` },
-          ]}
-        />
-      </View>
+      <ProgressBar value={seen.length} max={pool.length} label="सराव प्रगती" />
       <View style={{ height: 18 }} />
       {card ? (
         <View style={s.phraseCard}>

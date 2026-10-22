@@ -1,3 +1,4 @@
+import type { StackProps } from "../navigation/types";
 import React, { useState } from "react";
 import { Image, Pressable, View } from "react-native";
 import { CommonActions } from "@react-navigation/native";
@@ -14,6 +15,7 @@ import type { PathId } from "../curriculum/types";
 import { pathInfo } from "./Learn";
 import { AppText as Text, Button, Heading, Label, Shell } from "../components/ui";
 import { s } from "../components/styles";
+import { BRAND } from "../brand";
 import { C } from "../components/theme";
 
 const levels: { path: PathId; mr: string; sub: string }[] = [
@@ -65,7 +67,7 @@ function Choice({
 
 // First-run onboarding in Marathi: goal, daily time, starting level. Every
 // choice can be changed later (Settings, Learn). Skipping keeps the defaults.
-export default function Onboarding({ navigation }: any) {
+export default function Onboarding({ navigation }: StackProps<"Onboarding">) {
   const { progress, saveProfile, setPath } = useProgress();
   const [step, setStep] = useState(0);
   const [goal, setGoal] = useState<Goal>(progress.profile?.goal ?? "daily");
@@ -92,12 +94,14 @@ export default function Onboarding({ navigation }: any) {
       {step === 0 && (
         <>
           {first && (
-            <Image
-              source={require("../../assets/logo-stacked.png")}
-              accessibilityLabel="English Boluya · इंग्लिश बोलूया"
-              resizeMode="contain"
-              style={{ width: "100%", height: 170, marginBottom: 12 }}
-            />
+            <View style={[s.logoPlate, { marginBottom: 12 }]}>
+              <Image
+                source={require("../../assets/logo-stacked.png")}
+                accessibilityLabel={BRAND.full}
+                resizeMode="contain"
+                style={{ width: "100%", height: 170 }}
+              />
+            </View>
           )}
           <Heading
             title="तुम्हाला इंग्रजी कशासाठी शिकायचे आहे?"

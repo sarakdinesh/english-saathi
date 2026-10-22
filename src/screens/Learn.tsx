@@ -1,3 +1,4 @@
+import type { TabProps } from "../navigation/types";
 import React, { useState } from "react";
 import { View, TextInput, Pressable, ScrollView } from "react-native";
 import { lessons, categories } from "../data/course";
@@ -42,7 +43,7 @@ export const pathInfo: Record<PathId, { mr: string; en: string; sub: string }> =
     },
   };
 
-export default function Learn({ navigation, route }: any) {
+export default function Learn({ navigation, route }: TabProps<"Learn">) {
   const { progress, setPath } = useProgress();
   const [query, setQuery] = useState("");
   const active = route.params?.category;
@@ -81,7 +82,7 @@ export default function Learn({ navigation, route }: any) {
             <Label light={on}>
               {pathInfo[id].en.toUpperCase()} {on ? "· निवडलेला" : ""}
             </Label>
-            <Text style={[s.sectionTitle, on && { color: C.white }]}>
+            <Text style={[s.sectionTitle, on && { color: C.heroText }]}>
               {pathInfo[id].mr}
             </Text>
             <Text style={[s.smallMuted, on && { color: C.heroSub }]}>
@@ -165,7 +166,7 @@ export default function Learn({ navigation, route }: any) {
                 pressed && { opacity: 0.7 },
               ]}
             >
-              <Text style={[s.filterText, on && { color: C.white }]}>
+              <Text style={[s.filterText, on && { color: C.onPrimary }]}>
                 {c.title}
               </Text>
             </Pressable>
@@ -237,7 +238,7 @@ export default function Learn({ navigation, route }: any) {
                   style={[s.lessonRow, { borderBottomWidth: 0 }]}
                 >
                   <View style={[s.smallIcon, { backgroundColor: C.lime }]}>
-                    <Text style={s.catSymbol}>✓</Text>
+                    <Text style={[s.catSymbol, { color: C.onLime }]}>✓</Text>
                   </View>
                   <View style={{ flex: 1 }}>
                     <Text style={s.rowTitle}>

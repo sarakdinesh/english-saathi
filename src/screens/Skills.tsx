@@ -1,3 +1,4 @@
+import type { StackProps } from "../navigation/types";
 import React from "react";
 import { View } from "react-native";
 import { allExercises } from "../curriculum";
@@ -26,14 +27,14 @@ const levelText: Record<Level, string> = {
   weak: "सुधारणा हवी",
   unknown: "अजून माहिती कमी",
 };
-const levelColor: Record<Level, string> = {
+const levelColor = (): Record<Level, string> => ({
   strong: C.green,
   ok: C.ink,
   weak: C.danger,
   unknown: C.muted,
-};
+});
 
-export default function Skills({ navigation }: any) {
+export default function Skills({ navigation }: StackProps<"Skills">) {
   const { progress } = useProgress();
   const stats = skillStats(progress, allExercises);
   const { strengths, weaknesses, focus } = summarize(stats);
@@ -75,7 +76,7 @@ export default function Skills({ navigation }: any) {
               {skillInfo[st.skill].mr} · {skillInfo[st.skill].en}
             </Text>
           </View>
-          <Text style={[s.rowTitle, { color: levelColor[st.level] }]}>
+          <Text style={[s.rowTitle, { color: levelColor()[st.level] }]}>
             {levelText[st.level]}
             {st.level === "unknown" ? ` (${st.attempted}/${MIN_ATTEMPTS})` : ""}
           </Text>
@@ -128,8 +129,9 @@ export default function Skills({ navigation }: any) {
   );
 }
 
-export function SkillPractice({ route }: any) {
+export function SkillPractice({ route }: StackProps<"SkillPractice">) {
   const { progress } = useProgress();
+  // Params can come from an old saved navigation state; validate anyway.
   const skill: SkillArea = SKILL_AREAS.includes(route.params?.skill)
     ? route.params.skill
     : "vocabulary";

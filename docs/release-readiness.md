@@ -98,4 +98,4 @@ Run on the release build, on at least one budget phone (≤ 3 GB RAM, Android 10
 14. Backup export → reset → import → progress restored; invalid text rejected without data loss.
 15. TalkBack: tabs, More sheet, lesson exercise, Grammar chips, Settings text-size chips.
 
-Dark mode is **not** offered: `userInterfaceStyle` is `light`, so the app stays light when the phone is in dark mode (by design for now; see the improvement report).
+16. Dark mode: phone in dark mode with the app on "System"; then force Light and Dark in Settings → Appearance. Check the launch screen (the window background behind the app is dark via `values-night/colors.xml`; the splash artwork itself stays light), the status-bar icons, the More sheet and an exercise's wrong-answer feedback.

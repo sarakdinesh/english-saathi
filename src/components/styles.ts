@@ -1,6 +1,8 @@
 import { StyleSheet } from "react-native";
-import { C } from "./theme";
-export const s = StyleSheet.create({
+import { C, themed } from "./theme";
+// Built from the live palette; rebuilt when the colour scheme changes.
+const build = themed(() =>
+  StyleSheet.create({
   root: { flex: 1, backgroundColor: C.frame, alignItems: "center" },
   appFrame: {
     flex: 1,
@@ -85,7 +87,7 @@ export const s = StyleSheet.create({
   },
   subtitle: { fontSize: 15, color: C.muted, lineHeight: 22, marginTop: 7 },
   hero: {
-    backgroundColor: C.green,
+    backgroundColor: C.hero,
     borderRadius: 28,
     padding: 26,
     shadowColor: C.shadow,
@@ -132,7 +134,7 @@ export const s = StyleSheet.create({
     color: C.heroMuted,
     fontWeight: "700",
   },
-  heroLesson: { fontSize: 17, fontWeight: "600", color: C.white, marginTop: 7 },
+  heroLesson: { fontSize: 17, fontWeight: "600", color: C.heroText, marginTop: 7 },
   heroArrow: {
     width: 48,
     height: 48,
@@ -310,7 +312,7 @@ export const s = StyleSheet.create({
     fontSize: 20,
     lineHeight: 30,
     fontWeight: "600",
-    color: C.white,
+    color: C.onPrimary,
     marginTop: 12,
   },
   example: {
@@ -344,7 +346,7 @@ export const s = StyleSheet.create({
     minHeight: 54,
   },
   buttonText: {
-    color: C.white,
+    color: C.onPrimary,
     fontSize: 15,
     fontWeight: "600",
     flexShrink: 1,
@@ -355,6 +357,26 @@ export const s = StyleSheet.create({
     borderColor: C.green,
   },
   accent: { backgroundColor: C.lime },
+  compareBox: {
+    marginTop: 10,
+    padding: 14,
+    borderRadius: 14,
+    backgroundColor: C.sand,
+  },
+  compareWrong: { color: C.dangerInk, textDecorationLine: "line-through" },
+  inlineAction: {
+    flexDirection: "row",
+    alignItems: "center",
+    alignSelf: "flex-start",
+    gap: 6,
+    minHeight: 44,
+  },
+  logoPlate: {
+    backgroundColor: C.logoPlate,
+    borderRadius: 14,
+    paddingHorizontal: 6,
+    paddingVertical: 2,
+  },
   chipRow: { flexDirection: "row", flexWrap: "wrap", gap: 8, marginBottom: 6 },
   chip: {
     minHeight: 48,
@@ -367,7 +389,7 @@ export const s = StyleSheet.create({
   },
   chipOn: { backgroundColor: C.green, borderColor: C.green },
   chipText: { fontSize: 14, fontWeight: "600", color: C.ink },
-  chipTextOn: { color: C.white },
+  chipTextOn: { color: C.onPrimary },
   stepRow: { flexDirection: "row", flexWrap: "wrap", gap: 6 },
   stepChip: {
     paddingVertical: 6,
@@ -377,7 +399,7 @@ export const s = StyleSheet.create({
   },
   stepChipOn: { backgroundColor: C.green },
   stepChipText: { fontSize: 13, fontWeight: "600", color: C.muted },
-  stepChipTextOn: { color: C.white },
+  stepChipTextOn: { color: C.onPrimary },
   buttonDisabled: {
     backgroundColor: C.sand,
     borderWidth: 1,
@@ -510,12 +532,12 @@ export const s = StyleSheet.create({
   speakTiles: { flexDirection: "row", gap: 12, marginBottom: 22 },
   speakTile: {
     flex: 1,
-    backgroundColor: C.ink,
+    backgroundColor: C.tile,
     borderRadius: 20,
     padding: 18,
     gap: 6,
   },
-  speakTileTitle: { fontSize: 17, fontWeight: "700", color: C.white },
+  speakTileTitle: { fontSize: 17, fontWeight: "700", color: C.heroText },
   speakTileSub: { fontSize: 13, lineHeight: 20, color: C.heroSub },
   mistakeWrong: {
     fontSize: 19,
@@ -613,7 +635,7 @@ export const s = StyleSheet.create({
     marginBottom: 12,
     gap: 4,
   },
-  pathCardOn: { backgroundColor: C.green, borderColor: C.green },
+  pathCardOn: { backgroundColor: C.hero, borderColor: C.hero },
   pathPill: {
     flexDirection: "row",
     justifyContent: "space-between",
@@ -627,4 +649,11 @@ export const s = StyleSheet.create({
     paddingHorizontal: 14,
     marginBottom: 16,
   },
-});
+  }),
+);
+// A live binding: importers read `s` at render time, so after
+// refreshStyles() every re-render uses the current scheme.
+export let s = build();
+export function refreshStyles() {
+  s = build();
+}

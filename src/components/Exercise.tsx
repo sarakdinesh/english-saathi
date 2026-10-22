@@ -1,7 +1,7 @@
 import React, { useState } from "react";
 import { View, Pressable } from "react-native";
 import type { Ex } from "../curriculum/types";
-import { isCorrect } from "../curriculum/score";
+import { answerText, correctText, isCorrect } from "../curriculum/score";
 import { useProgress } from "../state/progress";
 import { AppText as Text, Button, Label } from "./ui";
 import { Listen } from "./Audio";
@@ -144,12 +144,33 @@ export function Exercise({
       {result !== null && (
         <View accessibilityLiveRegion="polite">
           <Text style={[s.rowTitle, { color: result ? C.green : C.dangerInk }]}>
-            {result ? "बरोबर! छान प्रयत्न." : "पुन्हा शिकूया."}
+            {result ? "बरोबर! छान प्रयत्न." : "हरकत नाही! फरक पाहूया."}
           </Text>
+          {!result && (
+            <View style={s.compareBox}>
+              <Text style={s.smallMuted}>तुमचे उत्तर · Your answer</Text>
+              <Text
+                style={[s.exampleEnglish, s.compareWrong]}
+                accessibilityLabel={`तुमचे उत्तर: ${answerText(item, chosen)}`}
+              >
+                ✗ {answerText(item, chosen)}
+              </Text>
+              <Text style={[s.smallMuted, { marginTop: 8 }]}>
+                योग्य उत्तर · Correct answer
+              </Text>
+              <Text
+                style={[s.exampleEnglish, { color: C.green }]}
+                accessibilityLabel={`योग्य उत्तर: ${correctText(item)}`}
+              >
+                ✓ {correctText(item)}
+              </Text>
+            </View>
+          )}
+          {!result && <Text style={[s.smallMuted, { marginTop: 10 }]}>का? · Why</Text>}
           <Text style={s.marathiBody}>{item.explanation}</Text>
-          {!result && build && (
-            <Text style={[s.body, { marginTop: 8 }]}>
-              योग्य वाक्य: {item.accept[0]}
+          {!result && (
+            <Text style={[s.smallMuted, { marginTop: 6 }]}>
+              हा प्रश्न उजळणीत लवकरच पुन्हा येईल.
             </Text>
           )}
           <View style={{ height: 16 }} />

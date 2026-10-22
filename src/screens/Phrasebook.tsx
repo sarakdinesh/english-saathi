@@ -1,3 +1,4 @@
+import type { StackProps } from "../navigation/types";
 import React, { useState } from "react";
 import { Pressable, ScrollView, View } from "react-native";
 import {
@@ -21,7 +22,7 @@ import { Listen, Recorder } from "../components/Audio";
 import { s } from "../components/styles";
 import { C } from "../components/theme";
 
-export default function Phrasebook({ route }: any) {
+export default function Phrasebook({ route }: StackProps<"Phrasebook">) {
   const { activity, progress, toggleSave, review } = useProgress();
   const [id, setId] = useState<string>(route.params?.situation ?? "meet");
   const [open, setOpen] = useState<string | null>(null);
@@ -63,7 +64,7 @@ export default function Phrasebook({ route }: any) {
             }}
             style={[s.filter, x.id === id && s.filterActive]}
           >
-            <Text style={[s.filterText, x.id === id && { color: C.white }]}>
+            <Text style={[s.filterText, x.id === id && { color: C.onPrimary }]}>
               {x.mr}
             </Text>
           </Pressable>

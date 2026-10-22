@@ -1,11 +1,27 @@
 import assert from "node:assert/strict";
 import { load } from "./lib.ts";
 
-const { isCorrect, normalize } = load("src/curriculum/score.ts");
+const { isCorrect, normalize, answerText, correctText } = load("src/curriculum/score.ts");
 const cur = load("src/curriculum/index.ts");
 const { validateProgress, initial, scheduleReview, reviewIds } =
   load("src/state/model.ts");
 const { finish, bld, gap } = load("src/curriculum/author.ts");
+
+// ---- Mistake feedback --------------------------------------------------------
+// Every exercise can show "your answer" vs a complete correct answer, and the
+// correct answer always scores as correct.
+for (const e of cur.allExercises) {
+  const shown = correctText(e);
+  assert.ok(shown && !/_{2,}/.test(shown), `${e.id}: correct answer incomplete`);
+  if (e.kind === "choice") {
+    assert.ok(shown.includes(e.options[e.answer]), e.id);
+    assert.equal(answerText(e, [e.answer]), e.options[e.answer]);
+  } else assert.equal(shown, e.accept[0]);
+}
+assert.equal(
+  correctText({ kind: "choice", prompt: "I ___ tea.", options: ["drink", "drinks"], answer: 0, accept: [] }),
+  "I drink tea.",
+);
 
 // ---- Exercise scoring -------------------------------------------------------
 // Repeated words are selected by position, so "the" twice is handled.

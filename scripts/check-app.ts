@@ -87,6 +87,14 @@ for (const f of tsx) {
   for (const m of text.matchAll(/<TextInput\b([\s\S]*?)\/>/g))
     assert.ok(/accessibilityLabel=/.test(m[1]), `${f}:${lineOf(text, m.index!)} TextInput without accessibilityLabel`);
 }
+// Progress tracks are announced (role progressbar + value).
+for (const f of tsx) {
+  const text = read(f);
+  for (const m of text.matchAll(/style=\{s\.track\}/g)) {
+    const around = text.slice(Math.max(0, m.index! - 200), m.index! + 300);
+    assert.ok(/accessibilityRole="progressbar"/.test(around) && /accessibilityValue=/.test(around), `${f}:${lineOf(text, m.index!)} progress track without progressbar semantics`);
+  }
+}
 assert.equal(
   (appSrc.match(/tabBarAccessibilityLabel:/g) ?? []).length,
   tabScreens.length,
@@ -112,18 +120,37 @@ const contrast = (a: string, b: string) => {
   const [x, y] = [lum(a), lum(b)].sort((p, q) => q - p);
   return (x + 0.05) / (y + 0.05);
 };
-const C = theme.C;
 const pairs: [string, string][] = [
   ["ink", "bg"], ["ink", "white"], ["body", "bg"], ["body", "white"],
   ["bodyMr", "white"], ["muted", "bg"], ["muted", "white"], ["green", "bg"],
-  ["green", "white"], ["white", "green"], ["ink", "lime"], ["danger", "white"],
+  ["green", "white"], ["onPrimary", "green"], ["onPrimary", "ink"],
+  ["onLime", "lime"], ["heroText", "tile"], ["heroSub", "tile"], ["ink", "limeSoft"], ["ink", "sand"],
+  ["green", "successSoft"], ["danger", "white"],
   ["danger", "dangerSoft"], ["dangerInk", "dangerSoft"], ["amberInk", "amberSoft"],
   ["coralInk", "coralSoft"], ["blueInk", "blueTint"], ["olive", "limeTint"],
-  ["heroText", "green"], ["heroSub", "green"], ["heroMuted", "green"],
-  ["heroFaint", "green"], ["muted", "sand"],
+  ["heroText", "hero"], ["heroSub", "hero"], ["heroMuted", "hero"],
+  ["heroFaint", "hero"], ["muted", "sand"],
 ];
-for (const [fg, bg] of pairs)
-  assert.ok(contrast(C[fg], C[bg]) >= 4.5, `${fg} on ${bg}: ${contrast(C[fg], C[bg]).toFixed(2)}`);
+// Every pair must pass in both colour schemes; both palettes have the same keys.
+assert.deepEqual(Object.keys(theme.palettes.dark).sort(), Object.keys(theme.palettes.light).sort());
+for (const [name, C] of Object.entries(theme.palettes) as [string, Record<string, string>][]) {
+  for (const [fg, bg] of pairs)
+    assert.ok(contrast(C[fg], C[bg]) >= 4.5, `${name}: ${fg} on ${bg}: ${contrast(C[fg], C[bg]).toFixed(2)}`);
+  // Icons (non-text) need 3:1.
+  assert.ok(contrast(C.tileAccent, C.tile) >= 3, `${name}: tile icon`);
+  assert.ok(contrast(C.green, C.bg) >= 3, `${name}: active tab icon`);
+}
+// Switching schemes swaps the live palette and invalidates themed styles.
+let builds = 0;
+const styles = theme.themed(() => ({ n: ++builds, bg: theme.C.bg }));
+assert.equal(styles().bg, theme.palettes.light.bg);
+assert.equal(styles().n, 1, "cached while the scheme is unchanged");
+theme.setScheme("dark");
+assert.equal(theme.C.bg, theme.palettes.dark.bg);
+assert.equal(styles().bg, theme.palettes.dark.bg);
+theme.setScheme("light");
+assert.equal(styles().bg, theme.palettes.light.bg);
+assert.equal(builds, 3);
 assert.ok(theme.touch >= 48);
 assert.ok(Object.values(theme.font).every((f: any) => f.fontSize >= 12 && f.lineHeight >= f.fontSize * 1.4));
 

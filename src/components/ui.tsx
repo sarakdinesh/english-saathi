@@ -1,3 +1,4 @@
+import type { AppNavigation } from "../navigation/types";
 import React from "react";
 import {
   KeyboardAvoidingView,
@@ -69,7 +70,13 @@ export function Button({
   accessibilityHint?: string;
 }) {
   const variant = accent ? s.accent : secondary ? s.secondary : null;
-  const ink = disabled ? C.muted : accent ? C.ink : secondary ? C.green : C.white;
+  const ink = disabled
+    ? C.muted
+    : accent
+      ? C.onLime
+      : secondary
+        ? C.green
+        : C.onPrimary;
   return (
     <Pressable
       accessibilityRole="button"
@@ -142,7 +149,7 @@ function HeaderButton({
 // notch / Dynamic Island and side insets itself.
 export function AppHeader({ title }: { title?: string }) {
   const insets = useSafeAreaInsets();
-  const navigation = useNavigation<any>();
+  const navigation = useNavigation<AppNavigation>();
   const route = useRoute();
   const isTab = isTabName(route.name);
   const isHome = route.name === "Home";
@@ -172,12 +179,14 @@ export function AppHeader({ title }: { title?: string }) {
       )}
       <View style={s.headerTitleWrap} accessibilityRole="header">
         {isHome ? (
-          <Image
-            source={require("../../assets/logo-horizontal.png")}
-            accessibilityLabel={BRAND.full}
-            resizeMode="contain"
-            style={{ width: 190, height: 41 }}
-          />
+          <View style={[s.logoPlate, { alignSelf: "flex-start" }]}>
+            <Image
+              source={require("../../assets/logo-horizontal.png")}
+              accessibilityLabel={BRAND.full}
+              resizeMode="contain"
+              style={{ width: 190, height: 41 }}
+            />
+          </View>
         ) : (
           <>
             <Text style={s.headerTitle} numberOfLines={1}>
@@ -318,6 +327,35 @@ export function Chips<T extends string>({
           </Pressable>
         );
       })}
+    </View>
+  );
+}
+
+// Thin progress track announced as "label, N of M" by screen readers.
+export function ProgressBar({
+  value,
+  max,
+  label,
+}: {
+  value: number;
+  max: number;
+  label: string;
+}) {
+  const total = Math.max(max, 1);
+  const now = Math.min(Math.max(value, 0), total);
+  return (
+    <View
+      style={s.track}
+      accessible
+      accessibilityRole="progressbar"
+      accessibilityLabel={label}
+      accessibilityValue={{ min: 0, max: total, now, text: `${now} / ${total}` }}
+      aria-valuemin={0}
+      aria-valuemax={total}
+      aria-valuenow={now}
+      aria-valuetext={`${now} / ${total}`}
+    >
+      <View style={[s.trackFill, { width: `${(now / total) * 100}%` }]} />
     </View>
   );
 }

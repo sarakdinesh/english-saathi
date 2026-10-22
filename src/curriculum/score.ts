@@ -15,3 +15,17 @@ export function isCorrect(item: Ex, selection: number[]) {
   }
   return selection[0] === item.answer;
 }
+
+// What the learner answered, as text.
+export const answerText = (item: Ex, selection: number[]) =>
+  item.kind === "build"
+    ? selection.map((i) => item.options[i]).join(" ")
+    : (item.options[selection[0]] ?? "");
+
+// The model answer shown after a mistake. Gap-fill prompts ("I ___ tea.")
+// are completed so the learner sees the whole correct sentence.
+export function correctText(item: Ex) {
+  if (item.kind === "build") return item.accept[0];
+  const option = item.options[item.answer];
+  return /_{2,}/.test(item.prompt) ? item.prompt.replace(/_{2,}/, option) : option;
+}
