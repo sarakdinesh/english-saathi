@@ -58,7 +58,7 @@ fi
 step "Version bump"
 cp app.json app.json.release-backup
 restore() { [ -f app.json.release-backup ] && mv app.json.release-backup app.json && echo "app.json restored."; }
-trap 'restore' ERR INT
+trap 'restore' EXIT  # also on failures inside subshells
 
 read -r VERSION CODE < <(node -e '
   const fs = require("fs");
@@ -95,7 +95,7 @@ shasum -a 256 "$OUT" | tee "$OUT.sha256"
 # ---- Record the release ------------------------------------------------------
 step "Commit and tag"
 rm -f app.json.release-backup
-trap - ERR INT
+trap - EXIT
 git add app.json
 git commit -m "Release $VERSION (versionCode $CODE)"
 git tag -a "$TAG" -m "English Boluya $VERSION (versionCode $CODE), Google Play"
