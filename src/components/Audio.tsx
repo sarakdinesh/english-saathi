@@ -306,8 +306,14 @@ function PracticeSteps({ current }: { current: number }) {
     >
       {PRACTICE_STEPS.map((step, i) => (
         <View key={step.en} style={[s.stepChip, i === current && s.stepChipOn]}>
-          <Text style={[s.stepChipText, i === current && s.stepChipTextOn]}>
+          {/* Trailing no-break space: see Button small in ui.tsx (vivo V2415
+              drew "4. पुन्हा" as "4."). */}
+          <Text
+            numberOfLines={1}
+            style={[s.stepChipText, i === current && s.stepChipTextOn]}
+          >
             {i + 1}. {step.mr}
+            {"\u00A0"}
           </Text>
         </View>
       ))}
