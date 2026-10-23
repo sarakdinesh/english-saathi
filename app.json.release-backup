@@ -1,0 +1,60 @@
+{
+  "expo": {
+    "name": "English Boluya",
+    "slug": "english-saathi",
+    "version": "1.0.0",
+    "orientation": "portrait",
+    "userInterfaceStyle": "automatic",
+    "icon": "./assets/icon.png",
+    "splash": {
+      "image": "./assets/splash-icon.png",
+      "resizeMode": "contain",
+      "backgroundColor": "#FEFDF5"
+    },
+    "backgroundColor": "#F7F8F2",
+    "android": {
+      "package": "com.englishsaathi.learn",
+      "adaptiveIcon": {
+        "foregroundImage": "./assets/adaptive-icon.png",
+        "backgroundColor": "#FEFDF5"
+      },
+      "versionCode": 1,
+      "blockedPermissions": [
+        "android.permission.READ_EXTERNAL_STORAGE",
+        "android.permission.WRITE_EXTERNAL_STORAGE",
+        "android.permission.SYSTEM_ALERT_WINDOW"
+      ]
+    },
+    "web": {
+      "name": "English Boluya",
+      "bundler": "metro"
+    },
+    "plugins": [
+      [
+        "expo-notifications",
+        {
+          "color": "#174C3C"
+        }
+      ],
+      [
+        "expo-audio",
+        {
+          "microphonePermission": "तुमचा बोलण्याचा सराव रेकॉर्ड करण्यासाठी मायक्रोफोनची परवानगी द्या.",
+          "enableBackgroundRecording": false,
+          "enableBackgroundPlayback": false
+        }
+      ],
+      [
+        "expo-speech-recognition",
+        {
+          "microphonePermission": "तुमचा बोलण्याचा सराव रेकॉर्ड करण्यासाठी मायक्रोफोनची परवानगी द्या.",
+          "speechRecognitionPermission": "तुम्ही म्हटलेले शब्द फोनवरच ओळखण्यासाठी परवानगी द्या. आवाज फोनबाहेर पाठवला जात नाही.",
+          "androidSpeechServicePackages": [
+            "com.google.android.googlequicksearchbox",
+            "com.google.android.as"
+          ]
+        }
+      ]
+    ]
+  }
+}
