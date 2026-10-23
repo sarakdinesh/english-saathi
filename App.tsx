@@ -43,6 +43,7 @@ import Phrasebook from "./src/screens/Phrasebook";
 import Settings from "./src/screens/Settings";
 import Review, { UnitPractice, Foundations } from "./src/screens/Review";
 import WordsScreen from "./src/screens/Words";
+import Dictionary from "./src/screens/Dictionary";
 import QuizScreen from "./src/screens/Quiz";
 import Saved from "./src/screens/Saved";
 
@@ -309,6 +310,11 @@ function Root() {
                 name="Words"
                 component={WordsScreen}
                 options={{ title: "शब्द · Words" }}
+              />
+              <Stack.Screen
+                name="Dictionary"
+                component={Dictionary}
+                options={{ title: "शब्दकोश · Dictionary" }}
               />
               <Stack.Screen
                 name="DailyQuiz"

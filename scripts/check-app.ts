@@ -232,7 +232,7 @@ const pairs: [string, string][] = [
   ["green", "white"], ["onPrimary", "green"], ["onPrimary", "ink"],
   ["onLime", "lime"], ["heroText", "tile"], ["heroSub", "tile"], ["ink", "limeSoft"], ["ink", "sand"],
   ["green", "successSoft"], ["ink", "successSoft"], ["body", "successSoft"], ["body", "limeSoft"], ["danger", "white"],
-  ["danger", "dangerSoft"], ["dangerInk", "dangerSoft"], ["amberInk", "amberSoft"],
+  ["danger", "dangerSoft"], ["dangerInk", "dangerSoft"], ["amberInk", "amberSoft"], ["amberInk", "white"],
   ["coralInk", "coralSoft"], ["blueInk", "blueTint"], ["olive", "limeTint"],
   ["heroText", "hero"], ["heroSub", "hero"], ["heroMuted", "hero"],
   ["heroFaint", "hero"], ["muted", "sand"],

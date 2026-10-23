@@ -29,6 +29,7 @@ export type StackParams = {
   Onboarding: undefined;
   Skills: undefined;
   Grammar: undefined;
+  Dictionary: { tab?: "words" | "verbs" | "phrasal" | "opposites" } | undefined;
   SkillPractice: { skill: SkillArea };
 };
 

@@ -101,6 +101,15 @@ export default function Grammar({ navigation }: StackProps<"Grammar">) {
       <SegmentTabs options={tabs} value={tab} onChange={setTab} label="व्याकरण विभाग" />
       <View style={{ height: 8 }} />
       <Summary tab={tab} />
+      {(tab === "tenses" || tab === "passive") && (
+        <Button
+          small
+          secondary
+          icon="flash-outline"
+          title="क्रियापदांची रूपे · V1 V2 V3"
+          onPress={() => navigation.navigate("Dictionary", { tab: "verbs" })}
+        />
+      )}
 
       {tab === "tenses" &&
         tenses.map((t) => (

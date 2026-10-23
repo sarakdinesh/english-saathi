@@ -688,6 +688,16 @@ const build = themed(() =>
     marginTop: 10,
     gap: 8,
   },
+  dictRow: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 10,
+    paddingVertical: 12,
+    borderBottomWidth: 1,
+    borderBottomColor: C.line,
+  },
+  dictForms: { fontSize: 15, lineHeight: 23, color: C.green, fontWeight: "600" },
+  dictTag: { fontSize: 11, fontWeight: "700", color: C.amberInk },
   heardRow: { flexDirection: "row", flexWrap: "wrap", gap: 6, marginVertical: 8 },
   heardChip: {
     backgroundColor: C.successSoft,

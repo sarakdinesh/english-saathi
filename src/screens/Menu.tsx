@@ -41,6 +41,7 @@ const groups = (): Group[] => [
       { icon: "book-outline", mr: "सर्व धडे", en: "Lessons", route: "Learn" },
       { icon: "list-outline", mr: "व्याकरण तक्ता", en: "Grammar chart", route: "Grammar" },
       { icon: "text-outline", mr: "पाच शब्द शिका", en: "Words", route: "Words" },
+      { icon: "library-outline", mr: "शब्दकोश", en: "Dictionary", route: "Dictionary" },
       { icon: "newspaper-outline", mr: "वाचायला सुरुवात", en: "Reading basics", route: "Foundations" },
       { icon: "navigate-outline", mr: "कुठून सुरू करू?", en: "Starting check", route: "Placement" },
     ],

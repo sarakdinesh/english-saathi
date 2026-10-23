@@ -39,17 +39,23 @@ export default function WordsScreen({
       <View style={s.search}>
         <Icon name="search-outline" />
         <TextInput
-          accessibilityLabel="Search vocabulary"
+          accessibilityLabel="शब्द शोधा · Search vocabulary"
           style={s.input}
           value={query}
           onChangeText={setQuery}
-          placeholder="Find a word or मराठी अर्थ…"
+          placeholder="शब्द किंवा मराठी अर्थ शोधा…"
         />
       </View>
       <Text style={s.smallMuted}>
         {matches.length} शब्द ·{" "}
         {route.params?.daily ? "आजचे पाच शब्द" : "सर्व शब्द"}
       </Text>
+      <Button
+        small
+        icon="library-outline"
+        title="पूर्ण शब्दकोश · 3000+ शब्द"
+        onPress={() => navigation.navigate("Dictionary")}
+      />
       {route.params?.daily && (
         <Button
           secondary

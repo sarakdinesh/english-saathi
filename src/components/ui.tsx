@@ -148,6 +148,7 @@ export const screenTitles: Record<string, { mr: string; en: string }> = {
   Words: { mr: "शब्द", en: "Words" },
   Quiz: { mr: "रोजचा सराव", en: "Daily practice" },
   Grammar: { mr: "व्याकरण", en: "Grammar" },
+  Dictionary: { mr: "शब्दकोश", en: "Dictionary" },
   Skills: { mr: "कौशल्ये", en: "Skills" },
   SkillPractice: { mr: "कौशल्य सराव", en: "Skill practice" },
   Onboarding: { mr: "स्वागत", en: "Welcome" },
