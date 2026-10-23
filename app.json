@@ -2,7 +2,7 @@
   "expo": {
     "name": "English Boluya",
     "slug": "english-saathi",
-    "version": "1.0.1",
+    "version": "1.1.0",
     "orientation": "portrait",
     "userInterfaceStyle": "automatic",
     "icon": "./assets/icon.png",
@@ -18,7 +18,7 @@
         "foregroundImage": "./assets/adaptive-icon.png",
         "backgroundColor": "#FEFDF5"
       },
-      "versionCode": 3,
+      "versionCode": 4,
       "blockedPermissions": [
         "android.permission.READ_EXTERNAL_STORAGE",
         "android.permission.WRITE_EXTERNAL_STORAGE",
