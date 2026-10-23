@@ -22,3 +22,8 @@ artifacts/
 credentials.json
 .env
 .env.*
+
+# Kotlin compiler session files (Gradle)
+android/.kotlin/
+# Left behind only if a release run is interrupted
+app.json.release-backup
