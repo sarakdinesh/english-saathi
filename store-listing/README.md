@@ -170,9 +170,9 @@ Re-check these answers if you ever add analytics, crash reporting, login or a cl
 
 | Field | Value |
 | --- | --- |
-| versionName / versionCode | 1.0.0 / 1 for the first upload; then `npm run release:android -- patch` (code +1 every upload) |
+| versionName / versionCode | **1.0.1 / 3** is the build to upload (`artifacts/english-boluya-1.0.1-3/`). Next time: `npm run release:android -- patch` (code +1 every upload) |
 | App signing | Keep **Play App Signing** on (default) |
-| Release name | `1.0.0 (1)` |
+| Release name | `1.0.1 (3)` |
 
 **Release notes (≤500 per language)**
 ```
