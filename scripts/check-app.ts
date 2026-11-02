@@ -187,6 +187,7 @@ for (const f of ["src/components/WordCheck.tsx", "src/state/wordcheck.ts"]) {
   assert.ok(!/score|accuracy|accent|pass\b|fail|स्कोअर|गुण|टक्के|उत्तीर्ण|नापास|अचूक/i.test(visible), `${f}: scoring language`);
 }
 assert.match(read("src/components/Audio.tsx"), /<WordCheck target=\{model\}/);
+assert.match(read("src/screens/Practice.tsx"), /<WordCheck target=\{card\.en\}/);
 assert.ok(app.plugins.some((p: any) => p[0] === "expo-speech-recognition"));
 const mainManifest = read("android/app/src/main/AndroidManifest.xml");
 assert.match(mainManifest, /android\.speech\.RecognitionService/);

@@ -13,6 +13,7 @@ import {
   ProgressBar,
 } from "../components/ui";
 import { Listen } from "../components/Audio";
+import { WordCheck } from "../components/WordCheck";
 import { s } from "../components/styles";
 import { C } from "../components/theme";
 
@@ -90,6 +91,8 @@ export function SpeakDrill() {
           <Text style={[s.marathiBody, { fontSize: 22, lineHeight: 34 }]}>
             {card.mr}
           </Text>
+          {/* Speak first, then see which words were heard; the answer opens itself. */}
+          <WordCheck target={card.en} onResult={() => setShown(true)} />
           {!shown ? (
             <View style={{ marginTop: 18 }}>
               <Button

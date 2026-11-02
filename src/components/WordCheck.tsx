@@ -61,7 +61,15 @@ export async function onDeviceLocale(): Promise<string | null> {
   }
 }
 
-export function WordCheck({ target, disabled = false }: { target: string; disabled?: boolean }) {
+export function WordCheck({
+  target,
+  disabled = false,
+  onResult,
+}: {
+  target: string;
+  disabled?: boolean;
+  onResult?: (r: Result) => void;
+}) {
   // undefined: still checking; null: unavailable (render nothing).
   const [locale, setLocale] = useState<string | null | undefined>(undefined);
   const [listening, setListening] = useState(false);
@@ -113,7 +121,10 @@ export function WordCheck({ target, disabled = false }: { target: string; disabl
         M.addListener("end", () => {
           setListening(false);
           clear();
-          if (heard.current.length) setResult(checkWords(target, heard.current));
+          if (!heard.current.length) return;
+          const r = checkWords(target, heard.current);
+          setResult(r);
+          onResult?.(r);
         }),
       ];
       M.start({

@@ -19,14 +19,28 @@ npm run android
 
 Use an Expo Go or development build that supports SDK 54. Native audio plugins require rebuilding an existing development client.
 
+## Marketing site
+
+The bilingual landing site (Play + waitlist CTAs, Privacy, Terms) lives in `website/`:
+
+```sh
+cd website
+cp .env.example .env
+npm install
+npm run dev
+```
+
+See [`website/README.md`](website/README.md) for env vars and deploy notes. Host `website/dist` and point Play Console at `https://<your-domain>/privacy`.
+
 ## Learning paths (version 2.0)
 
-Three labelled paths plus optional reading foundations, all bundled offline:
+Four labelled paths plus optional reading foundations, all bundled offline:
 
 - **Foundation (Level 0) — पाया: अक्षरे आणि आवाज**: 4 units, 18 lessons: the alphabet (names, sounds, vowels and consonants), short and long vowels, blending and segmenting, digraphs, blends, silent letters, spelling patterns, then numbers, days and months, colours, family, objects, classroom English and the time of day. Letter sounds are taught through example words; the device voice cannot say an isolated sound.
 
-- **Beginner — सुरुवातीपासून शिका**: 11 units, 48 lessons (greetings, family, numbers, time, places, home and food, pronouns and *be*, useful patterns, questions and negatives, routines, past and future, shopping/restaurant/directions/travel/calls, asking for help, contractions, stress and sounds).
+- **Beginner — सुरुवातीपासून शिका**: 12 units, 48 lessons (greetings, family, numbers, time, places, home and food, pronouns and *be*, useful patterns, questions and negatives, routines, past and future, shopping/restaurant/directions/travel/calls, asking for help, contractions, stress and sounds).
 - **Intermediate — आत्मविश्वासाने बोला**: 10 units, 42 lessons (longer answers, describing, storytelling, opinions, workplace, interviews, appointments/complaints/problems, modals and conditionals, collocations/phrasal verbs/passive, comparing/summarising/presenting).
+- **Advanced (Level 4, early)**: 1 unit, 4 lessons so far (softening, negotiating, handling objections, formal email). More units are still to be written.
 - **Reading foundations (optional)**: 3 lessons on letter sounds, blending and short sentences.
 
 Every lesson follows one structure: an "I can…" outcome (English and Marathi) → example conversation with audio → meanings and pattern → listen-and-repeat → 4+ guided exercises → personal speaking task → scripted role-play → recap and revision items. Each unit ends with a checkpoint in a new situation. An optional starting-level check only recommends where to begin.
@@ -37,7 +51,7 @@ Checks: `npm test` runs content integrity, progress migration and flow checks; `
 
 ## Learning experience
 
-- Four tabs: घर (Home), शिका (Learn), बोला (Speak), उजळणी (Review). Saved and Settings are visible from Home; Saved is also on Review.
+- Five tabs: घर (Home), शिका (Learn), बोला (Speak), सराव (Practice) and आणखी (More). More opens a sheet listing every other section (Saved, Settings, Grammar, Dictionary, Phrasebook and so on).
 - Home shows the next unfinished lesson, saved step, duration estimate, actual streak, daily lesson/word/speaking activity and due review count. Completing all lessons offers revision.
 - Six unlocked curriculum units. Unit 1 contains `intro` and `be`, with eight authored exercises covering tap-to-arrange, missing words, English-to-Marathi and Marathi-to-English choices. Other lessons show reading/listening/speaking steps without unsupported practice actions.
 - Optional reading foundations are separate from the grammar course.
@@ -50,7 +64,7 @@ Checks: `npm test` runs content integrity, progress migration and flow checks; `
 
 `english-saathi.progress.v1` remains the storage key. A pure validator migrates the original shape by adding version 2 fields while preserving completed IDs, bookmarks, dates, attempts, best score and last lesson. Loading invalid data shows a warning and suppresses writes, preserving the stored copy. Writes are serialized. Lesson steps, settings, per-day activities and revision persist locally. The last 100 full-quiz results are retained with timestamps from this version onward; older attempts retain their existing count/best score without invented historical results.
 
-Review schedule (local device clock): a mistake schedules the item in 10 minutes and resets its correct streak. Correct answers schedule 1, 3, 7, 14 and then 30 days. New difficult vocabulary can be explicitly queued. Items become due according to timestamps; opening the app is required—there are no notifications. Review answers for words/mixed-quiz cards are self-reported; first-unit exercises check answers automatically. Immediate retry is available in lesson/topic practice and mixed-quiz results.
+Review schedule (local device clock): a mistake schedules the item in 10 minutes and resets its correct streak. Correct answers schedule 1, 3, 7, 14 and then 30 days. New difficult vocabulary can be explicitly queued. Items become due according to timestamps and are shown when the app is opened. An optional daily reminder (a local notification at a chosen time, off by default, Android/iOS only) nudges the learner to study; nothing is sent to a server. Review answers for words/mixed-quiz cards are self-reported; first-unit exercises check answers automatically. Immediate retry is available in lesson/topic practice and mixed-quiz results.
 
 Settings exports complete progress as selectable JSON; native platforms also have the system share sheet. Copy the JSON somewhere safe. Paste a backup into Settings, validate it, then confirm Restore. Validation checks known IDs, types, numeric bounds, dates, exercise records and settings before applying anything. Invalid imports leave current progress intact. Reset has a separate inline confirmation and Cancel action. No cloud sync, accounts or backend.
 
@@ -61,7 +75,8 @@ Uses SDK-compatible `expo-speech` 14.0.8 and `expo-audio` 1.1.1, selected after 
 - Listen at normal or slower speed in lessons, vocabulary and revealed speaking examples. Status, Stop and unavailable-voice fallback are included; voice lookup times out rather than hanging. Sound preferences apply to synthesis and replay.
 - The device/browser supplies English voices. An installed offline English voice can work offline; some voices require connectivity or an OS voice download. No bundled human audio is included. iOS system speech may require the silent switch to be off.
 - Self-practice recording requests microphone permission only when Record is pressed. Pending, denied and error states explain how to continue. Stop, replay, stop replay and delete are included. A recording is temporary, capped at 60 seconds, and removed when leaving its screen; it is not included in backups. Native recordings use app cache; web uses a temporary blob URL. Cleanup is best effort if the OS has already removed the file.
-- Web recording needs a supported browser, microphone, MediaRecorder and localhost/HTTPS. Permission can be changed in site/device settings. Learners can mark a spoken attempt without recording. There is no speech recognition or pronunciation score.
+- Web recording needs a supported browser, microphone, MediaRecorder and localhost/HTTPS. Permission can be changed in site/device settings. Learners can mark a spoken attempt without recording.
+- Optional word check (`expo-speech-recognition`): where the phone offers on-device recognition with an installed English model, the learner says the sentence and sees which words the recogniser wrote down. It never uses the internet and is hidden when on-device recognition is unavailable, including on web. This is word recognition only; there is no pronunciation or accent score.
 - Screen blur/unmount stops playback and recording. Background recording and background playback are disabled.
 
 Bundled content, local progress and on-device recording need no backend in the packaged native app. Static web output has no service worker: a first load/reload still needs a server. Browser offline audio depends on installed voices and browser support.
