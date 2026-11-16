@@ -57,7 +57,11 @@ fi
 # ---- Version bump (app.json is the single source) ----------------------------
 step "Version bump"
 cp app.json app.json.release-backup
-restore() { [ -f app.json.release-backup ] && mv app.json.release-backup app.json && echo "app.json restored."; }
+cp src/brand.ts brand.ts.release-backup
+restore() {
+  [ -f brand.ts.release-backup ] && mv brand.ts.release-backup src/brand.ts
+  [ -f app.json.release-backup ] && mv app.json.release-backup app.json && echo "app.json restored."
+}
 trap 'restore' EXIT  # also on failures inside subshells
 
 read -r VERSION CODE < <(node -e '
@@ -70,6 +74,9 @@ read -r VERSION CODE < <(node -e '
   cfg.expo.version = next;
   cfg.expo.android.versionCode += 1;
   fs.writeFileSync("app.json", JSON.stringify(cfg, null, 2) + "\n");
+  // Settings shows BRAND.version; keep it equal to the store versionName.
+  const brand = fs.readFileSync("src/brand.ts", "utf8");
+  fs.writeFileSync("src/brand.ts", brand.replace(/version: "[^"]*"/, `version: "${next}"`));
   console.log(next, cfg.expo.android.versionCode);
 ' "$BUMP")
 TAG="v$VERSION+$CODE"
@@ -94,9 +101,9 @@ shasum -a 256 "$OUT" | tee "$OUT.sha256"
 
 # ---- Record the release ------------------------------------------------------
 step "Commit and tag"
-rm -f app.json.release-backup
+rm -f app.json.release-backup brand.ts.release-backup
 trap - EXIT
-git add app.json
+git add app.json src/brand.ts
 git commit -m "Release $VERSION (versionCode $CODE)"
 git tag -a "$TAG" -m "English Boluya $VERSION (versionCode $CODE), Google Play"
 

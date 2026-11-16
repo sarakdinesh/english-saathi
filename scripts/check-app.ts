@@ -289,5 +289,11 @@ assert.match(app.version, /^\d+\.\d+\.\d+$/);
 assert.match(gradle, /versionName expoConfig\.version/);
 assert.match(gradle, /expoConfig\.android\.versionCode/);
 assert.match(gradle, /boluyaStoreRelease/);
+// Settings shows BRAND.version; the release script keeps it equal to app.json.
+assert.equal(
+  load("src/brand.ts").BRAND.version,
+  JSON.parse(read("app.json")).expo.version,
+  "src/brand.ts version must match app.json",
+);
 
 console.log("App checks passed: branding, compatibility IDs, navigation, accessibility props, Marathi-first labels, design tokens and contrast, release safety.");
