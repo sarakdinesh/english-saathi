@@ -16,6 +16,25 @@ const toKey = (d: Date) =>
 export const daysBetween = (from: string, to: string) =>
   Math.round((toDate(to).getTime() - toDate(from).getTime()) / 86400000);
 
+// Days in a row with study, counted back from today (or yesterday, while
+// today is still open). Kind rule: one missed day in any seven is forgiven
+// (a "freeze"); it keeps the streak alive but does not add to it.
+export function streakOf(dates: string[], today: string) {
+  const studied = new Set(dates);
+  const d = toDate(today);
+  if (!studied.has(today)) d.setDate(d.getDate() - 1);
+  let count = 0;
+  let lastFreeze: string | undefined;
+  for (;;) {
+    const key = toKey(d);
+    if (studied.has(key)) count++;
+    else if (!lastFreeze || daysBetween(key, lastFreeze) >= 7) lastFreeze = key;
+    else break;
+    d.setDate(d.getDate() - 1);
+  }
+  return count;
+}
+
 // The last seven days, today included, oldest first.
 export function lastWeek(today: string) {
   const base = toDate(today);
@@ -47,6 +66,16 @@ export function weekSummary(
           ? `या आठवड्यात ${days} दिवस सराव केलात`
           : "या आठवड्याची सुरुवात आज एका छोट्या टप्प्याने करूया.";
   return { words, days, text };
+}
+
+// The weekly recap card: shown on Sunday and Monday when the learner practised
+// in the last seven days. Counts are per day ("spoke aloud on 4 days").
+export function weekCard(daily: Record<string, string[]>, dates: string[], today: string) {
+  if (![0, 1].includes(toDate(today).getDay())) return null;
+  const week = lastWeek(today);
+  const on = (id: string) => week.filter((d) => (daily[d] ?? []).includes(id)).length;
+  const { words, days } = weekSummary(daily, dates, today);
+  return days ? { days, words, spokeDays: on("speak"), lessonDays: on("lesson") } : null;
 }
 
 // Days since the last practice before today, or null when the learner

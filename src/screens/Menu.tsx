@@ -54,6 +54,10 @@ const groups = (): Group[] => [
       { icon: "chatbubbles-outline", mr: "बोलण्याची वाक्ये", en: "Phrasebook", route: "Phrasebook" },
       { icon: "mic-outline", mr: "बोलण्याचा सराव", en: "Speaking drill", route: "SpeakDrill" },
       { icon: "people-outline", mr: "संवाद सराव", en: "Role-plays", route: "RolePlayList" },
+      { icon: "journal-outline", mr: "आवाज डायरी", en: "Voice diary", route: "VoiceDiary" },
+      { icon: "briefcase-outline", mr: "मुलाखत किट", en: "Interview kit", route: "InterviewKit" },
+      { icon: "ear-outline", mr: "आवाजांच्या जोड्या", en: "Sound pairs", route: "SoundPairs" },
+      { icon: "musical-notes-outline", mr: "सोबत बोला", en: "Speak along", route: "SpeakAlong" },
     ],
   },
   {
@@ -72,6 +76,7 @@ const groups = (): Group[] => [
     tint: C.blueTint,
     ink: C.blueInk,
     items: [
+      { icon: "flag-outline", mr: "ध्येय प्रवास", en: "Goal journey", route: "Journey" },
       { icon: "stats-chart-outline", mr: "कौशल्ये", en: "Skills", route: "Skills" },
       { icon: "bookmark-outline", mr: "जतन केलेले", en: "Saved", route: "Saved" },
       { icon: "settings-outline", mr: "सेटिंग्ज", en: "Settings", route: "Settings" },

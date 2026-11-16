@@ -1,7 +1,6 @@
 import { motion, useReducedMotion } from "framer-motion";
 import { brand, features, getApp, hero, paths, stages } from "../content/copy";
 import { PlayCta } from "../components/PlayCta";
-import { WaitlistForm } from "../components/WaitlistForm";
 import { Reveal } from "../components/Reveal";
 
 const shots = [
@@ -64,10 +63,10 @@ export function Home() {
               transition={{ duration: 0.5, delay: 0.4 }}
             >
               <PlayCta variant="lime" />
-              <a className="btn btn--ghost-on-dark" href="#get-app">
+              <a className="btn btn--ghost-on-dark" href="/learn/index.html">
                 <span className="btn__stack">
-                  <span>{hero.waitlist.mr}</span>
-                  <small>{hero.waitlist.en}</small>
+                  <span>{hero.lessons.mr}</span>
+                  <small>{hero.lessons.en}</small>
                 </span>
               </a>
             </motion.div>
@@ -228,7 +227,17 @@ export function Home() {
           </Reveal>
 
           <Reveal delay={0.08}>
-            <WaitlistForm />
+            <div className="waitlist">
+              <h3>{getApp.lessonsTitle}</h3>
+              <p>{getApp.lessonsBody}</p>
+              <ul>
+                {getApp.lessonLinks.map(([href, label]) => (
+                  <li key={href}>
+                    <a href={href}>{label}</a>
+                  </li>
+                ))}
+              </ul>
+            </div>
           </Reveal>
         </div>
       </section>

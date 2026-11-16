@@ -32,11 +32,11 @@ export const goalInfo: Record<Goal, { mr: string; en: string; sub: string }> = {
 
 // Phrasebook situations (see data/speaking.ts) each goal leans towards.
 export const goalSituations: Record<Goal, string[]> = {
-  daily: ["shop", "food", "health", "meet"],
+  daily: ["shop", "food", "health", "meet", "kirana", "bus", "bank"],
   speaking: ["meet", "help", "phone"],
-  work: ["work", "phone"],
-  school: ["help", "meet"],
-  travel: ["travel", "food"],
+  work: ["work", "phone", "bank"],
+  school: ["help", "meet", "college", "school"],
+  travel: ["travel", "food", "bus"],
   interview: ["work", "meet"],
 };
 

@@ -140,6 +140,38 @@ const complete = (s: Store, date: string, task = "words") => {
 // ---- Encouragement: weekly summary and welcome back --------------------------
 {
   const enc = load("src/state/encourage.ts");
+  // Weekly recap: Sunday and Monday only, per-day counts, hidden after an empty week.
+  {
+    const daily = {
+      "2026-11-10": ["speak", "lesson", "word-1"],
+      "2026-11-12": ["speak", "word-2", "word-1"],
+      "2026-11-01": ["speak"], // older than seven days
+    };
+    const dates = ["2026-11-01", "2026-11-10", "2026-11-12"];
+    assert.deepEqual(enc.weekCard(daily, dates, "2026-11-16"), { days: 2, words: 2, spokeDays: 2, lessonDays: 1 }); // Monday
+    assert.ok(enc.weekCard(daily, dates, "2026-11-15")); // Sunday
+    assert.equal(enc.weekCard(daily, dates, "2026-11-17"), null); // Tuesday
+    assert.equal(enc.weekCard(daily, dates, "2026-11-30"), null); // Monday after an empty week
+    const msg = load("src/state/diary.ts").weekShareText({ days: 3, words: 0, spokeDays: 2, lessonDays: 0 }, "L");
+    assert.match(msg, /७ पैकी 3 दिवस/);
+    assert.doesNotMatch(msg, /धडे|नवीन शब्द/);
+    const one = load("src/state/diary.ts").sentenceShareText({ en: "Hi.", say: "हाय.", mr: "नमस्कार." }, "L");
+    assert.equal(one.split("\n").filter((l: string) => l.includes("L")).length, 1, "link once, last");
+    assert.ok(one.includes("Hi.") && one.includes("हाय.") && one.includes("नमस्कार."));
+  }
+  // Streak with a weekly freeze: one missed day in seven is forgiven, not counted.
+  {
+    const st = (ds: string[], today: string) => enc.streakOf(ds, today);
+    assert.equal(st([], "2026-03-10"), 0);
+    assert.equal(st(["2026-03-08", "2026-03-09", "2026-03-10"], "2026-03-10"), 3);
+    assert.equal(st(["2026-03-08", "2026-03-09"], "2026-03-10"), 2); // today still open
+    assert.equal(st(["2026-03-07", "2026-03-08", "2026-03-10"], "2026-03-10"), 3); // 9th frozen
+    assert.equal(st(["2026-03-07", "2026-03-08"], "2026-03-10"), 2); // yesterday frozen, today open
+    assert.equal(st(["2026-03-07"], "2026-03-10"), 0); // two days missed
+    assert.equal(st(["2026-03-05", "2026-03-07", "2026-03-08", "2026-03-10"], "2026-03-10"), 3); // second miss within 7 days
+    assert.equal(st(["2026-03-01", "2026-03-02", "2026-03-04", "2026-03-05", "2026-03-06", "2026-03-07", "2026-03-08", "2026-03-09", "2026-03-11"], "2026-03-11"), 9); // misses 7 days apart
+    assert.equal(st(["2026-03-29", "2026-03-30"], "2026-03-30"), 2); // across a DST change
+  }
   // Across the DST changes in March/April and October/November.
   for (const today of ["2026-03-08", "2026-03-29", "2026-04-05", "2026-10-25", "2026-11-01", "2026-01-01"]) {
     const w = enc.lastWeek(today);

@@ -7,6 +7,7 @@ import { duration, exercises as legacyList } from "../data/journey";
 import { lessonMinutes, lessonStages, minutesLeft, stagePosition } from "../state/steps";
 import { celebrationsOn, unitJustCompleted, weekSummary } from "../state/encourage";
 import { Celebration } from "../components/Celebrate";
+import { askReviewOnce } from "../components/askReview";
 import { localDate } from "../state/progress";
 import { kits, lessonById, orderedLessons, unitOf } from "../curriculum";
 import { useProgress } from "../state/progress";
@@ -85,6 +86,7 @@ export default function Lesson({ navigation, route }: StackProps<"Lesson">) {
       unitJustCompleted(unit.lessons, progress.completed, item.id);
     complete(item.id);
     activity("lesson");
+    void askReviewOnce(progress.dates.length);
     if (celebrate) setFinished({ unitDone });
     else moveOn();
   };

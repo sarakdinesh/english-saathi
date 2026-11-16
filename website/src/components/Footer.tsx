@@ -26,7 +26,7 @@ export function Footer() {
               </a>
             </li>
             <li>
-              <a href="/#get-app">वेटलिस्ट</a>
+              <a href="/learn/index.html">मोफत धडे</a>
             </li>
           </ul>
         </div>

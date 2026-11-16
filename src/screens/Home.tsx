@@ -2,7 +2,9 @@ import type { TabProps } from "../navigation/types";
 import React, { useState, useCallback } from "react";
 import { useFocusEffect } from "@react-navigation/native";
 import { View, Pressable } from "react-native";
+import { useShareCard } from "../components/ShareCard";
 import { useProgress, streakFor, localDate } from "../state/progress";
+import { currentDay, journeyById, type JourneyState } from "../state/journeys";
 import { allExercises } from "../curriculum";
 import { skillInfo, skillStats, summarize } from "../state/skills";
 import { goalInfo } from "../state/onboarding";
@@ -15,7 +17,9 @@ import {
   stepLabel,
   todayGoals,
 } from "../state/steps";
-import { weekSummary, welcomeBack } from "../state/encourage";
+import { weekCard, weekSummary, welcomeBack } from "../state/encourage";
+import { weekShareText } from "../state/diary";
+import { BRAND } from "../brand";
 import { useDaily } from "../daily/useDaily";
 import { DailyToday } from "./Daily";
 import { duration, exercises as legacyList } from "../data/journey";
@@ -42,6 +46,16 @@ const confidenceWord = [
   "थोडा आत्मविश्वास",
   "आत्मविश्वास आहे",
 ];
+
+// One line for the goal-journey link: not started, current day, or finished.
+function journeyLine(state: JourneyState | undefined) {
+  const j = state && journeyById(state.id);
+  if (!state || !j) return "🧭 ध्येय प्रवास सुरू करा: ठरलेल्या दिवसांत ठरलेले ध्येय →";
+  const day = currentDay(state);
+  return day === null
+    ? `🏆 ${j.mr} पूर्ण! →`
+    : `🧭 ${j.mr}: दिवस ${day} / ${j.days.length} →`;
+}
 
 export default function Home({ navigation }: TabProps<"Home">) {
   const { progress } = useProgress();
@@ -75,6 +89,8 @@ export default function Home({ navigation }: TabProps<"Home">) {
   const todayKey = localDate();
   const weekly = weekSummary(progress.daily, progress.dates, todayKey);
   const back = welcomeBack(progress.dates, todayKey);
+  const recap = weekCard(progress.daily, progress.dates, todayKey);
+  const weekShare = useShareCard(recap ? weekShareText(recap, BRAND.playUrl) : "");
   const marathiDays = ["र", "सो", "मं", "बु", "गु", "शु", "श"];
   const week = Array.from({ length: 7 }, (_, i) => {
     const d = new Date();
@@ -286,17 +302,57 @@ export default function Home({ navigation }: TabProps<"Home">) {
             ? `🔥 ${streak} दिवसांची सलग वाटचाल`
             : "आज एक छोटी सुरुवात पुरेशी आहे."}
         </Text>
+        {streak > 0 && (
+          <Text style={s.smallMuted}>
+            ❄️ आठवड्यातून एक दिवस सुटला तरी वाटचाल तुटत नाही.
+          </Text>
+        )}
         {progress.profile && (
           <Text style={s.smallMuted}>
             🎯 {goalInfo[progress.profile.goal].mr} · दररोज{" "}
             {progress.profile.studyMinutes} मिनिटे
           </Text>
         )}
+        {progress.profile?.goal === "interview" && (
+          <Pressable
+            accessibilityRole="button"
+            onPress={() => navigation.navigate("InterviewKit")}
+            style={{ minHeight: 48, justifyContent: "center" }}
+          >
+            <Text style={s.link}>💼 मुलाखत किट: २० प्रश्नांचा सराव →</Text>
+          </Pressable>
+        )}
+        <Pressable
+          accessibilityRole="button"
+          onPress={() => navigation.navigate("Journey")}
+          style={{ minHeight: 48, justifyContent: "center" }}
+        >
+          <Text style={s.link}>{journeyLine(progress.journey)}</Text>
+        </Pressable>
       </View>
       {!!back && (
         <View style={s.welcomeBack} accessibilityLiveRegion="polite">
           <Text style={s.rowTitle}>{back.title}</Text>
           <Text style={s.body}>{back.body}</Text>
+        </View>
+      )}
+      {!!recap && (
+        <View style={[s.dailyCard, { gap: 6, marginBottom: 14 }]}>
+          <Label>या आठवड्याचा आढावा · YOUR WEEK</Label>
+          <Text style={s.sectionTitle}>📅 ७ पैकी {recap.days} दिवस सराव</Text>
+          {recap.spokeDays > 0 && (
+            <Text style={s.body}>🗣️ {recap.spokeDays} दिवस मोठ्याने बोललात</Text>
+          )}
+          {recap.lessonDays > 0 && <Text style={s.body}>📘 {recap.lessonDays} दिवस धडे</Text>}
+          {recap.words > 0 && <Text style={s.body}>🔤 {recap.words} नवीन शब्द</Text>}
+          <Button
+            small
+            secondary
+            icon="share-social-outline"
+            title="शेअर करा · Share"
+            onPress={() => void weekShare.share()}
+          />
+          {weekShare.card}
         </View>
       )}
       {!simple && pathPill}

@@ -80,6 +80,21 @@ assert.deepEqual(validateProgress(JSON.parse(JSON.stringify(themed))).settings, 
   for (const celebrate of ["yes", 1, null, {}])
     assert.throws(() => validateProgress({ ...migrated, settings: { textSize: 1, sound: true, celebrate } }));
 }
+// Goal journey: optional, validated, round-trips; done days are de-duplicated and sorted.
+{
+  const ok = validateProgress({ ...migrated, journey: { id: "travel-14", start: "2026-11-16", done: [3, 1, 3] } });
+  assert.deepEqual(ok.journey, { id: "travel-14", start: "2026-11-16", done: [1, 3] });
+  assert.deepEqual(validateProgress(JSON.parse(JSON.stringify(ok))).journey, ok.journey);
+  assert.ok(!("journey" in validateProgress(legacy)));
+  for (const journey of [
+    { id: "moon-99", start: "2026-11-16", done: [] },
+    { id: "travel-14", start: "16/11/2026", done: [] },
+    { id: "travel-14", start: "2026-11-16", done: [15] },
+    { id: "travel-14", start: "2026-11-16", done: [0.5] },
+    "travel-14",
+  ])
+    assert.throws(() => validateProgress({ ...migrated, journey }));
+}
 const now = 1000000;
 let r = scheduleReview(undefined, false, now);
 assert.equal(r.due, now + 600000);

@@ -45,6 +45,11 @@ Screenshots were taken from the app's own web build at exact store sizes, with d
 Learn spoken English through Marathi. Short daily steps, works offline.
 ```
 
+**Search-friendly alternative (mr-IN), 79 characters.** Play search reads the short description, so this one carries the words people type:
+```
+Spoken English मराठीतून: रोज बोलायचा सराव, मुलाखत तयारी, व्याकरण. इंटरनेटशिवाय.
+```
+
 ### Full description (max 4000)
 
 **Marathi (mr-IN)**
@@ -60,16 +65,28 @@ Learn spoken English through Marathi. Short daily steps, works offline.
 प्रत्येक धडा ७ छोट्या टप्प्यांत: लक्ष्य आणि संवाद, अर्थ आणि सूत्र, ऐका आणि म्हणा, सराव, तुमचे बोलणे, संवाद सराव, उजळणी. किती मिनिटे बाकी ते नेहमी दिसते.
 
 ✔ भरपूर सराव
-११९ धडे, ८०० हून अधिक प्रश्न, ११९ ठरलेले संवाद, रोजची ४३ उपयुक्त वाक्ये आणि १०० रोजचे शब्द. चुकलेले प्रश्न योग्य वेळी उजळणीसाठी परत येतात.
+१२३ धडे, ८०० हून अधिक प्रश्न, १२३ ठरलेले संवाद, १३ प्रसंगांतील ७३ उपयुक्त वाक्ये (बस, किराणा, बँक, कॉलेज, शाळा…) आणि १०० रोजचे शब्द. चुकलेले प्रश्न योग्य वेळी उजळणीसाठी परत येतात.
 
 ✔ बोलण्याचा सराव
 इंग्रजी वाक्य फोनच्या आवाजात ऐका (हळूही ऐकता येते), मोठ्याने म्हणा, हवे तर रेकॉर्ड करून स्वतःचा आवाज ऐका. सुसंगत फोनवर "शब्द ओळख" फोनवरच चालते: तुम्ही म्हटलेल्या वाक्यातील कोणते शब्द फोनने ओळखले ते दिसते (उदा. "३ पैकी २ शब्द ऐकू आले"). ही फक्त शब्द ओळख आहे, उच्चाराचे गुण किंवा परीक्षा नाही.
+
+✔ ध्येयानुसार प्रवास
+मुलाखत (२१ दिवस), प्रवास (१४ दिवस) किंवा रोजचे इंग्रजी (३० दिवस): रोज काय करायचे ते ठरलेले.
+
+✔ मुलाखत किट
+नेहमी विचारले जाणारे २० प्रश्न, सोपी उत्तरे, मराठी अर्थ आणि स्वतःचे उत्तर रेकॉर्ड करण्याची सोय.
+
+✔ आवाजासोबत बोला आणि आवाजाच्या जोड्या
+फोन वाक्य वाचतो, चालू शब्द उजळतो, तुम्ही सोबत बोलता. ship/sheep, v/w, s/sh असे गोंधळणारे आवाज ऐकून ओळखा.
+
+✔ आवाज डायरी
+रोज ३० सेकंद बोला. पहिल्या दिवसाचा आणि आजचा आवाज ऐकून फरक ऐका.
 
 ✔ व्याकरण सोप्या मराठीत
 १२ काळ, मोडल, कर्मणी वाक्ये आणि If / Reported speech एका तक्त्यात, प्रत्येकाचा सारांश आणि उदाहरणे.
 
 ✔ प्रोत्साहन, दबाव नाही
-आजची प्रगती, सलग दिवस, आठवड्याचा सारांश आणि टप्पा पूर्ण झाल्यावर छोटे अभिनंदन. ब्रेक झाला तरी हरकत नाही — प्रगती जपलेली राहते.
+आजची प्रगती, सलग दिवस (आठवड्यातून एक दिवस सुटला तरी वाटचाल तुटत नाही), मित्रांना पाठवता येणारा आठवड्याचा सारांश आणि टप्पा पूर्ण झाल्यावर छोटे अभिनंदन. ब्रेक झाला तरी हरकत नाही — प्रगती जपलेली राहते.
 
 ✔ इंटरनेटशिवाय, खाते नाही
 सर्व धडे इंटरनेटशिवाय चालतात. लॉग-इन नाही, जाहिराती नाहीत. तुमची प्रगती फक्त तुमच्या फोनवर राहते; हवी तर तुम्ही स्वतः प्रत (backup) घेऊ शकता.
@@ -92,16 +109,28 @@ From letters and sounds to everyday conversation. Four paths: Foundation, Beginn
 Each lesson has 7 short stages: goal and conversation, meaning and formula, listen and repeat, practice, your own speaking, role-play, review. You always see how many minutes are left.
 
 ✔ Lots of practice
-119 lessons, 800+ questions, 119 scripted role-plays, 43 everyday phrases and 100 everyday words. Missed questions come back for review at the right time.
+123 lessons, 800+ questions, 123 scripted role-plays, 73 everyday phrases in 13 situations (bus, kirana shop, bank, college, school…) and 100 everyday words. Missed questions come back for review at the right time.
 
 ✔ Speaking practice
 Hear each sentence in the phone's voice (also slowly), say it aloud, and record yourself to compare if you like. On supported phones, an on-device "word check" shows which words of your sentence the phone recognised (e.g. "2 of 3 words heard"). It's word recognition only, not a pronunciation score or a test.
+
+✔ Goal journeys
+Interview (21 days), travel (14 days) or everyday English (30 days): each day's tasks are planned for you.
+
+✔ Interview kit
+20 common interview questions with simple model answers, Marathi meaning, and recording to practise your own answer.
+
+✔ Speak along and sound pairs
+The phone reads a sentence, the current word lights up, and you speak with it. Train your ear on confusing sounds like ship/sheep, v/w and s/sh.
+
+✔ Voice diary
+Speak for 30 seconds a day. Hear your day 1 voice next to today's and notice the change.
 
 ✔ Grammar in simple Marathi
 12 tenses, modal verbs, passive voice and If / reported speech in one chart, each with a summary and examples.
 
 ✔ Encouragement, not pressure
-Today's progress, your streak, a weekly summary and small celebrations when you finish a stage. Took a break? No problem — your progress is kept.
+Today's progress, your streak (one missed day a week is forgiven), a weekly summary you can share with friends and small celebrations when you finish a stage. Took a break? No problem — your progress is kept.
 
 ✔ Offline, no account
 All lessons work without internet. No login, no ads. Your progress stays on your phone; you can export a backup yourself.
@@ -181,6 +210,16 @@ Re-check these answers if you ever add analytics, crash reporting, login or a cl
 </mr-IN>
 <en-IN>
 First release: 119 lessons in 7 short stages, role-plays, grammar chart, everyday phrases, on-device word check, daily reminder and dark mode. Everything works offline.
+</en-IN>
+```
+
+**Release notes for the update with journeys, interview kit and voice diary**
+```
+<mr-IN>
+नवीन: ध्येयानुसार २१/१४/३० दिवसांचा प्रवास, मुलाखत किट (२० प्रश्न), आवाजासोबत बोला, आवाजाच्या जोड्या, आवाज डायरी, बस/किराणा/बँक/कॉलेज/शाळेतील वाक्ये, आठवड्याचा सारांश शेअर करा, सलग दिवसांसाठी एक दिवसाची सूट. पहिल्या वापरात पहिले वाक्य लगेच बोला.
+</mr-IN>
+<en-IN>
+New: 21/14/30-day goal journeys, interview kit (20 questions), speak along, sound pairs, voice diary, phrases for bus, kirana, bank, college and school, shareable weekly recap, and one forgiven day a week for your streak. Say your first sentence in the first minute.
 </en-IN>
 ```
 

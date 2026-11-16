@@ -46,6 +46,11 @@ import WordsScreen from "./src/screens/Words";
 import Dictionary from "./src/screens/Dictionary";
 import QuizScreen from "./src/screens/Quiz";
 import Saved from "./src/screens/Saved";
+import VoiceDiary from "./src/screens/VoiceDiary";
+import InterviewKit from "./src/screens/InterviewKit";
+import SoundPairs from "./src/screens/SoundPairs";
+import JourneyScreen from "./src/screens/Journey";
+import SpeakAlong from "./src/screens/SpeakAlong";
 
 const Stack = createNativeStackNavigator<StackParams>();
 const Tab = createBottomTabNavigator<TabParams>();
@@ -260,6 +265,31 @@ function Root() {
                 name="SpeakDrill"
                 component={SpeakDrill}
                 options={{ title: "बोलण्याचा सराव" }}
+              />
+              <Stack.Screen
+                name="VoiceDiary"
+                component={VoiceDiary}
+                options={{ title: "आवाज डायरी · Voice diary" }}
+              />
+              <Stack.Screen
+                name="InterviewKit"
+                component={InterviewKit}
+                options={{ title: "मुलाखत किट · Interview kit" }}
+              />
+              <Stack.Screen
+                name="SoundPairs"
+                component={SoundPairs}
+                options={{ title: "आवाजांच्या जोड्या · Sound pairs" }}
+              />
+              <Stack.Screen
+                name="Journey"
+                component={JourneyScreen}
+                options={{ title: "ध्येय प्रवास · Goal journey" }}
+              />
+              <Stack.Screen
+                name="SpeakAlong"
+                component={SpeakAlong}
+                options={{ title: "सोबत बोला · Speak along" }}
               />
               <Stack.Screen
                 name="RolePlay"

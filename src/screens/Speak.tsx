@@ -105,6 +105,34 @@ export default function Speak({ navigation }: TabProps<"Speak">) {
           <View style={{ height: 10 }} />
           <Button
             secondary
+            icon="musical-notes-outline"
+            title="आवाजासोबत बोला · Speak along"
+            onPress={() => navigation.navigate("SpeakAlong")}
+          />
+          <View style={{ height: 10 }} />
+          <Button
+            secondary
+            icon="journal-outline"
+            title="आवाज डायरी · Voice diary"
+            onPress={() => navigation.navigate("VoiceDiary")}
+          />
+          <View style={{ height: 10 }} />
+          <Button
+            secondary
+            icon="briefcase-outline"
+            title="मुलाखत किट · Interview kit"
+            onPress={() => navigation.navigate("InterviewKit")}
+          />
+          <View style={{ height: 10 }} />
+          <Button
+            secondary
+            icon="ear-outline"
+            title="कोणता शब्द ऐकला? · Sound pairs"
+            onPress={() => navigation.navigate("SoundPairs")}
+          />
+          <View style={{ height: 10 }} />
+          <Button
+            secondary
             title="सामान्य चुका · Common mistakes"
             onPress={() => navigation.navigate("Mistakes")}
           />

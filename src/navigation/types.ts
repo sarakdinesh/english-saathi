@@ -16,6 +16,11 @@ export type StackParams = {
   Saved: undefined;
   Settings: undefined;
   SpeakDrill: undefined;
+  VoiceDiary: undefined;
+  InterviewKit: { open?: string } | undefined;
+  Journey: undefined;
+  SpeakAlong: undefined;
+  SoundPairs: undefined;
   Mistakes: undefined;
   RolePlay: { id: string };
   RolePlayList: undefined;

@@ -4,6 +4,8 @@ import { useFocusEffect } from "@react-navigation/native";
 import * as Speech from "expo-speech";
 import {
   AudioModule,
+  createAudioPlayer,
+  type AudioPlayer,
   RecordingPresets,
   setAudioModeAsync,
   useAudioPlayer,
@@ -19,7 +21,17 @@ import { C } from "./theme";
 import { s } from "./styles";
 import { WordCheck } from "./WordCheck";
 import { useProgress } from "../state/progress";
+import { voiceClips } from "../data/voiceClips";
 let speechRequest = 0;
+// A recorded human clip, when one exists for the exact text, plays instead of
+// the phone voice (see scripts/import-voice.ts). One clip at a time.
+let clipPlayer: AudioPlayer | null = null;
+function stopClip() {
+  try {
+    clipPlayer?.remove();
+  } catch {}
+  clipPlayer = null;
+}
 const voiceTimeout = <T,>(p: Promise<T>, fallback: T) =>
   Promise.race([p, new Promise<T>((r) => setTimeout(() => r(fallback), 2500))]);
 
@@ -34,6 +46,7 @@ export function useSpeech() {
     mounted.current = true;
     return () => {
       mounted.current = false;
+      stopClip();
       void Speech.stop();
     };
   }, []);
@@ -43,12 +56,14 @@ export function useSpeech() {
       return () => {
         mounted.current = false;
         speechRequest++;
+        stopClip();
         void Speech.stop();
       };
     }, []),
   );
   const stop = useCallback(() => {
     speechRequest++;
+    stopClip();
     void Speech.stop();
     setPlaying(false);
     setStatus("थांबवले.");
@@ -62,9 +77,28 @@ export function useSpeech() {
     const request = ++speechRequest;
     try {
       setStatus("आवाज तयार होत आहे…");
+      stopClip();
       await Speech.stop();
       if (!progress.settings.sound) {
         setStatus("आवाज सेटिंग्जमध्ये बंद आहे.");
+        return;
+      }
+      const clip = lines.length === 1 ? voiceClips[lines[0]] : undefined;
+      if (clip !== undefined) {
+        const p = createAudioPlayer(clip);
+        clipPlayer = p;
+        p.setPlaybackRate(rate, "high");
+        p.addListener("playbackStatusUpdate", (st) => {
+          if (!st.didJustFinish || clipPlayer !== p) return;
+          stopClip();
+          if (mounted.current && request === speechRequest) {
+            setPlaying(false);
+            setStatus("पुन्हा ऐकू शकता.");
+          }
+        });
+        setPlaying(true);
+        setStatus("ऐकत आहात…");
+        p.play();
         return;
       }
       const voices = await voiceTimeout(
@@ -324,9 +358,12 @@ function PracticeSteps({ current }: { current: number }) {
 export function Recorder({
   model,
   onRecorded,
+  onSave,
 }: {
   model?: string;
   onRecorded?: () => void;
+  // Shows "Save to diary"; the caller copies the temporary file it is given.
+  onSave?: (uri: string) => void;
 }) {
   const { activity, progress } = useProgress();
   const recorder = useAudioRecorder(RecordingPresets.HIGH_QUALITY);
@@ -484,6 +521,16 @@ export function Recorder({
               }
             }}
           />
+          {!!onSave && (
+            <Button
+              icon="bookmark-outline"
+              title="डायरीत जतन करा · Save to diary"
+              onPress={() => {
+                player.pause();
+                onSave(uri);
+              }}
+            />
+          )}
           <Button
             secondary
             title="रेकॉर्डिंग हटवा · Delete"

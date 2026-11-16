@@ -179,6 +179,41 @@ Say each once, naturally, as if speaking to a person. Names stay as written.
 | say-help-4 | Let me think for a moment. |
 | say-help-5 | I am still learning English. |
 
+### Part C2 — Maharashtra scenes (30 clips, added 16 November 2026)
+
+| File name | Say |
+|---|---|
+| say-bus-0 | Does this bus go to Kolhapur? |
+| say-bus-1 | One ticket to Nashik, please. |
+| say-bus-2 | Which platform is the train to Dadar? |
+| say-bus-3 | Please tell me when we reach Swargate. |
+| say-bus-4 | Is this seat free? |
+| say-bus-5 | How long does the bus take? |
+| say-kirana-0 | Please give me one kilo of sugar. |
+| say-kirana-1 | Do you have toned milk? |
+| say-kirana-2 | Can I pay by UPI? |
+| say-kirana-3 | Please add it to my monthly bill. |
+| say-kirana-4 | Is this rice new or old? |
+| say-kirana-5 | Please give me a bag. |
+| say-bank-0 | I want to open a savings account. |
+| say-bank-1 | Which form should I fill? |
+| say-bank-2 | Could you help me fill this form? |
+| say-bank-3 | I want to update my mobile number. |
+| say-bank-4 | Where should I sign? |
+| say-bank-5 | When will I get my ATM card? |
+| say-college-0 | May I come in, sir? |
+| say-college-1 | Sorry, I am late. |
+| say-college-2 | Could you explain this again, please? |
+| say-college-3 | When is the last date for the fees? |
+| say-college-4 | My project is on solar energy. |
+| say-college-5 | I am not sure, but I think the answer is … |
+| say-school-0 | I am Riya's mother. |
+| say-school-1 | How is my son doing in English? |
+| say-school-2 | What can we do at home to help? |
+| say-school-3 | She finds maths difficult. |
+| say-school-4 | Is there any homework for the holidays? |
+| say-school-5 | Thank you for your time. |
+
 ---
 
 ## Optional — slow versions (later)
@@ -189,7 +224,16 @@ clips can be slowed the same way, so separate slow recordings are not needed.
 ## Sending the files
 
 Put them all in one folder (e.g. `~/Desktop/boluya-voice/`) and tell Claude
-the folder path. **Don't put them in the project folder yourself.** Claude
+the folder path. Or add them yourself (needs ffmpeg):
+
+```sh
+node --experimental-strip-types scripts/import-voice.ts ~/Desktop/boluya-voice
+```
+
+The script trims silence, evens out the volume, converts each clip into
+`assets/voice/` and regenerates `src/data/voiceClips.ts`. Any sentence or tip
+word with a clip then plays the human voice (also at the slow speed); the rest
+keep the phone voice. Part A (single sounds) is not wired in yet. **Don't put them in the project folder yourself.** Claude
 converts, trims silence, normalises volume and adds them to the app, with the
 phone voice kept as a fallback.
 

@@ -19,7 +19,7 @@ export const hero = {
   supportEn: "Learn spoken English through Marathi. Short daily steps, works offline.",
   playReady: { mr: "Google Play वर मिळवा", en: "Get it on Google Play" },
   playSoon: { mr: "लवकरच Google Play वर", en: "Coming to Google Play" },
-  waitlist: { mr: "वेटलिस्टला सामील व्हा", en: "Join the waitlist" },
+  lessons: { mr: "मोफत धडे पाहा", en: "Free lessons" },
 } as const;
 
 export const stages = [
@@ -90,20 +90,17 @@ export const paths = [
 export const getApp = {
   titleMr: "ॲप मिळवा",
   titleEn: "Get English Boluya",
-  bodyMr: "Android साठी तयार. Play वर उपलब्ध झाल्यावर लगेच डाउनलोड करा — किंवा वेटलिस्टवर नाव टाका.",
-  bodyEn: "Built for Android. Download when it lands on Play — or join the waitlist now.",
-  formName: { mr: "नाव (ऐच्छिक)", en: "Name (optional)" },
-  formEmail: { mr: "ईमेल", en: "Email" },
-  formSubmit: { mr: "वेटलिस्टवर जोडा", en: "Join waitlist" },
-  formSending: { mr: "पाठवत आहे…", en: "Sending…" },
-  formSuccess: {
-    mr: "धन्यवाद! आम्ही लवकरच संपर्क करू.",
-    en: "Thanks! We’ll be in touch soon.",
-  },
-  formError: {
-    mr: "काही चुकले. कृपया पुन्हा प्रयत्न करा किंवा ईमेल पाठवा.",
-    en: "Something went wrong. Please try again or email us.",
-  },
+  bodyMr: "Android साठी Google Play वर मोफत. खाते नाही, जाहिराती नाहीत, इंटरनेटशिवाय चालते.",
+  bodyEn: "Free on Google Play for Android. No account, no ads, works offline.",
+  lessonsTitle: "मोफत धडे · Free lessons",
+  lessonsBody: "ॲप उघडण्याआधी वेबसाइटवरच पाहा: रोजची वाक्ये, सोपे व्याकरण आणि मुलाखतीची तयारी, सर्व मराठीतून.",
+  lessonLinks: [
+    ["/learn/phrases-bank.html", "बँकेत इंग्रजीत कसे बोलायचे"],
+    ["/learn/grammar-present-simple.html", "Present simple — साधा वर्तमानकाळ"],
+    ["/learn/interview.html", "मुलाखतीचे २० प्रश्न आणि उत्तरे"],
+    ["/learn/mistakes.html", "इंग्रजी बोलताना होणाऱ्या सामान्य चुका"],
+    ["/learn/index.html", "सर्व धडे पाहा →"],
+  ],
   honestyMr:
     "टीप: हे ॲप प्रमाणपत्र देत नाही आणि ठराविक वेळेत अस्खलित होण्याचे आश्वासन देत नाही. रोज थोडा सराव हाच खरा मार्ग आहे.",
   honestyEn:

@@ -17,6 +17,8 @@ import {
 import type { PathId } from "../curriculum/types";
 import type { Profile } from "./onboarding";
 import type { Reminder } from "./reminders";
+import { streakOf } from "./encourage";
+import type { JourneyState } from "./journeys";
 import {
   dateKey,
   effectiveDate,
@@ -30,20 +32,7 @@ const KEY = "english-saathi.progress.v1";
 export const localDate = () => dateKey();
 // The day used for daily plans and their completion (see effectiveDate).
 const planDay = (clock?: string) => effectiveDate(localDate(), clock);
-export function streakFor(dates: string[]) {
-  const cursor = new Date();
-  let count = 0;
-  if (!dates.includes(localDate())) cursor.setDate(cursor.getDate() - 1);
-  while (
-    dates.includes(
-      `${cursor.getFullYear()}-${String(cursor.getMonth() + 1).padStart(2, "0")}-${String(cursor.getDate()).padStart(2, "0")}`,
-    )
-  ) {
-    count++;
-    cursor.setDate(cursor.getDate() - 1);
-  }
-  return count;
-}
+export const streakFor = (dates: string[]) => streakOf(dates, localDate());
 type Context = {
   progress: Progress;
   ready: boolean;
@@ -66,6 +55,7 @@ type Context = {
   savePlan: (plan: DailyPlan) => void;
   setClock: (date: string) => void;
   saveProfile: (profile: Profile) => void;
+  saveJourney: (journey: JourneyState | undefined) => void;
   saveReminder: (reminder: Reminder) => void;
   markDaily: (date: string, task: string) => void;
 };
@@ -190,6 +180,8 @@ export function ProgressProvider({ children }: { children: React.ReactNode }) {
         setClock: (date) =>
           setProgress((p) => (p.clock === date ? p : { ...p, clock: date })),
         saveProfile: (profile) => setProgress((p) => ({ ...p, profile })),
+        saveJourney: (journey) =>
+          setProgress(({ journey: _, ...p }) => (journey ? { ...p, journey } : p)),
         saveReminder: (reminder) => setProgress((p) => ({ ...p, reminder })),
         markDaily: (date, task) =>
           setProgress((p) => {

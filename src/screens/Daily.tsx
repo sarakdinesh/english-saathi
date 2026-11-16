@@ -15,6 +15,9 @@ import {
 } from "../daily/engine";
 import { useDaily } from "../daily/useDaily";
 import { Listen, ListenAll } from "../components/Audio";
+import { useShareCard } from "../components/ShareCard";
+import { sentenceShareText } from "../state/diary";
+import { BRAND } from "../brand";
 import {
   AppText as Text,
   Button,
@@ -92,6 +95,7 @@ export function DailyToday() {
   const isDone = (k: string) =>
     k === "words" ? learned >= 5 || done.includes(k) : done.includes(k);
   const sentence = sentenceById(plan.sentence)!;
+  const sentenceShare = useShareCard(sentenceShareText(sentence, BRAND.playUrl));
   const lesson = lessonById(plan.conversation);
   const conv = kits[plan.conversation]?.conv ?? [];
   const tip = tipById(plan.tip);
@@ -164,6 +168,16 @@ export function DailyToday() {
             <Text style={s.sayText}>{sentence.say}</Text>
             <Text style={s.marathiBody}>{sentence.mr}</Text>
             <Listen text={sentence.en} compact />
+            <View style={{ marginTop: 10 }}>
+              <Button
+                small
+                secondary
+                icon="share-social-outline"
+                title="मित्रांना पाठवा · Share"
+                onPress={() => void sentenceShare.share()}
+              />
+            </View>
+            {sentenceShare.card}
             {finish("sentence")}
           </DailyCard>
           <DailyCard

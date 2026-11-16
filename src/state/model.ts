@@ -11,6 +11,7 @@ import {
 import { PATHS, type PathId } from "../curriculum/types";
 import { normalizeProfile, type Profile } from "./onboarding";
 import { isReminder, type Reminder } from "./reminders";
+import { normalizeJourney, type JourneyState } from "./journeys";
 import {
   DAILY_TASKS,
   MAX_STORED_PLANS,
@@ -64,6 +65,8 @@ export type Progress = {
   clock?: string;
   profile?: Profile;
   reminder?: Reminder;
+  // Goal journey in progress or finished (see journeys.ts).
+  journey?: JourneyState;
 };
 export type SpeakingPractice = { task: number; role: number };
 export type CheckpointResult = { correct: number; total: number; at: number };
@@ -240,6 +243,8 @@ export function validateProgress(p: any): Progress {
   if (p.profile !== undefined && !profile) throw Error("Invalid profile");
   if (p.reminder !== undefined && !isReminder(p.reminder))
     throw Error("Invalid reminder");
+  const journey = p.journey === undefined ? undefined : normalizeJourney(p.journey);
+  if (p.journey !== undefined && !journey) throw Error("Invalid journey");
   const speaking: Record<string, SpeakingPractice> = {};
   if (p.speaking !== undefined) {
     if (!plain(p.speaking)) throw Error("Invalid speaking practice");
@@ -391,6 +396,7 @@ export function validateProgress(p: any): Progress {
           },
         }
       : {}),
+    ...(journey ? { journey } : {}),
   };
 }
 // Wrong: retry after 10 minutes. Correct: 1, 3, 7, 14, then 30 days.

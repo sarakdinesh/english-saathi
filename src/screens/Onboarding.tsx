@@ -16,7 +16,14 @@ import { pathInfo } from "./Learn";
 import { AppText as Text, Button, Heading, Label, Shell } from "../components/ui";
 import { s } from "../components/styles";
 import { BRAND } from "../brand";
+import { Listen } from "../components/Audio";
+import { WordCheck } from "../components/WordCheck";
+import { Celebration } from "../components/Celebrate";
 import { C } from "../components/theme";
+
+// The first thing a new learner says: short, true for everyone, and easy for
+// the phone's recogniser.
+export const FIRST_SENTENCE = "Hello, I am learning English.";
 
 const levels: { path: PathId; mr: string; sub: string }[] = [
   {
@@ -68,8 +75,9 @@ function Choice({
 // First-run onboarding in Marathi: goal, daily time, starting level. Every
 // choice can be changed later (Settings, Learn). Skipping keeps the defaults.
 export default function Onboarding({ navigation }: StackProps<"Onboarding">) {
-  const { progress, saveProfile, setPath } = useProgress();
+  const { progress, saveProfile, setPath, activity } = useProgress();
   const [step, setStep] = useState(0);
+  const [spoke, setSpoke] = useState(false);
   const [goal, setGoal] = useState<Goal>(progress.profile?.goal ?? "daily");
   const [minutes, setMinutes] = useState<StudyMinutes>(
     progress.profile?.studyMinutes ?? 15,
@@ -80,16 +88,25 @@ export default function Onboarding({ navigation }: StackProps<"Onboarding">) {
     navigation.dispatch(
       CommonActions.reset({ index: 0, routes: [{ name: "Main" }] }),
     );
+  // Fixed at open: saving the profile on the last choice must not change it.
+  const [first] = useState(!progress.profile);
+  // New learners say their first sentence before Home; returning ones go back.
   const pickLevel = (path: PathId) => {
     save();
     setPath(path);
-    toMain();
+    if (first) setStep(3);
+    else toMain();
   };
-  const first = !progress.profile;
+  const said = () => {
+    if (spoke) return;
+    setSpoke(true);
+    activity("speak");
+  };
   return (
     <Shell>
       <Label>
-        {first ? "स्वागत · WELCOME" : "तुमची निवड · YOUR CHOICES"} · {step + 1}/3
+        {first ? "स्वागत · WELCOME" : "तुमची निवड · YOUR CHOICES"} · {step + 1}/
+        {first ? 4 : 3}
       </Label>
       {step === 0 && (
         <>
@@ -193,7 +210,40 @@ export default function Onboarding({ navigation }: StackProps<"Onboarding">) {
           <Button secondary title="मागे · Back" onPress={() => setStep(1)} />
         </>
       )}
-      {first && (
+      {step === 3 && (
+        <>
+          <Heading
+            title="तुमचे पहिले इंग्रजी वाक्य!"
+            sub="आधी ऐका, मग मोठ्याने म्हणा. चूक झाली तरी चालेल — बोलणे हाच पहिला विजय."
+          />
+          <View style={s.phraseCard}>
+            <Text style={[s.phraseEn, { fontSize: 24, lineHeight: 34 }]}>{FIRST_SENTENCE}</Text>
+            <Text style={s.sayText}>हॅलो, आय ॲम लर्निंग इंग्लिश.</Text>
+            <Text style={s.marathiBody}>नमस्कार, मी इंग्रजी शिकत आहे.</Text>
+            <Listen text={FIRST_SENTENCE} compact />
+            <WordCheck
+              target={FIRST_SENTENCE}
+              onResult={(r) => {
+                if (r.heard === r.total) said();
+              }}
+            />
+          </View>
+          <View style={{ height: 14 }} />
+          {spoke ? (
+            <>
+              <Celebration
+                emoji="🎉"
+                title="छान! तुम्ही आज इंग्रजी बोललात."
+                sub="हीच सुरुवात आहे. रोज थोडे बोलूया."
+              />
+              <Button title="सुरू करूया · Let's start" onPress={toMain} />
+            </>
+          ) : (
+            <Button title="मी म्हणालो / म्हणाले · I said it" onPress={said} />
+          )}
+        </>
+      )}
+      {first && step < 3 && (
         <Pressable
           accessibilityRole="button"
           onPress={() => {

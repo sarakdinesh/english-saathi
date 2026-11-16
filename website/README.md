@@ -6,7 +6,7 @@ Modern bilingual (Marathi-first) landing site for **English Boluya · इंग�
 
 ```sh
 cd website
-cp .env.example .env   # optional — set Play URL, support email, waitlist endpoint
+cp .env.example .env   # optional — set Play URL, support email
 npm install
 npm run dev
 ```
@@ -26,9 +26,8 @@ Static output is written to `dist/`. Host that folder on any static host, then s
 
 | Variable | Purpose |
 | --- | --- |
-| `VITE_PLAY_STORE_URL` | Google Play listing. Empty → “Coming soon” CTA |
+| `VITE_PLAY_STORE_URL` | Google Play listing. Empty → the live listing |
 | `VITE_SUPPORT_EMAIL` | Footer + legal contact (default `support@example.com`) |
-| `VITE_WAITLIST_ENDPOINT` | Optional POST URL for waitlist JSON. Empty → `mailto:` fallback |
 
 ## Routes
 
@@ -38,5 +37,6 @@ Static output is written to `dist/`. Host that folder on any static host, then s
 | `/privacy` | Privacy policy |
 | `/terms` | Terms & conditions |
 | `/404` | Not found |
+| `/learn/*.html` | Static Marathi lesson pages for Google search, generated from the app's content by `../scripts/site-pages.ts` on every `dev`/`build`. Set `SITE_URL=https://<your-domain>` when building to also write `sitemap.xml` and `robots.txt`, then submit the sitemap in Google Search Console. |
 
 Brand assets live under `public/brand` and `public/screenshots` (copied from the app `assets/` and `store-listing/` folders).

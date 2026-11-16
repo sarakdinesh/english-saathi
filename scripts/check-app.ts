@@ -197,6 +197,14 @@ assert.deepEqual(
   "no new Android permission",
 );
 
+// Play rating: asked once, after 7 study days, on finishing a lesson; never on web.
+{
+  const src = read("src/components/askReview.ts");
+  assert.match(src, /REVIEW_AFTER_DAYS = 7/);
+  assert.match(src, /Platform\.OS === "web"/);
+  assert.match(src, /AsyncStorage\.getItem\(KEY\)/);
+  assert.match(read("src/screens/Lesson.tsx"), /activity\("lesson"\);\s*void askReviewOnce\(progress\.dates\.length\);/);
+}
 // Microphone: asked once after the splash on first launch, never on web,
 // never again after a refusal, never blocking.
 const micSrc = read("src/components/micPermission.ts");

@@ -8,4 +8,6 @@ export const BRAND = {
   full: "English Boluya · इंग्लिश बोलूया",
   tagline: "आपल्या भाषेत शिकूया, इंग्रजीत बोलूया!",
   version: "1.0.0",
+  // Store page from the Android package ID (see the note above).
+  playUrl: "https://play.google.com/store/apps/details?id=com.englishsaathi.learn",
 } as const;

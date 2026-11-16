@@ -4,8 +4,9 @@
   "version": "1.0.0",
   "type": "module",
   "scripts": {
-    "dev": "vite",
-    "build": "tsc -b && vite build",
+    "pages": "cd .. && node --experimental-strip-types scripts/site-pages.ts",
+    "dev": "npm run pages && vite",
+    "build": "npm run pages && tsc -b && vite build",
     "lint": "oxlint",
     "preview": "vite preview"
   },

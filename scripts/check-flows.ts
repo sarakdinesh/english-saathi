@@ -355,8 +355,102 @@ const homeSrc = fs.readFileSync("src/screens/Home.tsx", "utf8");
 assert.match(homeSrc, /simpleHome\(path\)/);
 assert.match(homeSrc, /<Collapsible[\s\S]*?title="आणखी पाहा/, "beginner Home keeps extras behind आणखी पाहा");
 
+// Voice diary: folder listing is the diary; milestones count day 1 = first recording.
+{
+  const d = load("src/state/diary.ts");
+  assert.deepEqual(
+    d.parseEntries(["2026-11-20.m4a", "saving.tmp", "2026-11-16.m4a", "notes.txt"]).map((e: any) => e.date),
+    ["2026-11-16", "2026-11-20"],
+  );
+  assert.equal(d.diaryName("2026-11-16", "file:///cache/rec-1.m4a"), "2026-11-16.m4a");
+  assert.equal(d.diaryName("2026-11-16", "file:///cache/rec"), "2026-11-16.m4a");
+  assert.equal(d.dayNumber("2026-11-16", "2026-11-22"), 7);
+  assert.equal(d.nextMilestone(undefined, "2026-11-16", false), 1);
+  assert.equal(d.nextMilestone("2026-11-16", "2026-11-16", true), 7);
+  assert.equal(d.nextMilestone("2026-11-16", "2026-11-22", false), 7); // day 7, not yet recorded
+  assert.equal(d.nextMilestone("2026-11-16", "2026-11-22", true), 30);
+  assert.equal(d.nextMilestone("2026-11-16", "2028-01-01", false), null);
+  const text = d.shareText({ days: 12, streak: 1, lessons: 0, spokeDays: 3, diary: 2 }, "https://x");
+  assert.match(text, /12 दिवस सराव/);
+  assert.doesNotMatch(text, /सलग|धडे पूर्ण/); // zero / one-day lines are left out
+  assert.match(text, /https:\/\/x$/);
+}
+
+// Interview kit: 20 unique questions, every field filled, audio text has no brackets.
+{
+  const iv = load("src/data/interview.ts");
+  assert.equal(iv.interviewQuestions.length, 20);
+  assert.equal(new Set(iv.interviewQuestions.map((q: any) => q.id)).size, 20);
+  for (const q of iv.interviewQuestions) {
+    for (const k of ["q", "qMr", "answer", "answerMr", "tip"]) assert.ok(q[k]?.trim(), `${q.id} ${k}`);
+    assert.doesNotMatch(iv.plainAnswer(q.answer), /[\[\]]/, q.id);
+  }
+  assert.equal(iv.plainAnswer("I am [Rahul] from [Pune]."), "I am Rahul from Pune.");
+}
+
+// Sound pairs: each pair is two different lowercase words, every group has a tip.
+{
+  const { soundGroups } = load("src/data/soundPairs.ts");
+  assert.ok(soundGroups.length >= 6);
+  for (const g of soundGroups) {
+    assert.ok(g.tip.trim() && g.pairs.length >= 3, g.id);
+    for (const [a, b] of g.pairs) assert.ok(a !== b && /^[a-z]+$/.test(a + b), `${g.id}: ${a}/${b}`);
+  }
+}
+
+// Goal journeys: every task points at real content; days advance in order.
+{
+  const jn = load("src/state/journeys.ts");
+  const { lessonById } = load("src/curriculum/index.ts");
+  const { situations } = load("src/data/speaking.ts");
+  const { interviewQuestions } = load("src/data/interview.ts");
+  const ivIds = new Set(interviewQuestions.map((q: any) => q.id));
+  for (const j of jn.JOURNEYS)
+    j.days.forEach((tasks: any[], i: number) => {
+      assert.ok(tasks.length >= 1, `${j.id} day ${i + 1} is empty`);
+      for (const t of tasks) {
+        if (t.kind === "lesson") assert.ok(lessonById(t.id), `${j.id}: lesson ${t.id}`);
+        if (t.kind === "interview") assert.ok(ivIds.has(t.id), `${j.id}: question ${t.id}`);
+        if (t.kind === "phrasebook") assert.ok(situations.some((x: any) => x.id === t.id), `${j.id}: ${t.id}`);
+      }
+    });
+  assert.equal(jn.journeyForGoal("interview"), "interview-21");
+  assert.equal(jn.journeyForGoal("travel"), "travel-14");
+  assert.equal(jn.journeyForGoal(undefined), "daily-30");
+  assert.equal(jn.currentDay({ id: "travel-14", start: "2026-11-16", done: [] }), 1);
+  assert.equal(jn.currentDay({ id: "travel-14", start: "2026-11-16", done: [1, 2, 4] }), 3);
+  assert.equal(jn.currentDay({ id: "travel-14", start: "2026-11-16", done: Array.from({ length: 14 }, (_, i) => i + 1) }), null);
+}
+
+// Speak along: word spans and the word under the voice's character position.
+{
+  const sa = load("src/state/shadowing.ts");
+  const spans = sa.wordSpans("Where is the bus stop?");
+  assert.deepEqual(spans.map((w: any) => w.start), [0, 6, 9, 13, 17]);
+  assert.equal(sa.wordAt(spans, -1), -1);
+  assert.equal(sa.wordAt(spans, 0), 0);
+  assert.equal(sa.wordAt(spans, 9), 2);
+  assert.equal(sa.wordAt(spans, 11), 2); // inside "the"
+  assert.equal(sa.wordAt(spans, 17), 4);
+}
+
 console.log(
   `Flow checks passed: scoring (${cur.allExercises.length} exercises solvable, duplicates, alternatives), ` +
     `${cur.rolePlays.length} role-play progressions, resume logic, short-step helpers, migration + 12 invalid new-field imports, revision IDs (${reviewIds.length}).`,
 );
 void initial;
+
+// ---- Website learn pages -----------------------------------------------------
+{
+  const { pages } = await import("./site-pages.ts");
+  const all = pages();
+  const files = new Set(all.map((p: any) => p.file));
+  assert.equal(files.size, all.length, "learn pages: duplicate file names");
+  for (const p of all) {
+    assert.ok(p.title && p.description && p.body, `${p.file}: empty field`);
+    assert.ok(!/undefined|\[object/.test(p.body + p.title), `${p.file}: missing data`);
+    for (const [, href] of p.body.matchAll(/href="\/learn\/([^"]+)"/g))
+      assert.ok(files.has(href), `${p.file}: broken link ${href}`);
+  }
+  console.log(`Learn pages: ${all.length} pages, links resolve.`);
+}
