@@ -91,6 +91,8 @@ Spoken English मराठीतून: रोज बोलायचा सर�
 ✔ इंटरनेटशिवाय, खाते नाही
 सर्व धडे इंटरनेटशिवाय चालतात. लॉग-इन नाही, जाहिराती नाहीत. तुमची प्रगती फक्त तुमच्या फोनवर राहते; हवी तर तुम्ही स्वतः प्रत (backup) घेऊ शकता.
 
+हे ॲप कोणासाठी: मराठीतून इंग्रजी शिकू इच्छिणारे विद्यार्थी, नोकरीच्या मुलाखतीची तयारी करणारे, ऑफिसमध्ये इंग्रजी बोलायचे असणारे आणि रोजच्या जीवनात स्पोकन इंग्लिश (Spoken English) वापरायचे असणारे सर्वजण. इंग्रजी व्याकरण मराठीत, रोजची इंग्रजी वाक्ये आणि इंग्रजी संभाषणाचा सराव एकाच ॲपमध्ये.
+
 आवडीनुसार: रोजची आठवण, गडद रंग, मोठी अक्षरे.
 
 टीप: हे ॲप भाषेचे प्रमाणपत्र देत नाही आणि ठराविक वेळेत अस्खलित होण्याचे आश्वासन देत नाही. रोज थोडा सराव हाच खरा मार्ग आहे.
@@ -134,6 +136,8 @@ Today's progress, your streak (one missed day a week is forgiven), a weekly summ
 
 ✔ Offline, no account
 All lessons work without internet. No login, no ads. Your progress stays on your phone; you can export a backup yourself.
+
+Who it's for: students who want to learn English in Marathi, job seekers preparing for an English interview, office workers, and anyone who wants to practise spoken English for daily life. English grammar in Marathi, daily English sentences and English conversation practice in one app.
 
 Also: daily reminder, dark mode, larger text.
 
